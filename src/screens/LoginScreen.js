@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {useState} from 'react';
 import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 
@@ -6,10 +6,13 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
+import {AuthContext} from '../navigation/AuthProvider';
 
 export default function LoginScreen({navigation}) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+
+  const {login} = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -36,7 +39,7 @@ export default function LoginScreen({navigation}) {
       <FormButton
         buttonTitle="Sign In"
         onPress={() => {
-          alert('Sing In Clicked!');
+          login(email, password);
         }}
       />
 
