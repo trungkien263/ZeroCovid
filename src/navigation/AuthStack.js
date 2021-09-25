@@ -8,6 +8,7 @@ import OnboardingScreen from '../screens/OnboardingScreen';
 import {View} from 'react-native';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,11 @@ export default function AuthStack() {
       } else {
         setIsFirstLaunch(false);
       }
+    });
+
+    GoogleSignin.configure({
+      webClientId:
+        '766114538862-sjklbjaiong94pbl2tim3av28ic10f7m.apps.googleusercontent.com',
     });
   }, []);
 

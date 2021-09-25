@@ -11,12 +11,12 @@ export default function Routes() {
   const [initializing, setInitializing] = useState(true);
 
   // Handle user state changes
-  function onAuthStateChanged(user) {
+  const onAuthStateChanged = user => {
     setUser(user);
     if (initializing) {
       setInitializing(false);
     }
-  }
+  };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);

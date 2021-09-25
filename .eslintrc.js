@@ -4,5 +4,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 0,
     'react-native/no-inline-styles': 0,
+    'react-hooks/exhaustive-deps': 0,
+    'no-shadow': 0,
   },
 };
