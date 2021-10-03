@@ -32,6 +32,7 @@ export default function AuthStack() {
     });
   }, []);
 
+  // define which sreen will be shown via initialRouteName attribute below
   if (isFirstLaunch === null) {
     return null;
   } else if (isFirstLaunch === true) {
