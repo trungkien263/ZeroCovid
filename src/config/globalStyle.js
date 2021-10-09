@@ -6,5 +6,6 @@ export const GlobalStyle = {
     COLOR_SILVER: '#eee',
     COLOR_BLUE: '#2e64e5',
     COLOR_GRAY: '#888',
+    COLOR_WHITE: '#fff',
   },
 };
