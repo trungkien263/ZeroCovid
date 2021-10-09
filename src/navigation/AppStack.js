@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -62,6 +62,22 @@ const FeedStack = ({navigation}) => (
             <Ionicons name="arrow-back" size={25} color="#2e64e5" />
           </View>
         ),
+        headerRight: () => {
+          return (
+            <Text
+              style={{
+                marginRight: 18,
+                color: '#2e64e5',
+                fontWeight: '700',
+                fontSize: 16,
+              }}
+              onPress={() => {
+                alert('pressed');
+              }}>
+              Post
+            </Text>
+          );
+        },
       }}
     />
     <Stack.Screen
