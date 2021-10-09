@@ -1,11 +1,38 @@
-import React from 'react';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, TextInput, Platform, Image} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import {FloatingAction} from 'react-native-floating-action';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default function AddPostScreen() {
-  const actions = [
+  const [image, setImage] = useState(null);
+
+  const choosePhoto = () => {
+    ImagePicker.openPicker({
+      width: 1200,
+      height: 780,
+      cropping: true,
+    }).then(image => {
+      console.log(image);
+      const imageUrl = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUrl);
+    });
+  };
+
+  const takePhoto = () => {
+    ImagePicker.openCamera({
+      width: 1200,
+      height: 780,
+      cropping: true,
+    }).then(image => {
+      console.log(image);
+      const imageUrl = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUrl);
+    });
+  };
+
+  const data = [
     {
       text: 'Take Photo',
       icon: <Icon name="camera" style={styles.actionButtonIcon} />,
@@ -23,6 +50,18 @@ export default function AddPostScreen() {
 
   return (
     <View style={styles.container}>
+      {image && (
+        <Image
+          source={{uri: image}}
+          style={{
+            width: '100%',
+            height: 250,
+            marginBottom: 16,
+            borderRadius: 16,
+          }}
+        />
+      )}
+
       <TextInput
         style={styles.textInput}
         placeholder="What is on your mind ?"
@@ -31,9 +70,12 @@ export default function AddPostScreen() {
       />
 
       <FloatingAction
-        actions={actions}
-        color={GlobalStyle.colors.COLOR_RED}
-        onPressItem={() => alert('kikiki')}
+        actions={data}
+        color={GlobalStyle.colors.COLOR_BLUE}
+        onPressItem={name => {
+          name === 'bt_take_photo' && takePhoto();
+          name === 'bt_choose_photo' && choosePhoto();
+        }}
       />
     </View>
   );
