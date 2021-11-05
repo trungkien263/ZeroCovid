@@ -5,6 +5,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <Text>Login Screen</Text>
+      <View></View>
     </View>
   );
 }
