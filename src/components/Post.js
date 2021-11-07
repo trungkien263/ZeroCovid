@@ -7,7 +7,7 @@ import {AuthContext} from '../navigation/AuthProvider';
 import moment from 'moment';
 
 export default function Post({item, onDeletePost}) {
-    console.log('----------------props', item);
+  console.log('----------------props', item);
   const {user, logout} = useContext(AuthContext);
 
   return (
@@ -64,7 +64,7 @@ export default function Post({item, onDeletePost}) {
           <Text style={styles.featureTxt}>{item?.comment} Comments</Text>
         </TouchableOpacity>
         {user.uid === item.userId && (
-          <TouchableOpacity onPress={()=>onDeletePost(item.postId)} >
+          <TouchableOpacity onPress={() => onDeletePost(item.postId)}>
             <FontAwesome
               name="trash-o"
               size={25}
