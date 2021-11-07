@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import {FloatingAction} from 'react-native-floating-action';
@@ -18,13 +19,14 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../navigation/AuthProvider';
 
-export default function AddPostScreen() {
+export default function AddPostScreen({navigation, route}) {
   const {user} = useContext(AuthContext);
   const [image, setImage] = useState(null);
   //   const reference = storage().ref('black-t-shirt-sm.png');
   const [isUploading, setIsUploading] = useState(false);
   const [tranferred, setTranferred] = useState(0);
   const [post, setPost] = useState(null);
+  const [isRefresh, setIsRefresh] = useState(false);
 
   const choosePhoto = () => {
     ImagePicker.openPicker({
@@ -71,6 +73,8 @@ export default function AddPostScreen() {
           'Your post has been published to the Firebase Cloud Storage Successfully!',
         );
         setPost(null);
+        setIsRefresh(!isRefresh);
+        navigation.navigate('Social App');
       })
       .catch(err => {
         console.log('Something went wrong!', err);
@@ -145,62 +149,66 @@ export default function AddPostScreen() {
   ];
 
   return (
-    <View style={styles.container}>
-      {image && (
-        <Image
-          source={{uri: image}}
-          style={{
-            width: '100%',
-            height: 250,
-            marginBottom: 16,
-            borderRadius: 16,
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{flex: 1}}>
+      <View style={styles.container}>
+        {image && (
+          <Image
+            source={{uri: image}}
+            style={{
+              width: '100%',
+              height: 250,
+              marginBottom: 16,
+              borderRadius: 16,
+            }}
+          />
+        )}
+
+        <TextInput
+          style={styles.textInput}
+          placeholder="What's on your mind ?"
+          // autoFocus={true}
+          keyboardType="default"
+          numberOfLines={4}
+          value={post}
+          onChangeText={text => {
+            setPost(text);
           }}
         />
-      )}
+        {isUploading ? (
+          <View>
+            <Text>{tranferred} % Completed</Text>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          <TouchableOpacity onPress={submitPost}>
+            <Text
+              style={{
+                color: GlobalStyle.colors.COLOR_WHITE,
+                fontSize: 16,
+                fontWeight: '700',
+                paddingVertical: 16,
+                paddingHorizontal: 32,
+                marginTop: 16,
+                borderRadius: 10,
+                backgroundColor: GlobalStyle.colors.COLOR_BLUE,
+              }}>
+              Post
+            </Text>
+          </TouchableOpacity>
+        )}
 
-      <TextInput
-        style={styles.textInput}
-        placeholder="What is on your mind ?"
-        // autoFocus={true}
-        keyboardType="default"
-        numberOfLines={4}
-        value={post}
-        onChangeText={text => {
-          setPost(text);
-        }}
-      />
-      {isUploading ? (
-        <View>
-          <Text>{tranferred} % Completed</Text>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      ) : (
-        <TouchableOpacity onPress={submitPost}>
-          <Text
-            style={{
-              color: GlobalStyle.colors.COLOR_WHITE,
-              fontSize: 16,
-              fontWeight: '700',
-              paddingVertical: 16,
-              paddingHorizontal: 32,
-              marginTop: 16,
-              borderRadius: 10,
-              backgroundColor: GlobalStyle.colors.COLOR_BLUE,
-            }}>
-            Post
-          </Text>
-        </TouchableOpacity>
-      )}
-
-      <FloatingAction
-        actions={data}
-        color={GlobalStyle.colors.COLOR_BLUE}
-        onPressItem={name => {
-          name === 'bt_take_photo' && takePhoto();
-          name === 'bt_choose_photo' && choosePhoto();
-        }}
-      />
-    </View>
+        <FloatingAction
+          actions={data}
+          color={GlobalStyle.colors.COLOR_BLUE}
+          onPressItem={name => {
+            name === 'bt_take_photo' && takePhoto();
+            name === 'bt_choose_photo' && choosePhoto();
+          }}
+        />
+      </View>
+    </ScrollView>
   );
 }
 

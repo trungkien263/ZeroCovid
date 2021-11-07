@@ -1,14 +1,21 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, Alert} from 'react-native';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  RefreshControl,
+} from 'react-native';
 import FormButton from '../components/FormButton';
 import {AuthContext} from '../navigation/AuthProvider';
 import Post from '../components/Post';
 import {GlobalStyle} from '../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {useIsFocused} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -72,9 +79,11 @@ export default function HomeScreen() {
     fetchPosts();
   }, [refresh]);
 
-  // useFocusEffect(()=>{
-  //     fetchPosts();
-  // })
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPosts();
+    }, [refresh]),
+  );
 
   const deletePost = postId => {
     console.log('post ID', postId);
@@ -125,6 +134,16 @@ export default function HomeScreen() {
       });
   };
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchPosts();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+
   //   const data = [
   //     {
   //       userName: 'Tzuyu',
@@ -156,11 +175,12 @@ export default function HomeScreen() {
   //   ];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       {posts.map((item, index) => {
-        {
-          /* console.log('passing item', item) */
-        }
         return <Post key={index} item={item} onDeletePost={handleDelete} />;
       })}
     </ScrollView>

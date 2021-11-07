@@ -62,22 +62,22 @@ const FeedStack = ({navigation}) => (
             <Ionicons name="arrow-back" size={25} color="#2e64e5" />
           </View>
         ),
-        headerRight: () => {
-          return (
-            <Text
-              style={{
-                marginRight: 18,
-                color: '#2e64e5',
-                fontWeight: '700',
-                fontSize: 16,
-              }}
-              onPress={() => {
-                alert('pressed');
-              }}>
-              Post
-            </Text>
-          );
-        },
+        // headerRight: () => {
+        //   return (
+        //     <Text
+        //       style={{
+        //         marginRight: 18,
+        //         color: '#2e64e5',
+        //         fontWeight: '700',
+        //         fontSize: 16,
+        //       }}
+        //       onPress={() => {
+        //         alert('pressed');
+        //       }}>
+        //       Post
+        //     </Text>
+        //   );
+        // },
       }}
     />
     <Stack.Screen
@@ -121,9 +121,9 @@ const ProfileStack = ({navigation}) => (
     <Stack.Screen
       name="Profile"
       component={ProfileScreen}
-      //   options={{
-      //     headerShown: false,
-      //   }}
+      options={{
+        headerShown: false,
+      }}
     />
     <Stack.Screen
       name="EditProfile"
