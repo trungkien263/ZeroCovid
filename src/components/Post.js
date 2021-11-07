@@ -1,21 +1,49 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {AuthContext} from '../navigation/AuthProvider';
 import moment from 'moment';
+import {useNavigation} from '@react-navigation/core';
+import firestore from '@react-native-firebase/firestore';
 
 export default function Post({item, onDeletePost}) {
   console.log('----------------props', item);
   const {user, logout} = useContext(AuthContext);
+  const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
+
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(item.userId)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          console.log('user data--------------', documentSnapshot.data());
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('HomeProfile', {userId: item.userId});
+          }}>
           <Image
-            source={{uri: item?.imageUrl}}
+            source={{
+              uri:
+                (userData && userData?.userImg) ||
+                'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
+            }}
             style={{
               width: 60,
               height: 60,
@@ -24,11 +52,15 @@ export default function Post({item, onDeletePost}) {
           />
         </TouchableOpacity>
         <View style={{paddingLeft: 10}}>
-          <Text style={{fontWeight: '700'}}>{item?.userName}</Text>
+          <Text style={{fontWeight: '700'}}>
+            {item?.userName ? item?.userName : 'Test user'}
+          </Text>
           <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
         </View>
       </View>
-      <Text style={{paddingVertical: 16}}>{item?.content}</Text>
+      {item.content && (
+        <Text style={{paddingVertical: 16}}>{item?.content}</Text>
+      )}
       {item.imageUrl && (
         <Image
           source={{uri: item?.imageUrl}}
@@ -37,6 +69,7 @@ export default function Post({item, onDeletePost}) {
             maxWidth: '100%',
             height: 200,
             borderRadius: 10,
+            marginTop: item.content ? 0 : 16,
             //   aspectRatio: 135 / 76,
             //   aspectRatio: 3 / 2,
           }}
