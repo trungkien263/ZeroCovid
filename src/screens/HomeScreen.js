@@ -14,6 +14,7 @@ import {GlobalStyle} from '../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {useFocusEffect} from '@react-navigation/native';
+import HomeSkeleton from '../components/Skeleton/HomeSkeleton';
 
 export default function HomeScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
@@ -27,6 +28,7 @@ export default function HomeScreen({navigation, route}) {
   const fetchPosts = async () => {
     try {
       const postList = [];
+      setIsLoading(true);
 
       await firestore()
         .collection('posts')
@@ -53,9 +55,7 @@ export default function HomeScreen({navigation, route}) {
         });
 
       setPosts(postList);
-      if (isLoading) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     } catch (error) {
       console.log('error', error);
     }
@@ -174,7 +174,11 @@ export default function HomeScreen({navigation, route}) {
   //     },
   //   ];
 
-  return (
+  return isLoading ? (
+    <ScrollView>
+      <HomeSkeleton />
+    </ScrollView>
+  ) : (
     <ScrollView
       style={styles.container}
       refreshControl={

@@ -16,6 +16,7 @@ import firestore from '@react-native-firebase/firestore';
 import Post from '../components/Post';
 import {useFocusEffect} from '@react-navigation/native';
 import storage from '@react-native-firebase/storage';
+import ProfileSkeleton from '../components/Skeleton/ProfileSkeleton';
 
 export default function ProfileScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
@@ -30,7 +31,7 @@ export default function ProfileScreen({navigation, route}) {
   const fetchPosts = async () => {
     try {
       const postList = [];
-
+      setIsLoading(true);
       await firestore()
         .collection('posts')
         .where('userId', '==', route.params ? route.params.userId : user.uid)
@@ -57,10 +58,7 @@ export default function ProfileScreen({navigation, route}) {
         });
 
       setPosts(postList);
-      console.log('---------------post user', posts);
-      if (isLoading) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     } catch (error) {
       console.log('error', error);
     }
@@ -169,78 +167,86 @@ export default function ProfileScreen({navigation, route}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Image
-          style={styles.userImg}
-          source={{
-            uri: userData
-              ? userData?.userImg
-              : 'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
-          }}
-        />
-        <Text style={styles.userName}>
-          {userData ? userData?.fname + ' ' + userData?.lname : 'Test user'}
-        </Text>
-        <Text style={styles.aboutUser}>{userData && userData?.about}</Text>
-        {route.params ? (
-          <View
-            style={{
-              flex: 1,
-              marginTop: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity style={styles.btn}>
-              <Text style={styles.textBtn}>Message</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.btn, {marginLeft: 10}]}>
-              <Text style={styles.textBtn}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              marginTop: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => {
-                navigation.navigate('EditProfile');
+      {isLoading ? (
+        <ScrollView>
+          <ProfileSkeleton />
+        </ScrollView>
+      ) : (
+        <ScrollView style={{padding: 16}}>
+          <Image
+            style={styles.userImg}
+            source={{
+              uri: userData
+                ? userData?.userImg
+                : 'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
+            }}
+          />
+          <Text style={styles.userName}>
+            {userData ? userData?.fname + ' ' + userData?.lname : 'Test user'}
+          </Text>
+          <Text style={styles.aboutUser}>{userData && userData?.about}</Text>
+          {route.params ? (
+            <View
+              style={{
+                flex: 1,
+                marginTop: 10,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
               }}>
-              <Text style={styles.textBtn}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.btn, {marginLeft: 10}]}
-              onPress={logout}>
-              <Text style={styles.textBtn}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              <TouchableOpacity style={styles.btn}>
+                <Text style={styles.textBtn}>Message</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.btn, {marginLeft: 10}]}>
+                <Text style={styles.textBtn}>Follow</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                marginTop: 10,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={() => {
+                  navigation.navigate('EditProfile');
+                }}>
+                <Text style={styles.textBtn}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, {marginLeft: 10}]}
+                onPress={logout}>
+                <Text style={styles.textBtn}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
-        <View style={styles.userInfoWrapper}>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userName}>{posts.length}</Text>
-            <Text>Posts</Text>
+          <View style={styles.userInfoWrapper}>
+            <View style={styles.userInfoItem}>
+              <Text style={styles.userName}>{posts.length}</Text>
+              <Text>Posts</Text>
+            </View>
+            <View style={styles.userInfoItem}>
+              <Text style={styles.userName}>10,000</Text>
+              <Text>Followers</Text>
+            </View>
+            <View style={styles.userInfoItem}>
+              <Text style={styles.userName}>100</Text>
+              <Text>Following</Text>
+            </View>
           </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userName}>10,000</Text>
-            <Text>Followers</Text>
-          </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userName}>100</Text>
-            <Text>Following</Text>
-          </View>
-        </View>
 
-        <View style={styles.postArea}>
-          {posts.map((item, index) => {
-            return <Post key={index} item={item} onDeletePost={handleDelete} />;
-          })}
-        </View>
-      </ScrollView>
+          <View style={styles.postArea}>
+            {posts.map((item, index) => {
+              return (
+                <Post key={index} item={item} onDeletePost={handleDelete} />
+              );
+            })}
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -248,7 +254,6 @@ export default function ProfileScreen({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   userImg: {
     height: 150,

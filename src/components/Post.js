@@ -9,7 +9,7 @@ import {useNavigation} from '@react-navigation/core';
 import firestore from '@react-native-firebase/firestore';
 
 export default function Post({item, onDeletePost}) {
-  console.log('----------------props', item);
+  //   console.log('----------------props', item);
   const {user, logout} = useContext(AuthContext);
   const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
@@ -21,7 +21,7 @@ export default function Post({item, onDeletePost}) {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          console.log('user data--------------', documentSnapshot.data());
+          //   console.log('user data--------------', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });
