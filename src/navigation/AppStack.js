@@ -12,6 +12,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import AddPostScreen from '../screens/AddPostScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import MenuScreen from '../screens/MenuScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -200,6 +201,15 @@ const AppStack = () => {
           //   tabBarLabel: 'Home',
           tabBarIcon: ({color, size}) => (
             <Ionicons name="person-outline" color={color} size={size} />
+          ),
+        })}
+      />
+      <Tab.Screen
+        name="Menu"
+        component={MenuScreen}
+        options={({route}) => ({
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="menu" color={color} size={size} />
           ),
         })}
       />
