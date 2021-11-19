@@ -31,7 +31,6 @@ export default function ProfileScreen({navigation, route}) {
   const fetchPosts = async () => {
     try {
       const postList = [];
-      setIsLoading(true);
       await firestore()
         .collection('posts')
         .where('userId', '==', route.params ? route.params.userId : user.uid)
@@ -58,7 +57,6 @@ export default function ProfileScreen({navigation, route}) {
         });
 
       setPosts(postList);
-      setIsLoading(false);
     } catch (error) {
       console.log('error', error);
     }
@@ -77,23 +75,12 @@ export default function ProfileScreen({navigation, route}) {
       });
   };
 
-  //   const handleDelete = postId => {
-  //     Alert.alert('Delete post', 'Are you sure?', [
-  //       {
-  //         text: 'Cancel',
-  //         onPress: () => console.log('canceled!'),
-  //         style: 'cancel',
-  //       },
-  //       {
-  //         text: 'OK',
-  //         onPress: () => deletePost(postId),
-  //       },
-  //     ]);
-  //   };
-
-  //   useEffect(() => {
-  //     fetchPosts();
-  //   }, []);
+  useEffect(async () => {
+    setIsLoading(true);
+    await fetchPosts();
+    await getUser();
+    setIsLoading(false);
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {

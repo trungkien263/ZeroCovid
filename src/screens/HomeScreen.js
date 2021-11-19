@@ -28,7 +28,6 @@ export default function HomeScreen({navigation, route}) {
   const fetchPosts = async () => {
     try {
       const postList = [];
-      setIsLoading(true);
 
       await firestore()
         .collection('posts')
@@ -55,7 +54,6 @@ export default function HomeScreen({navigation, route}) {
         });
 
       setPosts(postList);
-      setIsLoading(false);
     } catch (error) {
       console.log('error', error);
     }
@@ -75,8 +73,10 @@ export default function HomeScreen({navigation, route}) {
     ]);
   };
 
-  useEffect(() => {
-    fetchPosts();
+  useEffect(async () => {
+    setIsLoading(true);
+    await fetchPosts();
+    setIsLoading(false);
   }, [refresh]);
 
   useFocusEffect(
