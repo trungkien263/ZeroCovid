@@ -104,7 +104,7 @@ export default function MenuScreen() {
           width: windowWidth - 32,
         }}>
         {covidData.map((el, i) => {
-          return <CovidItem title={el.title} data={el.data} />;
+          return <CovidItem key={i} title={el.title} data={el.data} />;
         })}
       </View>
       {renderData.map((el, i) => {

@@ -1,6 +1,13 @@
 import React, {useContext} from 'react';
 import {useState} from 'react';
-import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FormInput from '../components/FormInput';
@@ -15,64 +22,70 @@ export default function LoginScreen({navigation}) {
   const {login, googleLogin} = useContext(AuthContext);
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/login.png')} style={styles.logo} />
-      <Text style={styles.text}>Social App</Text>
-      <FormInput
-        labelValue={email}
-        onChangeText={userEmail => setEmail(userEmail)}
-        placeholderText="Email"
-        iconType="user"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
+    <ScrollView>
+      <View style={styles.container}>
+        <Image source={require('../assets/login.png')} style={styles.logo} />
+        <Text style={styles.text}>Social App</Text>
+        <FormInput
+          labelValue={email}
+          onChangeText={userEmail => setEmail(userEmail.trim())}
+          placeholderText="Email"
+          iconType="user"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
 
-      <FormInput
-        labelValue={password}
-        onChangeText={userPassword => setPassword(userPassword)}
-        placeholderText="Password"
-        iconType="lock"
-        secureTextEntry={true}
-      />
+        <FormInput
+          labelValue={password}
+          onChangeText={userPassword => setPassword(userPassword.trim())}
+          placeholderText="Password"
+          iconType="lock"
+          secureTextEntry={true}
+        />
 
-      <FormButton
-        buttonTitle="Sign In"
-        onPress={() => {
-          login(email, password);
-        }}
-      />
+        <FormButton
+          buttonTitle="Sign In"
+          onPress={() => {
+            if (!email || !password) {
+              alert('Email or password are empty!');
+            } else {
+              login(email, password);
+            }
+          }}
+        />
 
-      <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
-        <Text style={styles.navButtonText}>Fogot Password?</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
+          <Text style={styles.navButtonText}>Fogot Password?</Text>
+        </TouchableOpacity>
 
-      <SocialButton
-        buttonTitle="Sign In with Facebook"
-        btnType="facebook"
-        color="#4867aa"
-        backgroundColor="#e6eaf4"
-        onPress={() => {}}
-      />
+        <SocialButton
+          buttonTitle="Sign In with Facebook"
+          btnType="facebook"
+          color="#4867aa"
+          backgroundColor="#e6eaf4"
+          onPress={() => {}}
+        />
 
-      <SocialButton
-        buttonTitle="Sign In with Google"
-        btnType="google"
-        color="#de4d41"
-        backgroundColor="#f5e7ea"
-        onPress={() => googleLogin()}
-      />
+        <SocialButton
+          buttonTitle="Sign In with Google"
+          btnType="google"
+          color="#de4d41"
+          backgroundColor="#f5e7ea"
+          onPress={() => googleLogin()}
+        />
 
-      <TouchableOpacity
-        style={styles.forgotButton}
-        onPress={() => {
-          navigation.navigate('Signup');
-        }}>
-        <Text style={styles.navButtonText}>
-          Dont have an account? Create here!
-        </Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={styles.forgotButton}
+          onPress={() => {
+            navigation.navigate('Signup');
+          }}>
+          <Text style={styles.navButtonText}>
+            Dont have an account? Create here!
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
