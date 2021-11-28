@@ -15,15 +15,16 @@ const windowWidth = Dimensions.get('window').width;
 
 export default function MenuScreen() {
   const [covidCases, setCovidCases] = useState([]);
+  const [selectedApi, setSelectedApi] = useState('dayone/country/vietnam');
+
   useEffect(async () => {
-    await callApi(`dayone/country/vietnam`, 'GET').then(res => {
+    await callApi(`${selectedApi}`, 'GET').then(res => {
       setCovidCases(res.data);
     });
-  }, []);
+  }, [selectedApi]);
 
-  const lastItem = covidCases.pop();
-
-  //   console.log('======cases', lastItem);
+  const lastItem =
+    selectedApi == 'dayone/country/vietnam' ? covidCases.pop() : covidCases;
 
   const renderData = [
     {
@@ -55,15 +56,24 @@ export default function MenuScreen() {
   const covidData = [
     {
       title: 'Total Confirmed',
-      data: lastItem?.Confirmed,
+      data:
+        selectedApi == 'dayone/country/vietnam'
+          ? lastItem?.Confirmed
+          : lastItem?.TotalConfirmed,
     },
     {
       title: 'Total Recovered',
-      data: lastItem?.Recovered,
+      data:
+        selectedApi == 'dayone/country/vietnam'
+          ? lastItem?.Recovered
+          : lastItem?.TotalRecovered,
     },
     {
       title: 'Total Deaths',
-      data: lastItem?.Deaths,
+      data:
+        selectedApi == 'dayone/country/vietnam'
+          ? lastItem?.Deaths
+          : lastItem?.TotalDeaths,
     },
   ];
 
@@ -97,6 +107,40 @@ export default function MenuScreen() {
 
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginBottom: 10,
+        }}>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedApi('dayone/country/vietnam');
+          }}
+          style={{
+            backgroundColor: 'orange',
+            alignItems: 'center',
+            paddingVertical: 4,
+            borderRadius: 8,
+            width: (windowWidth - 64) / 2,
+          }}>
+          <Text>Vietnam</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedApi('world/total');
+            console.log(selectedApi);
+          }}
+          style={{
+            backgroundColor: 'orange',
+            alignItems: 'center',
+            paddingVertical: 4,
+            borderRadius: 8,
+            width: (windowWidth - 64) / 2,
+          }}>
+          <Text>World</Text>
+        </TouchableOpacity>
+      </View>
       <View
         style={{
           flexDirection: 'row',

@@ -20,7 +20,7 @@ const Tab = createBottomTabNavigator();
 const FeedStack = ({navigation}) => (
   <Stack.Navigator>
     <Stack.Screen
-      name="Social App"
+      name="Zero Covid"
       component={HomeScreen}
       options={{
         headerTitleAlign: 'center',
