@@ -10,21 +10,19 @@ import {
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import callApi from '../services/apiCaller';
 import LinearGradient from 'react-native-linear-gradient';
+import {useSelector} from 'react-redux';
 
 const windowWidth = Dimensions.get('window').width;
 
 export default function MenuScreen() {
-  const [covidCases, setCovidCases] = useState([]);
-  const [selectedApi, setSelectedApi] = useState('dayone/country/vietnam');
+  const {vnCases, worldCases} = useSelector(state => state.covidCases);
+  const vnNumber = vnCases.pop();
+  const [covidCases, setCovidCases] = useState(vnNumber);
+  const [isTotalWorld, setIsTotalWorld] = useState(false);
 
-  useEffect(async () => {
-    await callApi(`${selectedApi}`, 'GET').then(res => {
-      setCovidCases(res.data);
-    });
-  }, [selectedApi]);
+  console.log('----------covidCases', covidCases);
 
-  const lastItem =
-    selectedApi == 'dayone/country/vietnam' ? covidCases.pop() : covidCases;
+  //   const lastItem = vnCases.pop();
 
   const renderData = [
     {
@@ -56,24 +54,15 @@ export default function MenuScreen() {
   const covidData = [
     {
       title: 'Total Confirmed',
-      data:
-        selectedApi == 'dayone/country/vietnam'
-          ? lastItem?.Confirmed
-          : lastItem?.TotalConfirmed,
+      data: isTotalWorld ? covidCases.TotalConfirmed : covidCases.Confirmed,
     },
     {
       title: 'Total Recovered',
-      data:
-        selectedApi == 'dayone/country/vietnam'
-          ? lastItem?.Recovered
-          : lastItem?.TotalRecovered,
+      data: isTotalWorld ? covidCases.TotalRecovered : covidCases.Recovered,
     },
     {
       title: 'Total Deaths',
-      data:
-        selectedApi == 'dayone/country/vietnam'
-          ? lastItem?.Deaths
-          : lastItem?.TotalDeaths,
+      data: isTotalWorld ? covidCases.TotalDeaths : covidCases.Deaths,
     },
   ];
 
@@ -115,7 +104,9 @@ export default function MenuScreen() {
         }}>
         <TouchableOpacity
           onPress={() => {
-            setSelectedApi('dayone/country/vietnam');
+            const data = vnCases.pop();
+            setCovidCases(data);
+            setIsTotalWorld(false);
           }}
           style={{
             backgroundColor: 'orange',
@@ -128,8 +119,8 @@ export default function MenuScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setSelectedApi('world/total');
-            console.log(selectedApi);
+            setCovidCases(worldCases);
+            setIsTotalWorld(true);
           }}
           style={{
             backgroundColor: 'orange',

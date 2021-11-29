@@ -16,14 +16,26 @@ import storage from '@react-native-firebase/storage';
 import {useFocusEffect} from '@react-navigation/native';
 import HomeSkeleton from '../components/Skeleton/HomeSkeleton';
 
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  actFetchCovidCasesRequest,
+  actFetchCovidCasesWorldRequest,
+} from '../actions';
+
 export default function HomeScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
   //   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    dispatch(actFetchCovidCasesRequest());
+    dispatch(actFetchCovidCasesWorldRequest());
+  }, []);
 
   const fetchPosts = async () => {
     try {
