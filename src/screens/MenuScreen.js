@@ -83,11 +83,15 @@ export default function MenuScreen() {
     );
   };
 
-  const CovidItem = ({title, data}) => {
+  const linearColor = [
+    ['#360033', '#0B8793'],
+    ['#00b09b', '#96c93d'],
+    ['#cb356b', '#bd3f32'],
+  ];
+
+  const CovidItem = ({title, data, color}) => {
     return (
-      <LinearGradient
-        colors={['#4c669f', '#3b5998', '#192f6a']}
-        style={styles.box}>
+      <LinearGradient colors={color} style={styles.box}>
         <Text style={[styles.title, {fontSize: 14}]}>{title}</Text>
         <Text style={[styles.title, {fontSize: 14}]}>{data}</Text>
       </LinearGradient>
@@ -139,7 +143,14 @@ export default function MenuScreen() {
           width: windowWidth - 32,
         }}>
         {covidData.map((el, i) => {
-          return <CovidItem key={i} title={el.title} data={el.data} />;
+          return (
+            <CovidItem
+              key={i}
+              title={el.title}
+              data={el.data}
+              color={linearColor[i]}
+            />
+          );
         })}
       </View>
       {renderData.map((el, i) => {
