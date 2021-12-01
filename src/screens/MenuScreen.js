@@ -16,11 +16,12 @@ const windowWidth = Dimensions.get('window').width;
 
 export default function MenuScreen() {
   const {vnCases, worldCases} = useSelector(state => state.covidCases);
+  const {useDetails} = useSelector(state => state.user);
   const vnNumber = vnCases.pop();
   const [covidCases, setCovidCases] = useState(vnNumber);
   const [isTotalWorld, setIsTotalWorld] = useState(false);
 
-  console.log('----------covidCases', covidCases);
+  console.log('----------useDetails', useDetails);
 
   //   const lastItem = vnCases.pop();
 

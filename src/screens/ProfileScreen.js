@@ -1,22 +1,21 @@
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import {useFocusEffect} from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
+  Alert,
+  Image,
   SafeAreaView,
   ScrollView,
-  Image,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  Alert,
+  View,
 } from 'react-native';
-import FormButton from '../components/FormButton';
+import Post from '../components/Post';
+import ProfileSkeleton from '../components/Skeleton/ProfileSkeleton';
 import {GlobalStyle} from '../config/globalStyle';
 import {AuthContext} from '../navigation/AuthProvider';
-import firestore from '@react-native-firebase/firestore';
-import Post from '../components/Post';
-import {useFocusEffect} from '@react-navigation/native';
-import storage from '@react-native-firebase/storage';
-import ProfileSkeleton from '../components/Skeleton/ProfileSkeleton';
 
 export default function ProfileScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);

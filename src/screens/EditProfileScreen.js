@@ -11,6 +11,7 @@ import {
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import BottomSheet from 'reanimated-bottom-sheet';
 import Animated from 'react-native-reanimated';
+import FastImage from 'react-native-fast-image';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -22,9 +23,11 @@ import {GlobalStyle} from '../config/globalStyle';
 import {AuthContext} from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import {useSelector} from 'react-redux';
 
 export default function EditProfile() {
   const {user, logout} = useContext(AuthContext);
+  const {useDetails} = useSelector(state => state.user);
 
   //   const [imageSource, setImageSource] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -34,21 +37,8 @@ export default function EditProfile() {
   const [isUploading, setIsUploading] = useState(false);
   const [tranferred, setTranferred] = useState(0);
 
-  const getUser = async () => {
-    const currentUser = await firestore()
-      .collection('users')
-      .doc(user.uid)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-          console.log('user data--------------', documentSnapshot.data());
-          setUserData(documentSnapshot.data());
-        }
-      });
-  };
-
   useEffect(() => {
-    getUser();
+    setUserData(useDetails);
   }, []);
 
   console.log('user data--------------', userData);
@@ -228,7 +218,7 @@ export default function EditProfile() {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <ImageBackground
+                <FastImage
                   source={{
                     uri: image
                       ? image
@@ -238,8 +228,9 @@ export default function EditProfile() {
                   style={{
                     width: 100,
                     height: 100,
+                    borderRadius: 15,
                   }}
-                  borderRadius={15}>
+                  resizeMode="cover">
                   <View
                     style={{
                       flex: 1,
@@ -260,7 +251,7 @@ export default function EditProfile() {
                       }}
                     />
                   </View>
-                </ImageBackground>
+                </FastImage>
               </View>
             </TouchableOpacity>
 

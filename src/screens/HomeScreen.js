@@ -20,6 +20,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   actFetchCovidCasesRequest,
   actFetchCovidCasesWorldRequest,
+  actFetchUserDetailsRequest,
 } from '../actions';
 
 export default function HomeScreen({navigation, route}) {
@@ -35,6 +36,7 @@ export default function HomeScreen({navigation, route}) {
   useEffect(() => {
     dispatch(actFetchCovidCasesRequest());
     dispatch(actFetchCovidCasesWorldRequest());
+    dispatch(actFetchUserDetailsRequest(user.uid));
   }, []);
 
   const fetchPosts = async () => {

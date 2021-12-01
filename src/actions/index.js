@@ -1,5 +1,7 @@
 import * as Types from '../constants/ActionTypes';
 import callApi from '../services/apiCaller';
+import {PROVINCES_API_URL} from '../constants/api';
+import firestore from '@react-native-firebase/firestore';
 
 // fetch covidCasesVN
 export const actFetchCovidCasesRequest = () => {
@@ -31,4 +33,24 @@ export const actFetchCovidCasesWorld = cases => {
     type: Types.FETCH_COVID_CASES_WORLD,
     payload: cases,
   };
+};
+
+// fetch userDetails
+export const actFetchUserDetailsRequest = userId => async dispatch => {
+  try {
+    let data;
+    await firestore()
+      .collection('users')
+      .doc(userId)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          data = documentSnapshot.data();
+        }
+      });
+
+    dispatch({type: Types.FETCH_USER_DETAILS, payload: data});
+  } catch (e) {
+    console.log('Fail to fetch userDetails: ', e);
+  }
 };
