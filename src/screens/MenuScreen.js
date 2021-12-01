@@ -84,7 +84,7 @@ export default function MenuScreen() {
   };
 
   const linearColor = [
-    ['#360033', '#0B8793'],
+    ['#f46b45', '#eea849'],
     ['#00b09b', '#96c93d'],
     ['#cb356b', '#bd3f32'],
   ];
