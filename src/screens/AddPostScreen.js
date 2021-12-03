@@ -74,7 +74,7 @@ export default function AddPostScreen({navigation, route}) {
         );
         setPost(null);
         setIsRefresh(!isRefresh);
-        navigation.navigate('Social App');
+        navigation.navigate('Zero Covid');
       })
       .catch(err => {
         console.log('Something went wrong!', err);

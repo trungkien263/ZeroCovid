@@ -1,29 +1,30 @@
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import React, {useContext, useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  ImageBackground,
-  TextInput,
   Alert,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import BottomSheet from 'reanimated-bottom-sheet';
-import Animated from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
-
-import Icon from 'react-native-vector-icons/Ionicons';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import ImagePicker from 'react-native-image-crop-picker';
+import Animated from 'react-native-reanimated';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
-import ImagePicker from 'react-native-image-crop-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {useSelector} from 'react-redux';
+import BottomSheet from 'reanimated-bottom-sheet';
 import FormButton from '../components/FormButton';
 import {GlobalStyle} from '../config/globalStyle';
 import {AuthContext} from '../navigation/AuthProvider';
-import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
-import {useSelector} from 'react-redux';
+import provinces from '../data/provinces.json';
+import {Picker} from '@react-native-picker/picker';
+
+const {width, height} = Dimensions.get('window');
 
 export default function EditProfile() {
   const {user, logout} = useContext(AuthContext);
@@ -37,11 +38,56 @@ export default function EditProfile() {
   const [isUploading, setIsUploading] = useState(false);
   const [tranferred, setTranferred] = useState(0);
 
+  const [provinceData, setProvinceData] = useState([]);
+  const [districtList, setDistrictList] = useState([]);
+  const [wardList, setWardList] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState('01');
+  const [selectedDistrict, setSelectedDistrict] = useState([]);
+  const [selectedWard, setSelectedWard] = useState([]);
+
   useEffect(() => {
     setUserData(useDetails);
   }, []);
 
   console.log('user data--------------', userData);
+
+  useEffect(() => {
+    const arr = [];
+    provinces.map(el => {
+      arr.push({
+        id: el.Id,
+        name: el.Name,
+        district: el.Districts,
+      });
+    });
+    setProvinceData(arr);
+  }, []);
+
+  useEffect(async () => {
+    if (selectedProvince.length > 0) {
+      const province = provinces.find(el => el.Id === selectedProvince);
+      await setDistrictList(province.Districts);
+      console.log('++++++districtList[0]:', districtList[0].Wards);
+      const district = districtList[0].Wards;
+      setWardList(district);
+    }
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    if (districtList.length > 0) {
+      const district = districtList.find(el => el.Id === selectedDistrict);
+      setWardList(district.Wards);
+    }
+  }, [selectedDistrict]);
+
+  const ProvinceItem = (label, value) => {
+    return (
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Text>{label}</Text>
+        <Text>{value}</Text>
+      </View>
+    );
+  };
 
   const bs = React.createRef();
   const fall = new Animated.Value(1);
@@ -331,7 +377,7 @@ export default function EditProfile() {
               autoCorrect={false}
             />
           </View>
-          <View style={styles.action}>
+          {/* <View style={styles.action}>
             <FontAwesome
               name="globe"
               color={GlobalStyle.colors.COLOR_GRAY}
@@ -347,7 +393,81 @@ export default function EditProfile() {
               onChangeText={txt => setUserData({...userData, country: txt})}
               autoCorrect={false}
             />
+          </View> */}
+
+          <View
+            style={{
+              marginTop: 16,
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View
+              style={{
+                borderWidth: 2,
+                borderColor: '#ccc',
+                borderRadius: 10,
+                width: (width - 62) / 3,
+                maxHeight: 50,
+              }}>
+              <Picker
+                selectedValue={selectedProvince}
+                style={{height: 50}}
+                onValueChange={(itemValue, itemIndex) =>
+                  setSelectedProvince(itemValue)
+                }>
+                {provinces.map((el, i) => (
+                  <ProvinceItem key={i} label={el.Name} value={el.Id} />
+                ))}
+              </Picker>
+            </View>
+            <View
+              style={{
+                borderWidth: 2,
+                borderColor: '#ccc',
+                borderRadius: 10,
+                // marginTop: 10,
+                width: (width - 62) / 3,
+                maxHeight: 50,
+              }}>
+              <Picker
+                selectedValue={selectedDistrict}
+                style={{height: 50}}
+                onValueChange={(itemValue, itemIndex) =>
+                  setSelectedDistrict(itemValue)
+                }>
+                {districtList.map((el, i) => (
+                  <ProvinceItem key={i} label={el.Name} value={el.Id} />
+                ))}
+              </Picker>
+            </View>
+            <View
+              style={{
+                borderWidth: 2,
+                borderColor: '#ccc',
+                borderRadius: 10,
+                // marginTop: 10,
+                width: (width - 62) / 3,
+                maxHeight: 50,
+              }}>
+              <Picker
+                selectedValue={selectedWard}
+                style={{height: 50}}
+                onValueChange={(itemValue, itemIndex) =>
+                  setSelectedWard(itemValue)
+                }>
+                {wardList.map((el, i) => (
+                  <ProvinceItem key={i} label={el.Name} value={el.Id} />
+                ))}
+              </Picker>
+            </View>
+            {/* <View style={{marginTop: 10}}>
+              <Text>
+                {selectedProvince + ' ' + selectedDistrict + ' ' + selectedWard}
+              </Text>
+            </View> */}
           </View>
+
           <View style={styles.action}>
             <FontAwesome
               name="map-marker"
@@ -363,6 +483,7 @@ export default function EditProfile() {
               value={userData ? userData.city : ''}
               onChangeText={txt => setUserData({...userData, city: txt})}
               autoCorrect={false}
+              minHeight={80}
             />
           </View>
 

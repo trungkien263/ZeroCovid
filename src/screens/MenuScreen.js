@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -7,24 +7,27 @@ import {
   View,
   FlatList,
   ScrollView,
-  Picker,
+  Alert,
 } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import callApi from '../services/apiCaller';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
+import {AuthContext} from '../navigation/AuthProvider';
 import provinces from '../data/provinces.json';
+import {Picker} from '@react-native-picker/picker';
 
 const windowWidth = Dimensions.get('window').width;
 
 export default function MenuScreen() {
+  const {user, logout} = useContext(AuthContext);
   const {vnCases, worldCases} = useSelector(state => state.covidCases);
   const {useDetails} = useSelector(state => state.user);
   const vnNumber = vnCases.pop();
   const [covidCases, setCovidCases] = useState(vnNumber);
   const [isTotalWorld, setIsTotalWorld] = useState(false);
+
   const [provinceData, setProvinceData] = useState([]);
   const [districtList, setDistrictList] = useState([]);
   const [wardList, setWardList] = useState([]);
@@ -72,6 +75,22 @@ export default function MenuScreen() {
       title: 'SOS',
       action: () => {
         alert('SOS Clicked !');
+      },
+    },
+    {
+      title: 'Đăng xuất',
+      action: () => {
+        Alert.alert('Sign out!', 'Are you sure?', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('canceled!'),
+            style: 'cancel',
+          },
+          {
+            text: 'Sign Out',
+            onPress: () => logout(),
+          },
+        ]);
       },
     },
   ];
@@ -191,7 +210,7 @@ export default function MenuScreen() {
         return <MenuItem key={i} title={el.title} action={el.action} />;
       })}
 
-      <View style={{marginTop: 16}}>
+      {/* <View style={{marginTop: 16}}>
         <View style={{borderWidth: 2, borderColor: '#ccc', borderRadius: 10}}>
           <Picker
             selectedValue={selectedProvince}
@@ -245,7 +264,7 @@ export default function MenuScreen() {
             {selectedProvince + ' ' + selectedDistrict + ' ' + selectedWard}
           </Text>
         </View>
-      </View>
+      </View> */}
     </ScrollView>
   );
 }

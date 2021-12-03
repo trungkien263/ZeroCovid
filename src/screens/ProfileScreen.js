@@ -58,6 +58,7 @@ export default function ProfileScreen({navigation, route}) {
       setPosts(postList);
     } catch (error) {
       console.log('error', error);
+      return null;
     }
   };
 
@@ -125,6 +126,7 @@ export default function ProfileScreen({navigation, route}) {
               })
               .catch(err => {
                 console.log('Error while delete the image', err);
+                return null;
               });
             // if the post image is not available
           } else {
@@ -148,6 +150,7 @@ export default function ProfileScreen({navigation, route}) {
       })
       .catch(err => {
         console.log('Error while delete the post', err);
+        return null;
       });
   };
 
@@ -199,13 +202,13 @@ export default function ProfileScreen({navigation, route}) {
                 onPress={() => {
                   navigation.navigate('EditProfile');
                 }}>
-                <Text style={styles.textBtn}>Edit</Text>
+                <Text style={styles.textBtn}>Edit Profile</Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={[styles.btn, {marginLeft: 10}]}
                 onPress={logout}>
                 <Text style={styles.textBtn}>Logout</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           )}
 
