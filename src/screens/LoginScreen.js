@@ -21,6 +21,25 @@ export default function LoginScreen({navigation}) {
 
   const {login, googleLogin} = useContext(AuthContext);
 
+  const validateMail = mail => {
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(mail) === true) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      alert('Email and password can not be empty!');
+    } else if (!validateMail(email)) {
+      alert('Invalid email');
+    } else {
+      login(email, password);
+    }
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -44,16 +63,7 @@ export default function LoginScreen({navigation}) {
           secureTextEntry={true}
         />
 
-        <FormButton
-          buttonTitle="Sign In"
-          onPress={() => {
-            if (!email || !password) {
-              alert('Email or password are empty!');
-            } else {
-              login(email, password);
-            }
-          }}
-        />
+        <FormButton buttonTitle="Sign In" onPress={handleLogin} />
 
         <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
           <Text style={styles.navButtonText}>Fogot Password?</Text>

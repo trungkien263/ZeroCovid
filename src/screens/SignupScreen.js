@@ -1,5 +1,11 @@
 import React, {useContext, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import FormButton from '../components/FormButton';
 import FormInput from '../components/FormInput';
@@ -13,86 +19,104 @@ export default function SignupScreen({navigation}) {
 
   const {register} = useContext(AuthContext);
 
+  const validateMail = mail => {
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(mail) === true) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const handleSignUp = () => {
+    if (!email || !password || !confirmPassword) {
+      alert('Email and password can not be empty!');
+    } else if (!validateMail(email)) {
+      alert('Invalid email');
+    } else if (password !== confirmPassword) {
+      alert('Password and ConfirmPassword must be the same');
+    } else {
+      register(email, password);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Create an account</Text>
+      <ScrollView>
+        <Text style={styles.text}>Create an account</Text>
 
-      <FormInput
-        labelValue={email}
-        onChangeText={userEmail => setEmail(userEmail)}
-        placeholderText="Email"
-        iconType="user"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
+        <FormInput
+          labelValue={email}
+          onChangeText={userEmail => setEmail(userEmail)}
+          placeholderText="Email"
+          iconType="user"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
 
-      <FormInput
-        labelValue={password}
-        onChangeText={userPassword => setPassword(userPassword)}
-        placeholderText="Password"
-        iconType="lock"
-        secureTextEntry={true}
-      />
+        <FormInput
+          labelValue={password}
+          onChangeText={userPassword => setPassword(userPassword)}
+          placeholderText="Password"
+          iconType="lock"
+          secureTextEntry={true}
+        />
 
-      <FormInput
-        labelValue={confirmPassword}
-        onChangeText={userConfirmPassword =>
-          setConfirmPassword(userConfirmPassword)
-        }
-        placeholderText="Confirm Password"
-        iconType="lock"
-        secureTextEntry={true}
-      />
+        <FormInput
+          labelValue={confirmPassword}
+          onChangeText={userConfirmPassword =>
+            setConfirmPassword(userConfirmPassword)
+          }
+          placeholderText="Confirm Password"
+          iconType="lock"
+          secureTextEntry={true}
+        />
 
-      <FormButton
-        buttonTitle="Sign Up"
-        onPress={() => {
-          register(email, password);
-        }}
-      />
+        <FormButton buttonTitle="Sign Up" onPress={handleSignUp} />
 
-      <View style={styles.textPrivate}>
-        <Text style={styles.color_textPrivate}>
-          By registering, you confirm that you accept our
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            alert('Terms Clicked!');
-          }}>
-          <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-            Terms of service
+        <View style={styles.textPrivate}>
+          <Text style={styles.color_textPrivate}>
+            By registering, you confirm that you accept our
           </Text>
+          <TouchableOpacity
+            onPress={() => {
+              alert('Terms Clicked!');
+            }}>
+            <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
+              Terms of service
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.color_textPrivate}> and </Text>
+          <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
+            Privacy Policy
+          </Text>
+        </View>
+
+        <SocialButton
+          buttonTitle="Sign Up with Facebook"
+          btnType="facebook"
+          color="#4867aa"
+          backgroundColor="#e6eaf4"
+          onPress={() => {}}
+        />
+
+        <SocialButton
+          buttonTitle="Sign Up with Google"
+          btnType="google"
+          color="#de4d41"
+          backgroundColor="#f5e7ea"
+          onPress={() => {}}
+        />
+
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => {
+            navigation.navigate('Login');
+          }}>
+          <Text style={styles.navButtonText}>Have an account? Sign In</Text>
         </TouchableOpacity>
-        <Text style={styles.color_textPrivate}> and </Text>
-        <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-          Privacy Policy
-        </Text>
-      </View>
-
-      <SocialButton
-        buttonTitle="Sign Up with Facebook"
-        btnType="facebook"
-        color="#4867aa"
-        backgroundColor="#e6eaf4"
-        onPress={() => {}}
-      />
-
-      <SocialButton
-        buttonTitle="Sign Up with Google"
-        btnType="google"
-        color="#de4d41"
-        backgroundColor="#f5e7ea"
-        onPress={() => {}}
-      />
-
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => {
-          navigation.navigate('Login');
-        }}>
-        <Text style={styles.navButtonText}>Have an account? Sign In</Text>
-      </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
