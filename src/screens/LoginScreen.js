@@ -1,4 +1,5 @@
 import React, {useContext} from 'react';
+import auth from '@react-native-firebase/auth';
 import {useState} from 'react';
 import {
   Image,
@@ -19,7 +20,7 @@ export default function LoginScreen({navigation}) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  const {login, googleLogin} = useContext(AuthContext);
+  //   const {login, googleLogin} = useContext(AuthContext);
 
   const validateMail = mail => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -27,6 +28,15 @@ export default function LoginScreen({navigation}) {
       return true;
     } else {
       return false;
+    }
+  };
+
+  const login = async (email, password) => {
+    try {
+      await auth().signInWithEmailAndPassword(email, password);
+    } catch (e) {
+      console.log(e);
+      alert(e);
     }
   };
 
