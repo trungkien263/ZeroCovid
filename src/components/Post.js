@@ -88,7 +88,11 @@ export default function Post({item, onDeletePost}) {
             {item?.like} Likes
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.featureBtn}>
+        <TouchableOpacity
+          style={styles.featureBtn}
+          onPress={() => {
+            navigation.navigate('CommentScreen');
+          }}>
           <FontAwesome
             name="comment"
             size={25}

@@ -20,7 +20,7 @@ export default function LoginScreen({navigation}) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  //   const {login, googleLogin} = useContext(AuthContext);
+  const {googleLogin} = useContext(AuthContext);
 
   const validateMail = mail => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;

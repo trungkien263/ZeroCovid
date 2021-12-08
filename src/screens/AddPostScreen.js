@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -25,8 +25,15 @@ export default function AddPostScreen({navigation, route}) {
   //   const reference = storage().ref('black-t-shirt-sm.png');
   const [isUploading, setIsUploading] = useState(false);
   const [tranferred, setTranferred] = useState(0);
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState('');
   const [isRefresh, setIsRefresh] = useState(false);
+  const [isEmptyPost, setIsEmptyPost] = useState(false);
+
+  useEffect(() => {
+    if (post !== '') {
+      setIsEmptyPost(false);
+    }
+  }, [post]);
 
   const choosePhoto = () => {
     ImagePicker.openPicker({
@@ -53,32 +60,36 @@ export default function AddPostScreen({navigation, route}) {
   };
 
   const submitPost = async () => {
-    const imageUrl = await uploadImage();
-    console.log('-------------------image url', imageUrl);
+    if (post === '') {
+      setIsEmptyPost(true);
+    } else {
+      const imageUrl = await uploadImage();
+      console.log('-------------------image url', imageUrl);
 
-    firestore()
-      .collection('posts')
-      .add({
-        userId: user.uid,
-        post: post,
-        postImg: imageUrl,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-        likes: null,
-        comments: null,
-      })
-      .then(() => {
-        console.log('Post added!');
-        Alert.alert(
-          'Post published!',
-          'Your post has been published to the Firebase Cloud Storage Successfully!',
-        );
-        setPost(null);
-        setIsRefresh(!isRefresh);
-        navigation.navigate('Zero Covid');
-      })
-      .catch(err => {
-        console.log('Something went wrong!', err);
-      });
+      firestore()
+        .collection('posts')
+        .add({
+          userId: user.uid,
+          post: post,
+          postImg: imageUrl,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+          likes: null,
+          comments: null,
+        })
+        .then(() => {
+          console.log('Post added!');
+          Alert.alert(
+            'Post published!',
+            'Your post has been published to the Firebase Cloud Storage Successfully!',
+          );
+          setPost(null);
+          setIsRefresh(!isRefresh);
+          navigation.navigate('Zero Covid');
+        })
+        .catch(err => {
+          console.log('Something went wrong!', err);
+        });
+    }
   };
 
   const uploadImage = async () => {
@@ -166,9 +177,9 @@ export default function AddPostScreen({navigation, route}) {
         )}
 
         <TextInput
-          style={styles.textInput}
+          style={[styles.textInput]}
           placeholder="What's on your mind ?"
-          // autoFocus={true}
+          autoFocus={true}
           keyboardType="default"
           numberOfLines={4}
           value={post}
@@ -176,13 +187,20 @@ export default function AddPostScreen({navigation, route}) {
             setPost(text);
           }}
         />
+        {isEmptyPost && (
+          <Text style={{color: 'red', marginTop: 4, fontWeight: '400'}}>
+            Post's content can not be empty!
+          </Text>
+        )}
         {isUploading ? (
           <View>
             <Text>{tranferred} % Completed</Text>
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         ) : (
-          <TouchableOpacity onPress={submitPost}>
+          <TouchableOpacity
+            disabled={isEmptyPost || post === ''}
+            onPress={submitPost}>
             <Text
               style={{
                 color: GlobalStyle.colors.COLOR_WHITE,
@@ -193,6 +211,7 @@ export default function AddPostScreen({navigation, route}) {
                 marginTop: 16,
                 borderRadius: 10,
                 backgroundColor: GlobalStyle.colors.COLOR_BLUE,
+                opacity: isEmptyPost || post === '' ? 0.8 : 1,
               }}>
               Post
             </Text>
@@ -224,7 +243,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: '90%',
     borderRadius: 10,
-    borderColor: GlobalStyle.colors.COLOR_GRAY,
+    borderColor: GlobalStyle.colors.COLOR_BLUE,
     paddingLeft: 16,
     textAlign: 'center',
   },

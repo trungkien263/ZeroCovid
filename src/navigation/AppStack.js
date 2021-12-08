@@ -13,6 +13,7 @@ import AddPostScreen from '../screens/AddPostScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import MenuScreen from '../screens/MenuScreen';
+import CommentScreen from '../screens/CommentScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -84,6 +85,25 @@ const FeedStack = ({navigation}) => (
     <Stack.Screen
       name="HomeProfile"
       component={ProfileScreen}
+      options={{
+        title: '',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          shadowColor: '#fff',
+          elevation: 0,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      }}
+    />
+    <Stack.Screen
+      name="CommentScreen"
+      component={CommentScreen}
       options={{
         title: '',
         headerTitleAlign: 'center',
