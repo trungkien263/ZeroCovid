@@ -181,6 +181,7 @@ export default function AddPostScreen({navigation, route}) {
           placeholder="What's on your mind ?"
           autoFocus={true}
           keyboardType="default"
+          multiline={true}
           numberOfLines={4}
           value={post}
           onChangeText={text => {
@@ -246,6 +247,7 @@ const styles = StyleSheet.create({
     borderColor: GlobalStyle.colors.COLOR_BLUE,
     paddingLeft: 16,
     textAlign: 'center',
+    maxHeight: 250,
   },
   actionButtonIcon: {
     fontSize: 20,

@@ -36,7 +36,9 @@ export default function Post({item, onDeletePost}) {
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('HomeProfile', {userId: item.userId});
+            navigation.navigate('HomeProfile', {
+              userId: item.userId,
+            });
           }}>
           <Image
             source={{
@@ -91,7 +93,10 @@ export default function Post({item, onDeletePost}) {
         <TouchableOpacity
           style={styles.featureBtn}
           onPress={() => {
-            navigation.navigate('CommentScreen');
+            navigation.navigate('CommentScreen', {
+              postId: item.postId,
+              postOwnerId: item.userId,
+            });
           }}>
           <FontAwesome
             name="comment"
