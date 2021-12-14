@@ -21,6 +21,7 @@ import {
   actFetchCovidCasesRequest,
   actFetchCovidCasesWorldRequest,
   actFetchUserDetailsRequest,
+  actFetchAllUsersRequest,
 } from '../actions';
 
 export default function HomeScreen({navigation, route}) {
@@ -37,6 +38,7 @@ export default function HomeScreen({navigation, route}) {
     dispatch(actFetchCovidCasesRequest());
     dispatch(actFetchCovidCasesWorldRequest());
     dispatch(actFetchUserDetailsRequest(user.uid));
+    dispatch(actFetchAllUsersRequest());
   }, []);
 
   const fetchPosts = async () => {

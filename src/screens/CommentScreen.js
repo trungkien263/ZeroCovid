@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Dimensions,
+  Alert,
 } from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
@@ -14,21 +15,21 @@ import storage from '@react-native-firebase/storage';
 import {FlatList} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {AuthContext} from '../navigation/AuthProvider';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const {width} = Dimensions.get('window');
 export default function CommentScreen({route}) {
   const {user} = useContext(AuthContext);
   const postIdParam = route.params.postId;
   const {postOwnerId} = route.params;
-  const {useDetails} = useSelector(state => state.user);
-
-  console.log('=========useDetails', user);
+  const {allUsers} = useSelector(state => state.users);
 
   const [comments, setComments] = useState([]);
   const [postId, setPostId] = useState('');
   const [content, setContent] = useState('');
 
   useEffect(() => {
+    console.log('=========allUsers', allUsers);
     // function matchUserToComment(cmts) {
     //   for (let i = 0; i < cmts.length; i++) {
     //     if (cmts[i].hasOwnProperty('user')) {
@@ -69,8 +70,8 @@ export default function CommentScreen({route}) {
 
   console.log('comments', comments);
 
-  const handleSendComment = async () => {
-    const {response, data} = await firestore()
+  const handleSendComment = () => {
+    firestore()
       .collection('posts')
       .doc(postIdParam)
       // .collection('users')
@@ -89,6 +90,38 @@ export default function CommentScreen({route}) {
       });
   };
 
+  const handleDelete = cmtId => {
+    Alert.alert('Delete comment', 'Are you sure?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('canceled!'),
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => deleteFirestoreData(cmtId),
+      },
+    ]);
+  };
+
+  const deleteFirestoreData = cmtId => {
+    firestore()
+      .collection('posts')
+      .doc(postIdParam)
+      .collection('comments')
+      .doc(cmtId)
+      .delete()
+      .then(() => {
+        Alert.alert(
+          'Comment deleted!',
+          'Your comment has been deleted Successfully!',
+        );
+      })
+      .catch(err => {
+        console.log('Error while delete the comment', err);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
@@ -102,8 +135,19 @@ export default function CommentScreen({route}) {
                   marginBottom: 10,
                   padding: 16,
                   borderRadius: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
                 }}>
-                <Text>{item.content}</Text>
+                <Text style={{maxWidth: '90%'}}>{item.content}</Text>
+                {item?.creator === user.uid && (
+                  <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                    <FontAwesome
+                      name="trash-o"
+                      size={25}
+                      color={GlobalStyle.colors.COLOR_GRAY}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
             );
           }}
@@ -113,15 +157,18 @@ export default function CommentScreen({route}) {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
+            paddingTop: 6,
           }}>
           <View style={{flex: 1, marginRight: 10}}>
             <TextInput
-              placeholder="Enter here..."
+              placeholder="Enter your comment here..."
+              placeholderTextColor={GlobalStyle.colors.COLOR_GRAY}
               style={{
                 backgroundColor: GlobalStyle.colors.COLOR_SILVER,
                 borderRadius: 10,
                 paddingHorizontal: 10,
                 maxHeight: 140,
+                color: '#000',
               }}
               onChangeText={txt => setContent(txt)}
               multiline={true}
@@ -131,6 +178,7 @@ export default function CommentScreen({route}) {
             onPress={() => {
               handleSendComment();
             }}
+            disabled={content === ''}
             style={{
               backgroundColor: GlobalStyle.colors.COLOR_BLUE,
               paddingHorizontal: 10,
