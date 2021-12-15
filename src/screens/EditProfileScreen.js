@@ -65,11 +65,15 @@ export default function EditProfile() {
 
   useEffect(async () => {
     if (selectedProvince.length > 0) {
-      const province = provinces.find(el => el.Id === selectedProvince);
-      await setDistrictList(province.Districts);
-      console.log('++++++districtList[0]:', districtList[0].Wards);
-      const district = districtList[0].Wards;
-      setWardList(district);
+      try {
+        const province = provinces.find(el => el.Id === selectedProvince);
+        await setDistrictList(province.Districts);
+        console.log('++++++districtList[0]:', districtList[0].Wards);
+        const district = districtList[0].Wards;
+        setWardList(district);
+      } catch (err) {
+        console.log(err);
+      }
     }
   }, [selectedProvince]);
 

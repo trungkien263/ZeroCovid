@@ -13,7 +13,7 @@ import Post from '../components/Post';
 import {GlobalStyle} from '../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import HomeSkeleton from '../components/Skeleton/HomeSkeleton';
 
 import {useDispatch, useSelector} from 'react-redux';
@@ -31,8 +31,6 @@ export default function HomeScreen({navigation, route}) {
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
-
-  //   const isFocused = useIsFocused();
 
   useEffect(() => {
     dispatch(actFetchCovidCasesRequest());

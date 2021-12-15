@@ -23,46 +23,12 @@ const windowWidth = Dimensions.get('window').width;
 export default function MenuScreen() {
   const {user, logout} = useContext(AuthContext);
   const {vnCases, worldCases} = useSelector(state => state.covidCases);
-  const {useDetails} = useSelector(state => state.user);
+  const {users} = useSelector(state => state.users);
   const vnNumber = vnCases.pop();
   const [covidCases, setCovidCases] = useState(vnNumber);
   const [isTotalWorld, setIsTotalWorld] = useState(false);
 
-  const [provinceData, setProvinceData] = useState([]);
-  const [districtList, setDistrictList] = useState([]);
-  const [wardList, setWardList] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState('01');
-  const [selectedDistrict, setSelectedDistrict] = useState([]);
-  const [selectedWard, setSelectedWard] = useState([]);
-
-  useEffect(() => {
-    const arr = [];
-    provinces.map(el => {
-      arr.push({
-        id: el.Id,
-        name: el.Name,
-        district: el.Districts,
-      });
-    });
-    setProvinceData(arr);
-  }, []);
-
-  useEffect(async () => {
-    if (selectedProvince.length > 0) {
-      const province = provinces.find(el => el.Id === selectedProvince);
-      await setDistrictList(province.Districts);
-      console.log('++++++districtList[0]:', districtList[0].Wards);
-      const district = districtList[0].Wards;
-      setWardList(district);
-    }
-  }, [selectedProvince]);
-
-  useEffect(() => {
-    if (districtList.length > 0) {
-      const district = districtList.find(el => el.Id === selectedDistrict);
-      setWardList(district.Wards);
-    }
-  }, [selectedDistrict]);
+  console.log('--------users##', users);
 
   const renderData = [
     {
@@ -130,6 +96,9 @@ export default function MenuScreen() {
   const linearColor = [
     ['#f46b45', '#eea849'],
     ['#00b09b', '#96c93d'],
+    ['#F06173', '#D73952'],
+    ['#39C6BD', '#40B6DA'],
+    ['#61ABF0', '#2073C2'],
     ['#cb356b', '#bd3f32'],
   ];
 
@@ -209,62 +178,6 @@ export default function MenuScreen() {
       {renderData.map((el, i) => {
         return <MenuItem key={i} title={el.title} action={el.action} />;
       })}
-
-      {/* <View style={{marginTop: 16}}>
-        <View style={{borderWidth: 2, borderColor: '#ccc', borderRadius: 10}}>
-          <Picker
-            selectedValue={selectedProvince}
-            style={{height: 50}}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedProvince(itemValue)
-            }>
-            {provinces.map((el, i) => (
-              <ProvinceItem key={i} label={el.Name} value={el.Id} />
-            ))}
-          </Picker>
-        </View>
-        <View
-          style={{
-            borderWidth: 2,
-            borderColor: '#ccc',
-            borderRadius: 10,
-            marginTop: 10,
-          }}>
-          <Picker
-            selectedValue={selectedDistrict}
-            style={{height: 50}}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedDistrict(itemValue)
-            }>
-            {districtList.map((el, i) => (
-              <ProvinceItem key={i} label={el.Name} value={el.Id} />
-            ))}
-          </Picker>
-        </View>
-        <View
-          style={{
-            borderWidth: 2,
-            borderColor: '#ccc',
-            borderRadius: 10,
-            marginTop: 10,
-          }}>
-          <Picker
-            selectedValue={selectedWard}
-            style={{height: 50}}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedWard(itemValue)
-            }>
-            {wardList.map((el, i) => (
-              <ProvinceItem key={i} label={el.Name} value={el.Id} />
-            ))}
-          </Picker>
-        </View>
-        <View style={{marginTop: 10}}>
-          <Text>
-            {selectedProvince + ' ' + selectedDistrict + ' ' + selectedWard}
-          </Text>
-        </View>
-      </View> */}
     </ScrollView>
   );
 }

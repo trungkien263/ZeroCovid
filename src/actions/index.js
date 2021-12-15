@@ -63,6 +63,7 @@ export const actFetchAllUsersRequest = () => async dispatch => {
       .collection('users')
       .get()
       .then(documentSnapshot => {
+        console.log('========documentSnapshot', documentSnapshot);
         if (documentSnapshot.exists) {
           data = documentSnapshot.data();
         }

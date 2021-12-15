@@ -16,6 +16,8 @@ import {FlatList} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {AuthContext} from '../navigation/AuthProvider';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {Keyboard} from 'react-native';
+import moment from 'moment';
 
 const {width} = Dimensions.get('window');
 export default function CommentScreen({route}) {
@@ -53,8 +55,8 @@ export default function CommentScreen({route}) {
         // .collection('users')
         // .doc(postIdParam)
         .collection('comments')
-        .get()
-        .then(snapshot => {
+        .orderBy('createdAt', 'asc')
+        .onSnapshot(snapshot => {
           let commentsData = snapshot.docs.map(doc => {
             const data = doc.data();
             const id = doc.id;
@@ -66,12 +68,12 @@ export default function CommentScreen({route}) {
     } else {
       //   matchUserToComment(comments);
     }
-  }, [postIdParam]);
+  }, []);
 
   console.log('comments', comments);
 
-  const handleSendComment = () => {
-    firestore()
+  const handleSendComment = async () => {
+    await firestore()
       .collection('posts')
       .doc(postIdParam)
       // .collection('users')
@@ -80,13 +82,14 @@ export default function CommentScreen({route}) {
       .add({
         content: content,
         creator: user.uid,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setContent('');
-        alert('Post successfully');
+        Keyboard.dismiss();
       })
       .catch(err => {
-        alert(err);
+        console.log('Error while send comment', err);
       });
   };
 
@@ -129,25 +132,60 @@ export default function CommentScreen({route}) {
           data={comments}
           renderItem={({item}) => {
             return (
-              <View
-                style={{
-                  backgroundColor: GlobalStyle.colors.COLOR_SILVER,
-                  marginBottom: 10,
-                  padding: 16,
-                  borderRadius: 10,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text style={{maxWidth: '90%'}}>{item.content}</Text>
-                {item?.creator === user.uid && (
-                  <TouchableOpacity onPress={() => handleDelete(item.id)}>
-                    <FontAwesome
-                      name="trash-o"
-                      size={25}
-                      color={GlobalStyle.colors.COLOR_GRAY}
-                    />
-                  </TouchableOpacity>
-                )}
+              <View style={{marginBottom: 10}}>
+                <View
+                  style={{
+                    backgroundColor: GlobalStyle.colors.COLOR_SILVER,
+                    padding: 16,
+                    borderRadius: 10,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={{maxWidth: '90%'}}>{item.content}</Text>
+                  {item?.creator === user.uid && (
+                    <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                      <FontAwesome
+                        name="trash-o"
+                        size={25}
+                        color={GlobalStyle.colors.COLOR_GRAY}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: 4,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <TouchableOpacity>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: GlobalStyle.colors.COLOR_BLUE,
+                        }}>
+                        Like
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{marginLeft: 20}}>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: GlobalStyle.colors.COLOR_BLUE,
+                        }}>
+                        Answer
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={{fontSize: 12}}>
+                    {moment(item?.createdAt.toDate()).fromNow()}
+                  </Text>
+                </View>
               </View>
             );
           }}
@@ -172,6 +210,7 @@ export default function CommentScreen({route}) {
               }}
               onChangeText={txt => setContent(txt)}
               multiline={true}
+              value={content}
             />
           </View>
           <TouchableOpacity
