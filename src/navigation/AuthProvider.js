@@ -45,11 +45,12 @@ export const AuthProvider = ({children}) => {
                   .collection('users')
                   .doc(auth().currentUser.uid)
                   .set({
-                    fname: '',
+                    fname: 'User',
                     lname: '',
                     email: email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: null,
+                    uid: auth().currentUser.uid,
                   })
                   .catch(err => {
                     console.log('error when sign up: ', err);

@@ -37,26 +37,38 @@ export default function AddPostScreen({navigation, route}) {
 
   const choosePhoto = () => {
     ImagePicker.openPicker({
-      width: 1200,
-      height: 780,
+      compressImageMaxWidth: 300,
+      compressImageMaxHeight: 400,
       cropping: true,
-    }).then(image => {
-      console.log(image);
-      const imageUrl = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setImage(imageUrl);
-    });
+      freeStyleCropEnabled: true,
+      compressImageQuality: 0.7,
+    })
+      .then(image => {
+        console.log(image);
+        const imageUrl = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUrl);
+      })
+      .catch(error => {
+        console.log('Err while choose Photo', error);
+      });
   };
 
   const takePhoto = () => {
     ImagePicker.openCamera({
-      width: 1200,
-      height: 780,
+      width: 300,
+      height: 400,
       cropping: true,
-    }).then(image => {
-      console.log(image);
-      const imageUrl = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setImage(imageUrl);
-    });
+      freeStyleCropEnabled: true,
+      compressImageQuality: 0.7,
+    })
+      .then(image => {
+        console.log(image);
+        const imageUrl = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setImage(imageUrl);
+      })
+      .catch(error => {
+        console.log('Err while take Photo', error);
+      });
   };
 
   const submitPost = async () => {
@@ -73,8 +85,6 @@ export default function AddPostScreen({navigation, route}) {
           post: post,
           postImg: imageUrl,
           createdAt: firestore.Timestamp.fromDate(new Date()),
-          likes: null,
-          comments: null,
         })
         .then(() => {
           console.log('Post added!');
@@ -139,7 +149,6 @@ export default function AddPostScreen({navigation, route}) {
       return url;
     } catch (error) {
       console.log('--------------------error', error);
-      return null;
     }
   };
 
@@ -167,9 +176,10 @@ export default function AddPostScreen({navigation, route}) {
         {image && (
           <Image
             source={{uri: image}}
+            resizeMode="contain"
             style={{
               width: '100%',
-              height: 250,
+              height: 400,
               marginBottom: 16,
               borderRadius: 16,
             }}
@@ -177,9 +187,10 @@ export default function AddPostScreen({navigation, route}) {
         )}
 
         <TextInput
-          style={[styles.textInput]}
+          style={[styles.textInput, {color: '#000'}]}
           placeholder="What's on your mind ?"
-          autoFocus={true}
+          placeholderTextColor={GlobalStyle.colors.COLOR_GRAY}
+          //   autoFocus={true}
           keyboardType="default"
           multiline={true}
           numberOfLines={4}
@@ -246,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: GlobalStyle.colors.COLOR_BLUE,
     paddingLeft: 16,
-    textAlign: 'center',
+    textAlign: 'left',
     maxHeight: 250,
   },
   actionButtonIcon: {

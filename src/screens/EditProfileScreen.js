@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import * as Types from '../constants/ActionTypes';
 import FastImage from 'react-native-fast-image';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -101,6 +102,7 @@ export default function EditProfile() {
       width: 300,
       height: 400,
       cropping: true,
+      freeStyleCropEnabled: true,
       compressImageQuality: 0.7,
     })
       .then(image => {
@@ -116,6 +118,7 @@ export default function EditProfile() {
       compressImageMaxHeight: 300,
       compressImageMaxWidth: 300,
       cropping: true,
+      freeStyleCropEnabled: true,
       compressImageQuality: 0.7,
     })
       .then(image => {
@@ -165,20 +168,19 @@ export default function EditProfile() {
       imgUrl = userData.userImg;
     }
 
-    firestore()
+    const data = {
+      fname: userData.fname,
+      lname: userData.lname,
+      phone: userData.phone,
+      address: userData.address,
+      userImg: imgUrl,
+    };
+
+    await firestore()
       .collection('users')
       .doc(user.uid)
-      .update({
-        fname: userData.fname,
-        lname: userData.lname,
-        about: userData.about,
-        phone: userData.phone,
-        country: userData.country,
-        city: userData.city,
-        userImg: imgUrl,
-      })
+      .update(data)
       .then(() => {
-        console.log('User Updated!');
         Alert.alert(
           'Profile Updated!',
           'Your profile has been updated successfully.',
@@ -241,8 +243,8 @@ export default function EditProfile() {
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled">
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <ScrollView keyboardShouldPersistTaps="handled">
         <BottomSheet
           ref={bs}
           renderContent={renderInner}
@@ -253,250 +255,187 @@ export default function EditProfile() {
           enableGestureInteraction={true}
           enabledContentTapInteraction={false}
         />
-        <Animated.View
-          style={{
-            margin: 20,
-            opacity: Animated.add(0.3, Animated.multiply(fall, 1.0)),
-          }}>
-          <View style={{alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
-              <View
-                style={{
-                  height: 100,
-                  width: 100,
-                  borderRadius: 15,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <FastImage
-                  source={{
-                    uri: image
-                      ? image
-                      : userData?.userImg ||
-                        'https://cdn.icon-icons.com/icons2/1736/PNG/512/4043260-avatar-male-man-portrait_113269.png',
-                  }}
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 15,
-                  }}
-                  resizeMode="cover">
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Icon
-                      name="camera"
-                      size={35}
-                      color="#fff"
-                      style={{
-                        opacity: 0.7,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: '#fff',
-                        borderRadius: 10,
-                      }}
-                    />
-                  </View>
-                </FastImage>
-              </View>
-            </TouchableOpacity>
-
-            <Text
+        <View style={{alignItems: 'center'}}>
+          <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
+            <View
               style={{
-                marginTop: 10,
-                fontSize: 18,
-                fontWeight: 'bold',
-                color: 'black',
+                borderRadius: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden',
               }}>
-              {userData?.lname ? userData?.lname : 'Your Nick Name'}
+              <FastImage
+                source={{
+                  uri: image
+                    ? image
+                    : userData?.userImg ||
+                      'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
+                }}
+                style={{
+                  width: 150,
+                  height: 150,
+                  borderRadius: 80,
+                }}
+                resizeMode="cover">
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Icon
+                    name="camera"
+                    size={35}
+                    color="#fff"
+                    style={{
+                      opacity: 0.7,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: '#fff',
+                      borderRadius: 10,
+                    }}
+                  />
+                </View>
+              </FastImage>
+            </View>
+          </TouchableOpacity>
+
+          <Text
+            style={{
+              marginTop: 10,
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: 'black',
+            }}>
+            {userData?.fname + userData?.lname}
+          </Text>
+        </View>
+
+        <View style={styles.action}>
+          <FontAwesome
+            name="user-o"
+            color={GlobalStyle.colors.COLOR_GRAY}
+            style={{marginTop: 3}}
+            size={20}
+          />
+          <TextInput
+            placeholder="First Name"
+            placeholderTextColor="#666"
+            value={userData ? userData.fname : ''}
+            style={[styles.textInput]}
+            onChangeText={txt => setUserData({...userData, fname: txt})}
+            autoCorrect={false}
+          />
+        </View>
+        <View style={styles.action}>
+          <FontAwesome
+            name="user-o"
+            color={GlobalStyle.colors.COLOR_GRAY}
+            style={{marginTop: 3}}
+            size={20}
+          />
+          <TextInput
+            placeholder="Last Name"
+            placeholderTextColor="#666"
+            value={userData ? userData.lname : ''}
+            style={[styles.textInput]}
+            onChangeText={txt => setUserData({...userData, lname: txt})}
+            autoCorrect={false}
+          />
+        </View>
+        <View style={styles.action}>
+          <Feather
+            name="phone"
+            color={GlobalStyle.colors.COLOR_GRAY}
+            style={{marginTop: 3}}
+            size={20}
+          />
+          <TextInput
+            placeholder="Phone"
+            keyboardType="number-pad"
+            placeholderTextColor="#666"
+            style={[styles.textInput]}
+            value={userData ? userData.phone : ''}
+            onChangeText={txt => setUserData({...userData, phone: txt})}
+            autoCorrect={false}
+          />
+        </View>
+
+        <View
+          style={{
+            // marginTop: 10,
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}>
+          <View style={styles.locationItem}>
+            <Picker
+              selectedValue={selectedProvince}
+              style={{height: 50, justifyContent: 'center'}}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedProvince(itemValue)
+              }>
+              {provinces.map((el, i) => (
+                <ProvinceItem key={i} label={el.Name} value={el.Id} />
+              ))}
+            </Picker>
+          </View>
+          <View style={styles.locationItem}>
+            <Picker
+              selectedValue={selectedDistrict}
+              style={{height: 50}}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedDistrict(itemValue)
+              }>
+              {districtList.map((el, i) => (
+                <ProvinceItem key={i} label={el.Name} value={el.Id} />
+              ))}
+            </Picker>
+          </View>
+          <View style={styles.locationItem}>
+            <Picker
+              selectedValue={selectedWard}
+              style={{height: 50}}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedWard(itemValue)
+              }>
+              {wardList.map((el, i) => (
+                <ProvinceItem key={i} label={el.Name} value={el.Id} />
+              ))}
+            </Picker>
+          </View>
+          <View style={{marginTop: 10}}>
+            <Text>
+              {selectedProvince + ' ' + selectedDistrict + ' ' + selectedWard}
             </Text>
           </View>
+        </View>
 
-          <View style={styles.action}>
-            <FontAwesome
-              name="user-o"
-              color={GlobalStyle.colors.COLOR_GRAY}
-              style={{marginTop: 3}}
-              size={20}
-            />
-            <TextInput
-              placeholder="First Name"
-              placeholderTextColor="#666"
-              value={userData ? userData.fname : ''}
-              style={[styles.textInput]}
-              onChangeText={txt => setUserData({...userData, fname: txt})}
-              autoCorrect={false}
-            />
-          </View>
-          <View style={styles.action}>
-            <FontAwesome
-              name="user-o"
-              color={GlobalStyle.colors.COLOR_GRAY}
-              style={{marginTop: 3}}
-              size={20}
-            />
-            <TextInput
-              placeholder="Last Name"
-              placeholderTextColor="#666"
-              value={userData ? userData.lname : ''}
-              style={[styles.textInput]}
-              onChangeText={txt => setUserData({...userData, lname: txt})}
-              autoCorrect={false}
-            />
-          </View>
-          <View style={styles.action}>
-            <FontAwesome
-              name="list-alt"
-              color={GlobalStyle.colors.COLOR_GRAY}
-              style={{marginTop: 3}}
-              size={20}
-            />
-            <TextInput
-              placeholder="About Me"
-              placeholderTextColor="#666"
-              style={[styles.textInput]}
-              value={userData ? userData.about : ''}
-              onChangeText={txt => setUserData({...userData, about: txt})}
-              autoCorrect={false}
-            />
-          </View>
-          <View style={styles.action}>
-            <Feather
-              name="phone"
-              color={GlobalStyle.colors.COLOR_GRAY}
-              style={{marginTop: 3}}
-              size={20}
-            />
-            <TextInput
-              placeholder="Phone"
-              keyboardType="number-pad"
-              placeholderTextColor="#666"
-              style={[styles.textInput]}
-              value={userData ? userData.phone : ''}
-              onChangeText={txt => setUserData({...userData, phone: txt})}
-              autoCorrect={false}
-            />
-          </View>
-          {/* <View style={styles.action}>
-            <FontAwesome
-              name="globe"
-              color={GlobalStyle.colors.COLOR_GRAY}
-              style={{marginTop: 3}}
-              size={20}
-            />
-            <TextInput
-              placeholder="Country"
-              keyboardType="default"
-              placeholderTextColor="#666"
-              style={[styles.textInput]}
-              value={userData ? userData.country : ''}
-              onChangeText={txt => setUserData({...userData, country: txt})}
-              autoCorrect={false}
-            />
-          </View> */}
-
-          <View
-            style={{
-              marginTop: 16,
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View
-              style={{
-                borderWidth: 2,
-                borderColor: '#ccc',
-                borderRadius: 10,
-                width: (width - 62) / 3,
-                maxHeight: 50,
-              }}>
-              <Picker
-                selectedValue={selectedProvince}
-                style={{height: 50}}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedProvince(itemValue)
-                }>
-                {provinces.map((el, i) => (
-                  <ProvinceItem key={i} label={el.Name} value={el.Id} />
-                ))}
-              </Picker>
-            </View>
-            <View
-              style={{
-                borderWidth: 2,
-                borderColor: '#ccc',
-                borderRadius: 10,
-                // marginTop: 10,
-                width: (width - 62) / 3,
-                maxHeight: 50,
-              }}>
-              <Picker
-                selectedValue={selectedDistrict}
-                style={{height: 50}}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedDistrict(itemValue)
-                }>
-                {districtList.map((el, i) => (
-                  <ProvinceItem key={i} label={el.Name} value={el.Id} />
-                ))}
-              </Picker>
-            </View>
-            <View
-              style={{
-                borderWidth: 2,
-                borderColor: '#ccc',
-                borderRadius: 10,
-                // marginTop: 10,
-                width: (width - 62) / 3,
-                maxHeight: 50,
-              }}>
-              <Picker
-                selectedValue={selectedWard}
-                style={{height: 50}}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedWard(itemValue)
-                }>
-                {wardList.map((el, i) => (
-                  <ProvinceItem key={i} label={el.Name} value={el.Id} />
-                ))}
-              </Picker>
-            </View>
-            {/* <View style={{marginTop: 10}}>
-              <Text>
-                {selectedProvince + ' ' + selectedDistrict + ' ' + selectedWard}
-              </Text>
-            </View> */}
-          </View>
-
-          <View style={styles.action}>
-            <FontAwesome
-              name="map-marker"
-              color={GlobalStyle.colors.COLOR_GRAY}
-              style={{marginTop: 3, marginLeft: 4}}
-              size={20}
-            />
-            <TextInput
-              placeholder="City"
-              keyboardType="default"
-              placeholderTextColor="#666"
-              style={[styles.textInput]}
-              value={userData ? userData.city : ''}
-              onChangeText={txt => setUserData({...userData, city: txt})}
-              autoCorrect={false}
-              minHeight={80}
-            />
-          </View>
-
-          <View style={{marginTop: 18}}>
-            <FormButton buttonTitle="Submit" onPress={handleUpdate} />
-          </View>
-        </Animated.View>
+        <View style={styles.action}>
+          <FontAwesome
+            name="map-marker"
+            color={GlobalStyle.colors.COLOR_GRAY}
+            style={{marginTop: 3, marginLeft: 4}}
+            size={20}
+          />
+          <TextInput
+            placeholder="Address"
+            keyboardType="default"
+            placeholderTextColor="#666"
+            style={[styles.textInput]}
+            value={userData ? userData.address : ''}
+            onChangeText={txt => setUserData({...userData, address: txt})}
+            autoCorrect={false}
+            multiline={true}
+            // minHeight={80}
+          />
+        </View>
+      </ScrollView>
+      <View>
+        <FormButton buttonTitle="Submit" onPress={handleUpdate} />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -504,6 +443,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding: 16,
   },
   commandButton: {
     padding: 15,
@@ -580,5 +520,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
     color: '#05375a',
+  },
+  locationItem: {
+    borderWidth: 2,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    marginTop: 10,
+    maxHeight: 50,
+    justifyContent: 'center',
   },
 });

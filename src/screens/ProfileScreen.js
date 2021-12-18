@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import Post from '../components/Post';
 import ProfileSkeleton from '../components/Skeleton/ProfileSkeleton';
 import {GlobalStyle} from '../config/globalStyle';
@@ -19,6 +20,9 @@ import {AuthContext} from '../navigation/AuthProvider';
 
 export default function ProfileScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
+  const {useDetails} = useSelector(state => state.user);
+
+  console.log('*********useDetails', useDetails);
 
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -34,11 +38,14 @@ export default function ProfileScreen({navigation, route}) {
         .collection('posts')
         .where('userId', '==', route.params ? route.params.userId : user.uid)
         .orderBy('createdAt', 'desc')
+        // .collection('users')
+        // .where('uid', '==', route.params ? route.params.userId : user.uid)
         .get()
         .then(querySnapshot => {
           //   console.log('Total users: ', querySnapshot.size);
 
           querySnapshot.forEach(documentSnapshot => {
+            console.log('---------------documentSnapshot', documentSnapshot);
             const {post, postImg, createdAt, likes, comments, userId} =
               documentSnapshot.data();
             postList.push({
@@ -164,16 +171,17 @@ export default function ProfileScreen({navigation, route}) {
         <ScrollView style={{padding: 16}}>
           <Image
             style={styles.userImg}
-            source={{
-              uri: userData
-                ? userData?.userImg
-                : 'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
-            }}
+            source={
+              userData?.userImg !== null
+                ? {
+                    uri: userData?.userImg,
+                  }
+                : require('../assets/defaultAvatar.png')
+            }
           />
           <Text style={styles.userName}>
             {userData ? userData?.fname + ' ' + userData?.lname : 'Test user'}
           </Text>
-          <Text style={styles.aboutUser}>{userData && userData?.about}</Text>
           {route.params ? (
             <View
               style={{

@@ -8,6 +8,7 @@ import {
   TextInput,
   Dimensions,
   Alert,
+  Image,
 } from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
@@ -20,64 +21,51 @@ import {Keyboard} from 'react-native';
 import moment from 'moment';
 
 const {width} = Dimensions.get('window');
-export default function CommentScreen({route}) {
+export default function CommentScreen({route, navigation}) {
   const {user} = useContext(AuthContext);
   const postIdParam = route.params.postId;
   const {postOwnerId} = route.params;
-  const {allUsers} = useSelector(state => state.users);
+  const allUsers = useSelector(state => state.users.allUsers);
 
   const [comments, setComments] = useState([]);
   const [postId, setPostId] = useState('');
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    console.log('=========allUsers', allUsers);
-    // function matchUserToComment(cmts) {
-    //   for (let i = 0; i < cmts.length; i++) {
-    //     if (cmts[i].hasOwnProperty('user')) {
-    //       continue;
-    //     }
-
-    //     const user = props.users.find(x => x.uid === cmts[i].creator);
-    //     if (user == undefined) {
-    //       props.fetchUsersData(cmts[i].creator, false);
-    //     } else {
-    //       cmts[i].user = user;
-    //     }
-    //   }
-    //   setComments(cmts);
-    // }
-
+    let cleanerVar = false;
     if (postIdParam !== postId) {
-      firestore()
-        .collection('posts')
-        .doc(postIdParam)
-        // .collection('users')
-        // .doc(postIdParam)
-        .collection('comments')
-        .orderBy('createdAt', 'asc')
-        .onSnapshot(snapshot => {
-          let commentsData = snapshot.docs.map(doc => {
-            const data = doc.data();
-            const id = doc.id;
-            return {id, ...data};
-          });
-          setComments(commentsData);
-        });
-      setPostId(postIdParam);
-    } else {
-      //   matchUserToComment(comments);
+      fetchComment();
     }
-  }, []);
 
-  console.log('comments', comments);
+    return () => {
+      cleanerVar = true;
+    };
+  }, [comments]);
+
+  const fetchComment = () => {
+    firestore()
+      .collection('posts')
+      .doc(postIdParam)
+      .collection('comments')
+      .orderBy('createdAt', 'asc')
+      .onSnapshot(snapshot => {
+        const cmt = snapshot.docs.map(doc => {
+          const data = doc.data();
+          console.log('dataaaaaaaaaaaa', data);
+          const id = doc.id;
+          const ownerCmt = allUsers.find(el => el.uid === data?.creator);
+          const cmtTimestamp = data.createdAt;
+          return {id, ...data, ...ownerCmt, cmtTimestamp};
+        });
+        setComments(cmt);
+      });
+    setPostId(postIdParam);
+  };
 
   const handleSendComment = async () => {
     await firestore()
       .collection('posts')
       .doc(postIdParam)
-      // .collection('users')
-      // .doc(postIdParam)
       .collection('comments')
       .add({
         content: content,
@@ -131,60 +119,100 @@ export default function CommentScreen({route}) {
         <FlatList
           data={comments}
           renderItem={({item}) => {
+            console.log('cmt item', item);
             return (
               <View style={{marginBottom: 10}}>
-                <View
-                  style={{
-                    backgroundColor: GlobalStyle.colors.COLOR_SILVER,
-                    padding: 16,
-                    borderRadius: 10,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text style={{maxWidth: '90%'}}>{item.content}</Text>
-                  {item?.creator === user.uid && (
-                    <TouchableOpacity onPress={() => handleDelete(item.id)}>
-                      <FontAwesome
-                        name="trash-o"
-                        size={25}
-                        color={GlobalStyle.colors.COLOR_GRAY}
-                      />
-                    </TouchableOpacity>
-                  )}
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 4,
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
+                <View style={{flexDirection: 'row'}}>
+                  <TouchableOpacity
+                    style={{marginRight: 10}}
+                    onPress={() => {
+                      navigation.navigate('HomeProfile', {
+                        userId: item.creator,
+                      });
                     }}>
-                    <TouchableOpacity>
+                    <Image
+                      source={{
+                        uri:
+                          (item && item?.userImg) ||
+                          'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
+                      }}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 40,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <View style={{flex: 1}}>
+                    <View
+                      style={{
+                        flex: 1,
+                        backgroundColor: GlobalStyle.colors.COLOR_SILVER,
+                        paddingHorizontal: 16,
+                        paddingVertical: 6,
+                        borderRadius: 10,
+                      }}>
                       <Text
                         style={{
-                          fontSize: 12,
-                          color: GlobalStyle.colors.COLOR_BLUE,
+                          fontSize: 14,
+                          fontWeight: '700',
+                          marginBottom: 4,
                         }}>
-                        Like
+                        {item?.fname + ' ' + item?.lname}
                       </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{marginLeft: 20}}>
-                      <Text
+                      <View
                         style={{
-                          fontSize: 12,
-                          color: GlobalStyle.colors.COLOR_BLUE,
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
                         }}>
-                        Answer
+                        <Text style={{maxWidth: '90%'}}>{item.content}</Text>
+                        {item?.creator === user.uid && (
+                          <TouchableOpacity
+                            onPress={() => handleDelete(item.id)}>
+                            <FontAwesome
+                              name="trash-o"
+                              size={25}
+                              color={GlobalStyle.colors.COLOR_GRAY}
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginTop: 4,
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <TouchableOpacity>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              color: GlobalStyle.colors.COLOR_BLUE,
+                            }}>
+                            Like
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{marginLeft: 20}}>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              color: GlobalStyle.colors.COLOR_BLUE,
+                            }}>
+                            Answer
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={{fontSize: 12}}>
+                        {moment(item?.cmtTimestamp.toDate()).fromNow()}
                       </Text>
-                    </TouchableOpacity>
+                    </View>
                   </View>
-                  <Text style={{fontSize: 12}}>
-                    {moment(item?.createdAt.toDate()).fromNow()}
-                  </Text>
                 </View>
               </View>
             );

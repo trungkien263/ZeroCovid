@@ -63,12 +63,14 @@ export const actFetchAllUsersRequest = () => async dispatch => {
       .collection('users')
       .get()
       .then(documentSnapshot => {
-        console.log('========documentSnapshot', documentSnapshot);
-        if (documentSnapshot.exists) {
-          data = documentSnapshot.data();
-        }
+        let usersData = documentSnapshot.docs.map(doc => {
+          const userInfo = doc.data();
+          return {...userInfo};
+        });
+        data = usersData;
       });
 
+    console.log('==============data=========', data);
     dispatch({type: Types.FETCH_ALL_USERS, payload: data});
   } catch (e) {
     console.log('Fail to fetch all users: ', e);

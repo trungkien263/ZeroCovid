@@ -1,34 +1,26 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
+  Alert,
   Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  FlatList,
-  ScrollView,
-  Alert,
 } from 'react-native';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-
-import callApi from '../services/apiCaller';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
 import {AuthContext} from '../navigation/AuthProvider';
-import provinces from '../data/provinces.json';
-import {Picker} from '@react-native-picker/picker';
 
 const windowWidth = Dimensions.get('window').width;
 
 export default function MenuScreen() {
   const {user, logout} = useContext(AuthContext);
-  const {vnCases, worldCases} = useSelector(state => state.covidCases);
+  const {vnCases, worldCases} = useSelector(state => state?.covidCases);
   const {users} = useSelector(state => state.users);
   const vnNumber = vnCases.pop();
   const [covidCases, setCovidCases] = useState(vnNumber);
   const [isTotalWorld, setIsTotalWorld] = useState(false);
-
-  console.log('--------users##', users);
 
   const renderData = [
     {
@@ -108,15 +100,6 @@ export default function MenuScreen() {
         <Text style={[styles.title, {fontSize: 14}]}>{title}</Text>
         <Text style={[styles.title, {fontSize: 14}]}>{data}</Text>
       </LinearGradient>
-    );
-  };
-
-  const ProvinceItem = (label, value) => {
-    return (
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <Text>{label}</Text>
-        <Text>{value}</Text>
-      </View>
     );
   };
 

@@ -31,14 +31,16 @@ export default function HomeScreen({navigation, route}) {
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const allUsers = useSelector(state => state.users.allUsers);
 
-  useEffect(() => {
+  useEffect(async () => {
     dispatch(actFetchCovidCasesRequest());
     dispatch(actFetchCovidCasesWorldRequest());
     dispatch(actFetchUserDetailsRequest(user.uid));
-    dispatch(actFetchAllUsersRequest());
+    await dispatch(actFetchAllUsersRequest());
   }, []);
 
+  console.log('------allUsers', allUsers);
   const fetchPosts = async () => {
     try {
       const postList = [];
@@ -51,18 +53,15 @@ export default function HomeScreen({navigation, route}) {
           //   console.log('Total users: ', querySnapshot.size);
 
           querySnapshot.forEach(documentSnapshot => {
-            const {post, postImg, createdAt, likes, comments, userId} =
-              documentSnapshot.data();
+            const {post, postImg, createdAt, userId} = documentSnapshot.data();
+            const userData = allUsers.find(el => el.uid === userId);
             postList.push({
-              userName: 'Tzuyu',
               createdAt: createdAt,
               content: post,
-              like: likes,
-              comment: comments,
-              avatar: postImg,
               imageUrl: postImg,
               userId,
               postId: documentSnapshot.id,
+              userData,
             });
           });
         });
@@ -89,6 +88,7 @@ export default function HomeScreen({navigation, route}) {
 
   useEffect(async () => {
     setIsLoading(true);
+    await dispatch(actFetchAllUsersRequest());
     await fetchPosts();
     setIsLoading(false);
   }, [refresh]);
@@ -199,7 +199,14 @@ export default function HomeScreen({navigation, route}) {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
       {posts.map((item, index) => {
-        return <Post key={index} item={item} onDeletePost={handleDelete} />;
+        return (
+          <Post
+            key={index}
+            userData={item.userData}
+            item={item}
+            onDeletePost={handleDelete}
+          />
+        );
       })}
     </ScrollView>
   );

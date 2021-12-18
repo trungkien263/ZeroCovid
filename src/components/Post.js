@@ -8,28 +8,28 @@ import moment from 'moment';
 import {useNavigation} from '@react-navigation/core';
 import firestore from '@react-native-firebase/firestore';
 
-export default function Post({item, onDeletePost}) {
+export default function Post({item, onDeletePost, userData}) {
   //   console.log('----------------props', item);
   const {user, logout} = useContext(AuthContext);
   const navigation = useNavigation();
-  const [userData, setUserData] = useState(null);
+  //   const [userData, setUserData] = useState(null);
 
-  const getUser = async () => {
-    await firestore()
-      .collection('users')
-      .doc(item.userId)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-          //   console.log('user data--------------', documentSnapshot.data());
-          setUserData(documentSnapshot.data());
-        }
-      });
-  };
+  //   const getUser = async () => {
+  //     await firestore()
+  //       .collection('users')
+  //       .doc(item.userId)
+  //       .get()
+  //       .then(documentSnapshot => {
+  //         if (documentSnapshot.exists) {
+  //           //   console.log('user data--------------', documentSnapshot.data());
+  //           setUserData(documentSnapshot.data());
+  //         }
+  //       });
+  //   };
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  //   useEffect(() => {
+  //     getUser();
+  //   }, []);
 
   return (
     <View style={styles.container}>
@@ -55,7 +55,7 @@ export default function Post({item, onDeletePost}) {
         </TouchableOpacity>
         <View style={{paddingLeft: 10}}>
           <Text style={{fontWeight: '700'}}>
-            {item?.userName ? item?.userName : 'Test user'}
+            {userData?.fname + ' ' + userData?.lname}
           </Text>
           <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
         </View>
