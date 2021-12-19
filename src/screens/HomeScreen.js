@@ -31,42 +31,62 @@ export default function HomeScreen({navigation, route}) {
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const allUsers = useSelector(state => state.users.allUsers);
 
-  useEffect(async () => {
+  useEffect(() => {
     dispatch(actFetchCovidCasesRequest());
     dispatch(actFetchCovidCasesWorldRequest());
     dispatch(actFetchUserDetailsRequest(user.uid));
-    await dispatch(actFetchAllUsersRequest());
+    // dispatch(actFetchAllUsersRequest());
   }, []);
 
-  console.log('------allUsers', allUsers);
+  useEffect(() => {
+    console.log('========posts%', posts);
+  }, [posts]);
+
   const fetchPosts = async () => {
     try {
-      const postList = [];
+      let postList = [];
 
       await firestore()
         .collection('posts')
         .orderBy('createdAt', 'desc')
         .get()
         .then(querySnapshot => {
-          //   console.log('Total users: ', querySnapshot.size);
-
-          querySnapshot.forEach(documentSnapshot => {
+          querySnapshot.forEach(async documentSnapshot => {
             const {post, postImg, createdAt, userId} = documentSnapshot.data();
-            const userData = allUsers.find(el => el.uid === userId);
-            postList.push({
-              createdAt: createdAt,
-              content: post,
-              imageUrl: postImg,
-              userId,
-              postId: documentSnapshot.id,
-              userData,
-            });
+            // const userData = allUsers.find(el => el.uid === userId);
+            // let userData;
+            await firestore()
+              .collection('users')
+              .where('uid', '==', userId)
+              .get()
+              .then(snapshot => {
+                const userData = snapshot.docs[0].data();
+                console.log('==========userData', userData);
+                if (userData) {
+                  postList.push({
+                    createdAt: createdAt,
+                    content: post,
+                    imageUrl: postImg,
+                    userId,
+                    postId: documentSnapshot.id,
+                    userData,
+                  });
+                }
+                console.log('==========postList***', postList);
+              })
+              .catch(err => {
+                console.log('Error while fetch user', err);
+              });
           });
+          setPosts(postList);
         });
+      // .then(() => {
+      //   console.log('==========postList after***%', postList);
+      //   setPosts(postList);
+      // });
 
-      setPosts(postList);
+      //   setPosts(postList);
     } catch (error) {
       console.log('error', error);
     }

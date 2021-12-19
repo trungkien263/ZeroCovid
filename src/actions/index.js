@@ -70,7 +70,6 @@ export const actFetchAllUsersRequest = () => async dispatch => {
         data = usersData;
       });
 
-    console.log('==============data=========', data);
     dispatch({type: Types.FETCH_ALL_USERS, payload: data});
   } catch (e) {
     console.log('Fail to fetch all users: ', e);
