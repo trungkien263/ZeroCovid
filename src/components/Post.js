@@ -9,35 +9,15 @@ import {useNavigation} from '@react-navigation/core';
 import firestore from '@react-native-firebase/firestore';
 
 export default function Post({item, onDeletePost, userData}) {
-  //   console.log('----------------props', item);
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const navigation = useNavigation();
-  //   const [userData, setUserData] = useState(null);
-
-  //   const getUser = async () => {
-  //     await firestore()
-  //       .collection('users')
-  //       .doc(item.userId)
-  //       .get()
-  //       .then(documentSnapshot => {
-  //         if (documentSnapshot.exists) {
-  //           //   console.log('user data--------------', documentSnapshot.data());
-  //           setUserData(documentSnapshot.data());
-  //         }
-  //       });
-  //   };
-
-  //   useEffect(() => {
-  //     getUser();
-  //   }, []);
-
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('HomeProfile', {
-              userId: item.userId,
+              userId: item?.userId,
             });
           }}>
           <Image
@@ -60,12 +40,10 @@ export default function Post({item, onDeletePost, userData}) {
           <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
         </View>
       </View>
-      {item.content && (
-        <Text style={{paddingVertical: 16}}>{item?.content}</Text>
-      )}
-      {item.imageUrl && (
+      {item.post && <Text style={{paddingVertical: 16}}>{item?.post}</Text>}
+      {item.postImg && (
         <Image
-          source={{uri: item?.imageUrl}}
+          source={{uri: item?.postImg}}
           resizeMode="cover"
           style={{
             maxWidth: '100%',

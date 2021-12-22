@@ -36,75 +36,49 @@ export default function HomeScreen({navigation, route}) {
     dispatch(actFetchCovidCasesRequest());
     dispatch(actFetchCovidCasesWorldRequest());
     dispatch(actFetchUserDetailsRequest(user.uid));
-    // dispatch(actFetchAllUsersRequest());
+    dispatch(actFetchAllUsersRequest());
   }, []);
 
-  useEffect(() => {
-    console.log('========posts=', posts);
-  }, [posts]);
-
-  const findOwner = async userId => {
-    try {
-      await firestore()
-        .collection('users')
-        .where('uid', '==', userId)
-        .get()
-        .then(snapshot => {
-          //   const userData = snapshot.docs[0].data();
-          //   console.log('%%%%%%%', userData);
-          return snapshot.docs[0].data();
-        })
-        .catch(err => {
-          console.log('Error while fetch user', err);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const fetchPosts = async () => {
-    // try {
-    let postList = [];
-    let userData;
+    try {
+      let querySnapshot = await firestore()
+        .collection('posts')
+        .orderBy('createdAt', 'desc')
+        .get()
+        .catch(err => {
+          console.log(err);
+        });
 
-    await firestore()
-      .collection('posts')
-      .orderBy('createdAt', 'desc')
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(async documentSnapshot => {
-          const {post, postImg, createdAt, userId} = documentSnapshot.data();
-          await firestore()
+      let postsData = [];
+      querySnapshot.forEach(documentSnapshot => {
+        const postInfo = documentSnapshot.data();
+        postsData.push({...postInfo, postId: documentSnapshot.id});
+      });
+
+      const postsDetail = await Promise.all(
+        postsData.map(async el => {
+          const data = await firestore()
             .collection('users')
-            .where('uid', '==', userId)
+            .where('uid', '==', el?.userId)
             .get()
-            .then(snapshot => {
-              userData = snapshot.docs[0].data();
-            })
             .catch(err => {
               console.log('Error while fetch user', err);
             });
-          console.log('==========postList before push', postList);
-          postList.push({
-            createdAt: createdAt,
-            content: post,
-            imageUrl: postImg,
-            userId,
-            postId: documentSnapshot.id,
-            userData,
+
+          let tmp = [];
+          data.forEach(documentSnapshot => {
+            tmp.push(documentSnapshot.data());
           });
-          console.log('+++++++++++postList after push', postList);
-        });
-        console.log('==========postList++++insider', postList);
-      })
-      .catch(error => {
-        console.log('error', error);
-      });
-    console.log('==========postList----outside', postList);
-    setPosts(postList);
-    // } catch (error) {
-    //   console.log('error', error);
-    // }
+
+          const test = {userData: tmp[0], ...el};
+          return test;
+        }),
+      );
+
+      setPosts(postsDetail);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleDelete = postId => {
@@ -127,15 +101,17 @@ export default function HomeScreen({navigation, route}) {
     setIsLoading(false);
   }, [refresh]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchPosts();
-    }, []),
-  );
+  //   useEffect(() => {
+  //     console.log('========posts00+++', posts);
+  //   }, [posts]);
+
+  //   useFocusEffect(
+  //     React.useCallback(() => {
+  //       fetchPosts();
+  //     }, []),
+  //   );
 
   const deletePost = postId => {
-    console.log('post ID', postId);
-
     firestore()
       .collection('posts')
       .doc(postId)
@@ -163,6 +139,9 @@ export default function HomeScreen({navigation, route}) {
             setRefresh(!refresh);
           }
         }
+      })
+      .catch(err => {
+        console.log(err);
       });
   };
 
@@ -191,36 +170,6 @@ export default function HomeScreen({navigation, route}) {
       setRefreshing(false);
     }, 1000);
   }, []);
-
-  //   const data = [
-  //     {
-  //       userName: 'Tzuyu',
-  //       createdAt: 5,
-  //       content: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.',
-  //       like: 69,
-  //       comment: 96,
-  //       avatar: require('../assets/tzuyu.jpg'),
-  //       imageUrl: require('../assets/posts/post-img-1.jpg'),
-  //     },
-  //     {
-  //       userName: 'Taylor Swift',
-  //       createdAt: 5,
-  //       content: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.',
-  //       like: 69,
-  //       comment: 96,
-  //       avatar: require('../assets/tzuyu.jpg'),
-  //       imageUrl: require('../assets/posts/post-img-2.jpg'),
-  //     },
-  //     {
-  //       userName: 'Maria Ozawa',
-  //       createdAt: 5,
-  //       content: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit.',
-  //       like: 69,
-  //       comment: 96,
-  //       avatar: require('../assets/tzuyu.jpg'),
-  //       imageUrl: require('../assets/posts/post-img-3.jpg'),
-  //     },
-  //   ];
 
   return isLoading ? (
     <ScrollView>
