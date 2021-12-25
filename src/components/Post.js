@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -11,6 +11,83 @@ import firestore from '@react-native-firebase/firestore';
 export default function Post({item, onDeletePost, userData}) {
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
+  const [isLiked, setIsLiked] = useState(false);
+  const {postId} = item;
+  const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
+  let isRendered = useRef(false);
+
+  useEffect(async () => {
+    isRendered = true;
+    firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('likes')
+      .onSnapshot(snapshot => {
+        if (isRendered) {
+          setLikeCount(snapshot.docs.length);
+        }
+        snapshot.docs.map(doc => {
+          const data = doc.data();
+          console.log('-------like count', snapshot.docs.length);
+          if (data.creator === user.uid) {
+            setIsLiked(true);
+            return;
+          }
+        });
+      });
+
+    firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('comments')
+      .onSnapshot(snapshot => {
+        if (isRendered) {
+          setCommentCount(snapshot.docs.length);
+        }
+      });
+
+    return () => {
+      isRendered = false;
+    };
+  }, [item]);
+
+  const handleLike = async () => {
+    setIsLiked(true);
+    await firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('likes')
+      .add({
+        creator: user.uid,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        console.log('Send like successfully!');
+      })
+      .catch(err => {
+        console.log('Error while send like', err);
+      });
+  };
+
+  const handleUnLike = async () => {
+    setIsLiked(false);
+    const likedData = await firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('likes')
+      .get()
+      .catch(err => {
+        console.log('Error while unlike', err);
+      });
+
+    likedData.forEach(function (doc) {
+      if (doc.data().creator === user.uid) {
+        doc.ref.delete();
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -45,14 +122,11 @@ export default function Post({item, onDeletePost, userData}) {
       {item.postImg && (
         <Image
           source={{uri: item?.postImg}}
-          resizeMode="cover"
+          resizeMode="contain"
           style={{
             maxWidth: '100%',
             height: 200,
             borderRadius: 10,
-            marginTop: item.content ? 0 : 16,
-            //   aspectRatio: 135 / 76,
-            //   aspectRatio: 3 / 2,
           }}
         />
       )}
@@ -62,11 +136,19 @@ export default function Post({item, onDeletePost, userData}) {
           paddingTop: 16,
           justifyContent: 'space-evenly',
         }}>
-        <TouchableOpacity style={styles.featureBtn}>
-          <Icon name="heart" size={25} color={GlobalStyle.colors.COLOR_BLUE} />
+        <TouchableOpacity
+          style={styles.featureBtn}
+          onPress={() => {
+            !isLiked ? handleLike() : handleUnLike();
+          }}>
+          <Icon
+            name={isLiked ? 'heart' : 'hearto'}
+            size={25}
+            color={GlobalStyle.colors.COLOR_BLUE}
+          />
           <Text
             style={[styles.featureTxt, {color: GlobalStyle.colors.COLOR_BLUE}]}>
-            {item?.like} Likes
+            {likeCount ? likeCount : ''} Likes
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -82,7 +164,9 @@ export default function Post({item, onDeletePost, userData}) {
             size={25}
             color={GlobalStyle.colors.COLOR_GRAY}
           />
-          <Text style={styles.featureTxt}>{item?.comment} Comments</Text>
+          <Text style={styles.featureTxt}>
+            {commentCount ? commentCount : ''} Comments
+          </Text>
         </TouchableOpacity>
         {user.uid === item.userId && (
           <TouchableOpacity onPress={() => onDeletePost(item.postId)}>

@@ -101,15 +101,11 @@ export default function HomeScreen({navigation, route}) {
     setIsLoading(false);
   }, [refresh]);
 
-  //   useEffect(() => {
-  //     console.log('========posts00+++', posts);
-  //   }, [posts]);
-
-  //   useFocusEffect(
-  //     React.useCallback(() => {
-  //       fetchPosts();
-  //     }, []),
-  //   );
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPosts();
+    }, []),
+  );
 
   const deletePost = postId => {
     firestore()
