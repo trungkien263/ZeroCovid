@@ -308,7 +308,7 @@ export default function EditProfile() {
               fontWeight: 'bold',
               color: 'black',
             }}>
-            {userData?.fname + userData?.lname}
+            {userData?.fname + ' ' + userData?.lname}
           </Text>
         </View>
 

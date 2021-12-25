@@ -31,6 +31,7 @@ export default function Post({item, onDeletePost, userData}) {
               height: 60,
               borderRadius: 40,
             }}
+            resizeMode="cover"
           />
         </TouchableOpacity>
         <View style={{paddingLeft: 10}}>

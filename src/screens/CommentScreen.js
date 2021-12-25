@@ -24,7 +24,6 @@ const {width} = Dimensions.get('window');
 export default function CommentScreen({route, navigation}) {
   const {user} = useContext(AuthContext);
   const postIdParam = route.params.postId;
-  const {postOwnerId} = route.params;
   const allUsers = useSelector(state => state.users.allUsers);
 
   const [comments, setComments] = useState([]);
@@ -32,15 +31,10 @@ export default function CommentScreen({route, navigation}) {
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    let cleanerVar = false;
     if (postIdParam !== postId) {
       fetchComment();
     }
-
-    return () => {
-      cleanerVar = true;
-    };
-  }, [comments]);
+  }, []);
 
   const fetchComment = () => {
     firestore()
@@ -119,7 +113,6 @@ export default function CommentScreen({route, navigation}) {
         <FlatList
           data={comments}
           renderItem={({item}) => {
-            console.log('cmt item', item);
             return (
               <View style={{marginBottom: 10}}>
                 <View style={{flexDirection: 'row'}}>
