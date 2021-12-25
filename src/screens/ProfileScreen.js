@@ -29,8 +29,6 @@ export default function ProfileScreen({navigation, route}) {
   const [refresh, setRefresh] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  //   const isFocused = useIsFocused();
-
   const fetchPosts = async () => {
     try {
       const postList = [];
@@ -38,24 +36,19 @@ export default function ProfileScreen({navigation, route}) {
         .collection('posts')
         .where('userId', '==', route.params ? route.params.userId : user.uid)
         .orderBy('createdAt', 'desc')
-        // .collection('users')
-        // .where('uid', '==', route.params ? route.params.userId : user.uid)
         .get()
         .then(querySnapshot => {
-          //   console.log('Total users: ', querySnapshot.size);
-
           querySnapshot.forEach(documentSnapshot => {
-            console.log('---------------documentSnapshot', documentSnapshot);
             const {post, postImg, createdAt, likes, comments, userId} =
               documentSnapshot.data();
             postList.push({
               userName: 'Test name',
               createdAt: createdAt,
-              content: post,
+              post: post,
               like: likes,
               comment: comments,
               avatar: postImg,
-              imageUrl: postImg,
+              postImg: postImg,
               userId,
               postId: documentSnapshot.id,
             });
