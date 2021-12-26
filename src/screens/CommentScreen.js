@@ -17,8 +17,10 @@ import {FlatList} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {AuthContext} from '../navigation/AuthProvider';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Keyboard} from 'react-native';
 import moment from 'moment';
+import CommentItem from '../components/CommentItem';
 
 const {width} = Dimensions.get('window');
 export default function CommentScreen({route, navigation}) {
@@ -29,6 +31,7 @@ export default function CommentScreen({route, navigation}) {
   const [comments, setComments] = useState([]);
   const [postId, setPostId] = useState('');
   const [content, setContent] = useState('');
+  const [toggleAnswer, setToggleAnswer] = useState(false);
 
   useEffect(() => {
     if (postIdParam !== postId) {
@@ -169,7 +172,7 @@ export default function CommentScreen({route, navigation}) {
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                marginTop: 4,
+                marginVertical: 4,
               }}>
               <View
                 style={{
@@ -185,7 +188,11 @@ export default function CommentScreen({route, navigation}) {
                     Like
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{marginLeft: 20}}>
+                <TouchableOpacity
+                  style={{marginLeft: 20}}
+                  onPress={() => {
+                    setToggleAnswer(!toggleAnswer);
+                  }}>
                   <Text
                     style={{
                       fontSize: 12,
@@ -199,6 +206,23 @@ export default function CommentScreen({route, navigation}) {
                 {moment(item?.cmtTimestamp.toDate()).fromNow()}
               </Text>
             </View>
+            {toggleAnswer && (
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: GlobalStyle.colors.COLOR_SILVER,
+                  borderRadius: 10,
+                  padding: 16,
+                }}>
+                <Text>KKKKKKKKKK</Text>
+                <Text>KKKKKKKKKK</Text>
+                <Text>KKKKKKKKKK</Text>
+                <Text>KKKKKKKKKK</Text>
+                <Text>KKKKKKKKKK</Text>
+                <Text>KKKKKKKKKK</Text>
+                <Text>KKKKKKKKKK</Text>
+              </View>
+            )}
           </View>
         </View>
       </View>
@@ -243,14 +267,19 @@ export default function CommentScreen({route, navigation}) {
             }}
             disabled={content === ''}
             style={{
-              backgroundColor: GlobalStyle.colors.COLOR_BLUE,
+              //   backgroundColor: GlobalStyle.colors.COLOR_BLUE,
               paddingHorizontal: 10,
               borderRadius: 8,
               paddingVertical: 6,
               height: 40,
               justifyContent: 'center',
             }}>
-            <Text style={{color: GlobalStyle.colors.COLOR_WHITE}}>Cmt</Text>
+            {/* <Text style={{color: GlobalStyle.colors.COLOR_WHITE}}>Cmt</Text> */}
+            <Ionicons
+              name="send"
+              size={25}
+              color={GlobalStyle.colors.COLOR_BLUE}
+            />
           </TouchableOpacity>
         </View>
       </View>
