@@ -22,8 +22,6 @@ export default function ProfileScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
   const {useDetails} = useSelector(state => state.user);
 
-  console.log('*********useDetails', useDetails);
-
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -42,7 +40,6 @@ export default function ProfileScreen({navigation, route}) {
             const {post, postImg, createdAt, likes, comments, userId} =
               documentSnapshot.data();
             postList.push({
-              userName: 'Test name',
               createdAt: createdAt,
               post: post,
               like: likes,
