@@ -5,6 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import HomeScreen from '../screens/HomeScreen';
 import ChatScreen from '../screens/ChatScreen';
@@ -41,7 +42,7 @@ const FeedStack = ({navigation}) => (
               size={22}
               backgroundColor="#fff"
               color="#2e64e5"
-              onPress={() => navigation.navigate('AddPost')}
+              onPress={() => navigation.goBack()}
             />
           </View>
         ),
@@ -130,8 +131,18 @@ const MessageStack = ({navigation}) => (
       name="Chat"
       component={ChatScreen}
       options={({route}) => ({
-        title: route.params.userName,
         headerBackTitleVisible: false,
+        headerLeft: () => (
+          <View style={{marginLeft: 10}}>
+            <Ionicons.Button
+              name="arrow-back"
+              size={25}
+              backgroundColor="#f9fafd"
+              color="#2e64e5"
+              onPress={() => navigation.goBack()}
+            />
+          </View>
+        ),
       })}
     />
   </Stack.Navigator>

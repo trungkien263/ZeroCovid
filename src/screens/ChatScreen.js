@@ -1,12 +1,14 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import {Bubble, GiftedChat, Send} from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export default function ChatScreen({route}) {
-  const {userName} = route.params;
+  const {partnerInfo} = route?.params;
+
+  console.log('partnerInfo---------------', partnerInfo);
 
   const [messages, setMessages] = useState([]);
 
@@ -44,7 +46,7 @@ export default function ChatScreen({route}) {
   const renderSend = props => {
     return (
       <Send {...props}>
-        <View>
+        <TouchableOpacity>
           <MaterialCommunityIcons
             name="send-circle"
             size={36}
@@ -54,7 +56,7 @@ export default function ChatScreen({route}) {
               marginRight: 10,
             }}
           />
-        </View>
+        </TouchableOpacity>
       </Send>
     );
   };
