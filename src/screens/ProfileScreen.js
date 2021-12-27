@@ -20,8 +20,8 @@ import {AuthContext} from '../navigation/AuthProvider';
 
 export default function ProfileScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
-  const {useDetails} = useSelector(state => state.user);
-  const partnerId = route.params ? route.params.userId : '';
+  const {userDetails} = useSelector(state => state.user);
+  const partnerId = route.params ? route.params.userId : userDetails.uid;
 
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -223,7 +223,7 @@ export default function ProfileScreen({navigation, route}) {
           <Text style={styles.userName}>
             {userData ? userData?.fname + ' ' + userData?.lname : 'Test user'}
           </Text>
-          {route.params ? (
+          {partnerId !== userDetails.uid ? (
             <View
               style={{
                 flex: 1,

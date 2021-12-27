@@ -1,12 +1,12 @@
 import * as Types from '../constants/ActionTypes';
 
 const intialState = {
-  useDetails: [],
+  userDetails: [],
 };
 const user = (state = intialState, action) => {
   switch (action.type) {
     case Types.FETCH_USER_DETAILS:
-      state.useDetails = action.payload;
+      state.userDetails = action.payload;
       return {...state};
 
     default:

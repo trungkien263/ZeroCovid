@@ -6,6 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {NavigationContainer} from '@react-navigation/native';
 
 import HomeScreen from '../screens/HomeScreen';
 import ChatScreen from '../screens/ChatScreen';
@@ -22,10 +23,11 @@ const Tab = createBottomTabNavigator();
 const FeedStack = ({navigation}) => (
   <Stack.Navigator>
     <Stack.Screen
-      name="Zero Covid"
+      name="HomeScreen"
       component={HomeScreen}
       options={{
         headerTitleAlign: 'center',
+        headerTitle: 'Zero Covid',
         headerTitleStyle: {
           color: '#2e64e5',
           fontFamily: 'Kufam-SemiBoldItalic',
@@ -42,7 +44,7 @@ const FeedStack = ({navigation}) => (
               size={22}
               backgroundColor="#fff"
               color="#2e64e5"
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate('AddPost')}
             />
           </View>
         ),
@@ -65,22 +67,6 @@ const FeedStack = ({navigation}) => (
             <Ionicons name="arrow-back" size={25} color="#2e64e5" />
           </View>
         ),
-        // headerRight: () => {
-        //   return (
-        //     <Text
-        //       style={{
-        //         marginRight: 18,
-        //         color: '#2e64e5',
-        //         fontWeight: '700',
-        //         fontSize: 16,
-        //       }}
-        //       onPress={() => {
-        //         alert('pressed');
-        //       }}>
-        //       Post
-        //     </Text>
-        //   );
-        // },
       }}
     />
     <Stack.Screen
@@ -145,6 +131,25 @@ const MessageStack = ({navigation}) => (
         ),
       })}
     />
+    <Stack.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        title: '',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          shadowColor: '#fff',
+          elevation: 0,
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      }}
+    />
   </Stack.Navigator>
 );
 
@@ -174,18 +179,7 @@ const ProfileStack = ({navigation}) => (
   </Stack.Navigator>
 );
 
-const AppStack = () => {
-  //   const getTabBarVisibility = route => {
-  //     const routeName = route.state
-  //       ? route.state.routes[route.state.index].name
-  //       : '';
-
-  //     if (routeName === 'Chat') {
-  //       return false;
-  //     }
-  //     return true;
-  //   };
-
+const AppStack = ({navigation}) => {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -211,11 +205,6 @@ const AppStack = () => {
         name="Messages"
         component={MessageStack}
         options={({route}) => ({
-          //   tabBarVisible: getTabBarVisible(route),
-          // Or Hide tabbar when push!
-          // https://github.com/react-navigation/react-navigation/issues/7677
-          //   tabBarVisible: route.state && route.state.index === 0,
-          // tabBarLabel: 'Home',
           tabBarIcon: ({color, size}) => (
             <Ionicons
               name="chatbox-ellipses-outline"

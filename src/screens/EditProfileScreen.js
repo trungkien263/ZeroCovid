@@ -29,7 +29,7 @@ const {width, height} = Dimensions.get('window');
 
 export default function EditProfile() {
   const {user, logout} = useContext(AuthContext);
-  const {useDetails} = useSelector(state => state.user);
+  const {userDetails} = useSelector(state => state.user);
 
   //   const [imageSource, setImageSource] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -47,7 +47,7 @@ export default function EditProfile() {
   const [selectedWard, setSelectedWard] = useState([]);
 
   useEffect(() => {
-    setUserData(useDetails);
+    setUserData(userDetails);
   }, []);
 
   console.log('user data--------------', userData);
