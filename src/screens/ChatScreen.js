@@ -131,6 +131,15 @@ export default function ChatScreen({route}) {
     );
   };
 
+  const renderInputToolbar = props => {
+    return (
+      <InputToolbar
+        {...props}
+        style={{color: '#000', backgroundColor: 'red'}}
+      />
+    );
+  };
+
   return (
     <GiftedChat
       messages={messages}
@@ -144,8 +153,13 @@ export default function ChatScreen({route}) {
       alwaysShowSend={true}
       renderSend={renderSend}
       scrollToBottom
+      infiniteScroll={true}
       showAvatarForEveryMessage={false}
-      scrollToBottomComponent={scrollToBottomComponent}
+      renderInputToolbar={renderInputToolbar}
+      textInputProps={{
+        color: '#000',
+      }}
+      placeholder="Enter your msg here..."
     />
   );
 }
