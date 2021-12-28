@@ -185,13 +185,13 @@ export default function HomeScreen({navigation, route}) {
       bigText: 'Kien Dz Qua',
     });
 
-    PushNotification.localNotificationSchedule({
-      channelId: 'test-channel',
-      title: 'Alarm',
-      message: 'Test message',
-      date: new Date(Date.now() + 5 * 1000),
-      allowWhileIdle: true,
-    });
+    // PushNotification.localNotificationSchedule({
+    //   channelId: 'test-channel',
+    //   title: 'Alarm',
+    //   message: 'Test message',
+    //   date: new Date(Date.now() + 5 * 1000),
+    //   allowWhileIdle: true,
+    // });
   };
 
   useEffect(() => {
