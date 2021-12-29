@@ -30,11 +30,11 @@ export default function SignupScreen({navigation}) {
 
   const handleSignUp = () => {
     if (!email || !password || !confirmPassword) {
-      alert('Email and password can not be empty!');
+      alert('Email và mật khẩu không được trống!');
     } else if (!validateMail(email)) {
-      alert('Invalid email');
+      alert('Email không hợp lệ');
     } else if (password !== confirmPassword) {
-      alert('Password and ConfirmPassword must be the same');
+      alert('Mật khẩu không trùng khớp');
     } else {
       register(email, password);
     }
@@ -43,7 +43,7 @@ export default function SignupScreen({navigation}) {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <Text style={styles.text}>Create an account</Text>
+        <Text style={styles.text}>Tạo tài khoản</Text>
 
         <FormInput
           labelValue={email}
@@ -53,14 +53,14 @@ export default function SignupScreen({navigation}) {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          isEmailInput={true}
         />
 
         <FormInput
           labelValue={password}
           onChangeText={userPassword => setPassword(userPassword)}
-          placeholderText="Password"
+          placeholderText="Mật khẩu"
           iconType="lock"
-          secureTextEntry={true}
         />
 
         <FormInput
@@ -68,53 +68,57 @@ export default function SignupScreen({navigation}) {
           onChangeText={userConfirmPassword =>
             setConfirmPassword(userConfirmPassword)
           }
-          placeholderText="Confirm Password"
+          placeholderText="Xác nhận mật khẩu"
           iconType="lock"
-          secureTextEntry={true}
         />
 
-        <FormButton buttonTitle="Sign Up" onPress={handleSignUp} />
+        <FormButton buttonTitle="Đăng ký" onPress={handleSignUp} />
 
         <View style={styles.textPrivate}>
           <Text style={styles.color_textPrivate}>
-            By registering, you confirm that you accept our
+            Bằng cách bấm vào nút đăng ký, bạn đã đồng ý với
           </Text>
           <TouchableOpacity
-            onPress={() => {
-              alert('Terms Clicked!');
-            }}>
+          // onPress={() => {
+          //   alert('Terms Clicked!');
+          // }}
+          >
             <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-              Terms of service
+              Điều khoản
             </Text>
           </TouchableOpacity>
-          <Text style={styles.color_textPrivate}> and </Text>
+          <Text style={styles.color_textPrivate}> và </Text>
           <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-            Privacy Policy
+            Chính sách bảo mật
           </Text>
         </View>
 
-        <SocialButton
+        {/* <SocialButton
           buttonTitle="Sign Up with Facebook"
           btnType="facebook"
           color="#4867aa"
           backgroundColor="#e6eaf4"
           onPress={() => {}}
-        />
+        /> */}
 
-        <SocialButton
+        {/* <SocialButton
           buttonTitle="Sign Up with Google"
           btnType="google"
           color="#de4d41"
           backgroundColor="#f5e7ea"
+          containerStyle={{
+            borderWidth: 1,
+            borderColor: '#de4d41',
+          }}
           onPress={() => {}}
-        />
+        /> */}
 
         <TouchableOpacity
           style={styles.navButton}
           onPress={() => {
             navigation.navigate('Login');
           }}>
-          <Text style={styles.navButtonText}>Have an account? Sign In</Text>
+          <Text style={styles.navButtonText}>Đã có tài khoản? Đăng nhập</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

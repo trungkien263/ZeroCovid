@@ -361,8 +361,26 @@ export default function EditProfile() {
             autoCorrect={false}
           />
         </View>
+        <View style={styles.action}>
+          <Feather
+            name="mail"
+            color={GlobalStyle.colors.COLOR_GRAY}
+            style={{marginTop: 3}}
+            size={20}
+          />
+          <TextInput
+            placeholder="Email"
+            keyboardType="email-address"
+            placeholderTextColor="#666"
+            style={[styles.textInput]}
+            value={userData ? userData.email : ''}
+            editable={false}
+            // onChangeText={txt => setUserData({...userData, phone: txt})}
+            autoCorrect={false}
+          />
+        </View>
 
-        <View
+        {/* <View
           style={{
             // marginTop: 10,
             flex: 1,
@@ -410,7 +428,7 @@ export default function EditProfile() {
               {selectedProvince + ' ' + selectedDistrict + ' ' + selectedWard}
             </Text>
           </View>
-        </View>
+        </View> */}
 
         <View style={styles.action}>
           <FontAwesome

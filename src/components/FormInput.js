@@ -1,12 +1,27 @@
-import React from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {windowHeight, windowWidth} from '../utils/Dimentions';
-
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {GlobalStyle} from '../config/globalStyle';
 
-const FormInput = ({labelValue, placeholderText, iconType, ...rest}) => {
+const FormInput = ({
+  labelValue,
+  placeholderText,
+  iconType,
+  containerStyle,
+  isEmailInput = false,
+  ...rest
+}) => {
+  const [isShowPwd, setIsShowPwd] = useState(true);
   return (
-    <View style={[styles.inputContainer, {borderRadius: 10}]}>
+    <View style={[styles.inputContainer, {borderRadius: 10}, containerStyle]}>
       <View style={styles.iconStyle}>
         <AntDesign name={iconType} size={25} color="#666" />
       </View>
@@ -16,8 +31,22 @@ const FormInput = ({labelValue, placeholderText, iconType, ...rest}) => {
         numberOfLines={1}
         placeholder={placeholderText}
         placeholderTextColor="#666"
+        secureTextEntry={isShowPwd ? true : false}
         {...rest}
       />
+      {!isEmailInput && (
+        <TouchableOpacity
+          onPress={() => {
+            setIsShowPwd(!isShowPwd);
+          }}
+          style={{marginRight: 10, padding: 6}}>
+          <FontAwesome5
+            name={!isShowPwd ? 'eye-slash' : 'eye'}
+            size={20}
+            color={GlobalStyle.colors.COLOR_GRAY}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
