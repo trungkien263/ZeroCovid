@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   navButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
     color: '#2e64e5',
     fontFamily: 'Lato-Regular',

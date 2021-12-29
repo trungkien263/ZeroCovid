@@ -31,7 +31,7 @@ const FormInput = ({
         numberOfLines={1}
         placeholder={placeholderText}
         placeholderTextColor="#666"
-        secureTextEntry={isShowPwd ? true : false}
+        secureTextEntry={isShowPwd && !isEmailInput ? true : false}
         {...rest}
       />
       {!isEmailInput && (

@@ -190,7 +190,7 @@ const AppStack = ({navigation}) => {
         name="Home"
         component={FeedStack}
         options={({route}) => ({
-          //   tabBarLabel: 'Home',
+          tabBarLabel: 'Trang chủ',
           // tabBarVisible: route.state && route.state.index === 0,
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons
@@ -205,6 +205,7 @@ const AppStack = ({navigation}) => {
         name="Messages"
         component={MessageStack}
         options={({route}) => ({
+          tabBarLabel: 'Tin nhắn',
           tabBarIcon: ({color, size}) => (
             <Ionicons
               name="chatbox-ellipses-outline"
@@ -218,7 +219,7 @@ const AppStack = ({navigation}) => {
         name="Profile"
         component={ProfileStack}
         options={({route}) => ({
-          //   tabBarLabel: 'Home',
+          tabBarLabel: 'Trang cá nhân',
           tabBarIcon: ({color, size}) => (
             <Ionicons name="person-outline" color={color} size={size} />
           ),
@@ -228,6 +229,7 @@ const AppStack = ({navigation}) => {
         name="Menu"
         component={MenuScreen}
         options={({route}) => ({
+          tabBarLabel: 'Khác',
           tabBarIcon: ({color, size}) => (
             <Ionicons name="menu" color={color} size={size} />
           ),

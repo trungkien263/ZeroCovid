@@ -88,6 +88,61 @@ export default function MessagesScreen() {
     setIsLoading(false);
   }, []);
 
+  const Message = ({item, partnerId}) => {
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Profile', {
+              partnerId: partnerId,
+            });
+          }}>
+          <Image
+            source={{uri: item?.partnerData?.userImg}}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 40,
+              marginBottom: 16,
+            }}
+          />
+        </TouchableOpacity>
+        <View
+          style={{
+            flex: 1,
+            paddingLeft: 16,
+            marginBottom: 14,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Profile', {
+                partnerId: partnerId,
+              });
+            }}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: 6,
+              // backgroundColor: 'red',
+              maxWidth: '35%',
+            }}>
+            <Text style={{marginBottom: 4, fontWeight: '700'}}>
+              {item.partnerData.fname + ' ' + item.partnerData.lname}
+            </Text>
+            <Text>{item.messageTime}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{paddingBottom: 4}}
+            onPress={() => {
+              navigation.push('Chat', {roomInfo: item});
+            }}>
+            <Text>{item.lastMsg}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {isLoading ? (
@@ -97,58 +152,7 @@ export default function MessagesScreen() {
           data={rooms}
           keyExtractor={item => item.roomId}
           renderItem={({item}) => {
-            return (
-              <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('Profile', {
-                      partnerId: partnerId,
-                    });
-                  }}>
-                  <Image
-                    source={{uri: item?.partnerData?.userImg}}
-                    style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: 40,
-                      marginBottom: 16,
-                    }}
-                  />
-                </TouchableOpacity>
-                <View
-                  style={{
-                    flex: 1,
-                    paddingLeft: 16,
-                    marginBottom: 14,
-                  }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate('Profile', {
-                        partnerId: partnerId,
-                      });
-                    }}
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginTop: 6,
-                      // backgroundColor: 'red',
-                      maxWidth: '35%',
-                    }}>
-                    <Text style={{marginBottom: 4, fontWeight: '700'}}>
-                      {item.partnerData.fname + ' ' + item.partnerData.lname}
-                    </Text>
-                    <Text>{item.messageTime}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{paddingBottom: 4}}
-                    onPress={() => {
-                      navigation.push('Chat', {roomInfo: item});
-                    }}>
-                    <Text>{item.lastMsg}</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            );
+            return <Message item={item} partnerId={partnerId} />;
           }}
         />
       )}

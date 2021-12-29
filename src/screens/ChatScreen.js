@@ -159,7 +159,7 @@ export default function ChatScreen({route}) {
       textInputProps={{
         color: '#000',
       }}
-      placeholder="Enter your msg here..."
+      placeholder="Nhập tin nhắn..."
     />
   );
 }
