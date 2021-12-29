@@ -28,35 +28,78 @@ export default function ProfileScreen({navigation, route}) {
   const [refresh, setRefresh] = useState(false);
   const [userData, setUserData] = useState(null);
 
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const postList = [];
+  //       await firestore()
+  //         .collection('posts')
+  //         .where('userId', '==', route.params ? route.params.userId : user.uid)
+  //         .orderBy('createdAt', 'desc')
+  //         .get()
+  //         .then(querySnapshot => {
+  //           querySnapshot.forEach(documentSnapshot => {
+  //             const {post, postImg, createdAt, likes, comments, userId} =
+  //               documentSnapshot.data();
+  //             postList.push({
+  //               createdAt: createdAt,
+  //               post: post,
+  //               like: likes,
+  //               comment: comments,
+  //               avatar: postImg,
+  //               postImg: postImg,
+  //               userId,
+  //               postId: documentSnapshot.id,
+  //             });
+  //           });
+  //         });
+
+  //       setPosts(postList);
+  //     } catch (error) {
+  //       console.log('error', error);
+  //       return null;
+  //     }
+  //   };
+
   const fetchPosts = async () => {
     try {
-      const postList = [];
-      await firestore()
+      let querySnapshot = await firestore()
         .collection('posts')
         .where('userId', '==', route.params ? route.params.userId : user.uid)
         .orderBy('createdAt', 'desc')
         .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            const {post, postImg, createdAt, likes, comments, userId} =
-              documentSnapshot.data();
-            postList.push({
-              createdAt: createdAt,
-              post: post,
-              like: likes,
-              comment: comments,
-              avatar: postImg,
-              postImg: postImg,
-              userId,
-              postId: documentSnapshot.id,
-            });
-          });
+        .catch(err => {
+          console.log(err);
         });
 
-      setPosts(postList);
-    } catch (error) {
-      console.log('error', error);
-      return null;
+      let postsData = [];
+      querySnapshot.forEach(documentSnapshot => {
+        const postInfo = documentSnapshot.data();
+        postsData.push({...postInfo, postId: documentSnapshot.id});
+      });
+
+      const postsDetail = await Promise.all(
+        postsData.map(async el => {
+          const data = await firestore()
+            .collection('users')
+            .where('uid', '==', el?.userId)
+            .get()
+            .catch(err => {
+              console.log('Error while fetch user', err);
+            });
+
+          let tmp = [];
+          data.forEach(documentSnapshot => {
+            tmp.push(documentSnapshot.data());
+          });
+
+          const test = {userData: tmp[0], ...el};
+          return test;
+        }),
+      );
+
+      setPosts(postsDetail);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -69,6 +112,9 @@ export default function ProfileScreen({navigation, route}) {
         if (documentSnapshot.exists) {
           setUserData(documentSnapshot.data());
         }
+      })
+      .catch(err => {
+        console.log(err);
       });
   };
 
@@ -77,7 +123,7 @@ export default function ProfileScreen({navigation, route}) {
     await fetchPosts();
     await getUser();
     setIsLoading(false);
-  }, []);
+  }, [partnerId]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -152,30 +198,40 @@ export default function ProfileScreen({navigation, route}) {
   };
 
   const initChat = async () => {
-    const roomId = user?.uid + partnerId;
+    let roomId = user?.uid + partnerId;
     let isRoomExist = false;
 
     let querySnapshot = await firestore()
       .collection('rooms')
+      .where('members', 'array-contains', userDetails.uid)
       .get()
       .catch(err => {
         console.log(err);
       });
 
+    console.log('==========partnerId', partnerId);
+    let roomData;
     querySnapshot.forEach(documentSnapshot => {
       const room = documentSnapshot.data();
       const members = room.members;
-      if (members[0] + members[1] === roomId) {
+      const rId = members.find(el => el === partnerId);
+      console.log('memberssssssssss', rId + ' - ' + documentSnapshot.id);
+      if (rId !== undefined) {
         isRoomExist = true;
+        roomId = documentSnapshot.id;
+        roomData = room;
       }
     });
+
+    const roomInfo = {partnerData: userData, partnerId, roomId, ...roomData};
+
+    console.log('roomInforoomInfo', roomInfo);
 
     if (isRoomExist) {
       navigation.navigate('Messages', {
         screen: 'Chat',
         params: {
-          partnerInfo: userData,
-          roomId: roomId,
+          roomInfo,
         },
       });
     } else {

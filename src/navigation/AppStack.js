@@ -112,7 +112,14 @@ const FeedStack = ({navigation}) => (
 
 const MessageStack = ({navigation}) => (
   <Stack.Navigator>
-    <Stack.Screen name="Messages" component={MessagesScreen} />
+    <Stack.Screen
+      name="Messages"
+      options={() => ({
+        title: 'Tin nhắn',
+        headerTitleAlign: 'center',
+      })}
+      component={MessagesScreen}
+    />
     <Stack.Screen
       name="Chat"
       component={ChatScreen}
