@@ -154,13 +154,13 @@ export default function AddPostScreen({navigation, route}) {
 
   const data = [
     {
-      text: 'Take Photo',
+      text: 'Chụp ảnh',
       icon: <Icon name="camera" style={styles.actionButtonIcon} />,
       name: 'bt_take_photo',
       position: 2,
     },
     {
-      text: 'Choose Photo',
+      text: 'Chọn ảnh',
       icon: <Icon name="folder-open" style={styles.actionButtonIcon} />,
       name: 'bt_choose_photo',
       position: 1,
@@ -188,7 +188,7 @@ export default function AddPostScreen({navigation, route}) {
 
         <TextInput
           style={[styles.textInput, {color: '#000'}]}
-          placeholder="What's on your mind ?"
+          placeholder="Bạn đang nghĩ gì ?"
           placeholderTextColor={GlobalStyle.colors.COLOR_GRAY}
           //   autoFocus={true}
           keyboardType="default"
@@ -201,12 +201,12 @@ export default function AddPostScreen({navigation, route}) {
         />
         {isEmptyPost && (
           <Text style={{color: 'red', marginTop: 4, fontWeight: '400'}}>
-            Post's content can not be empty!
+            Không được bỏ trống!
           </Text>
         )}
         {isUploading ? (
           <View>
-            <Text>{tranferred} % Completed</Text>
+            <Text>{tranferred} % Hoàn thành</Text>
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         ) : (
@@ -225,7 +225,7 @@ export default function AddPostScreen({navigation, route}) {
                 backgroundColor: GlobalStyle.colors.COLOR_BLUE,
                 opacity: isEmptyPost || post === '' ? 0.8 : 1,
               }}>
-              Post
+              Đăng
             </Text>
           </TouchableOpacity>
         )}

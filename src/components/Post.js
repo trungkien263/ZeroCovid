@@ -147,7 +147,7 @@ export default function Post({item, onDeletePost, userData}) {
           />
           <Text
             style={[styles.featureTxt, {color: GlobalStyle.colors.COLOR_BLUE}]}>
-            {likeCount ? likeCount : ''} Likes
+            {likeCount ? likeCount : ''} Thích
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -164,7 +164,7 @@ export default function Post({item, onDeletePost, userData}) {
             color={GlobalStyle.colors.COLOR_GRAY}
           />
           <Text style={styles.featureTxt}>
-            {commentCount ? commentCount : ''} Comments
+            {commentCount ? commentCount : ''} Bình luận
           </Text>
         </TouchableOpacity>
         {user.uid === item.userId && (

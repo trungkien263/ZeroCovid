@@ -14,20 +14,20 @@ export default function ChatScreen({route}) {
 
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ]);
-  }, []);
+  //   useEffect(() => {
+  //     setMessages([
+  //       {
+  //         _id: 1,
+  //         text: 'Hello developer',
+  //         createdAt: new Date(),
+  //         user: {
+  //           _id: 2,
+  //           name: 'React Native',
+  //           avatar: 'https://placeimg.com/140/140/any',
+  //         },
+  //       },
+  //     ]);
+  //   }, []);
 
   const fetchMessages = async () => {
     await firestore()
@@ -159,7 +159,7 @@ export default function ChatScreen({route}) {
       textInputProps={{
         color: '#000',
       }}
-      placeholder="Enter your msg here..."
+      placeholder="Nhập tin nhắn..."
     />
   );
 }
