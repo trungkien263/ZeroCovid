@@ -42,9 +42,9 @@ export default function LoginScreen({navigation}) {
 
   const handleLogin = () => {
     if (!email || !password) {
-      alert('Email and password can not be empty!');
+      alert('Email và mật khẩu không được bỏ trống!');
     } else if (!validateMail(email)) {
-      alert('Invalid email');
+      alert('Email không hợp lệ');
     } else {
       login(email, password);
     }
@@ -54,7 +54,7 @@ export default function LoginScreen({navigation}) {
     <ScrollView>
       <View style={styles.container}>
         <Image source={require('../assets/login.png')} style={styles.logo} />
-        <Text style={styles.text}>Social App</Text>
+        <Text style={styles.text}>Zero Covid</Text>
         <FormInput
           labelValue={email}
           onChangeText={userEmail => setEmail(userEmail.trim())}
@@ -63,47 +63,60 @@ export default function LoginScreen({navigation}) {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          isEmailInput={true}
         />
 
         <FormInput
           labelValue={password}
           onChangeText={userPassword => setPassword(userPassword.trim())}
-          placeholderText="Password"
+          placeholderText="Mật khẩu"
           iconType="lock"
-          secureTextEntry={true}
         />
 
-        <FormButton buttonTitle="Sign In" onPress={handleLogin} />
+        <FormButton
+          containerStyle={{marginTop: 10}}
+          buttonTitle="Đăng nhập"
+          onPress={handleLogin}
+        />
 
-        <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
-          <Text style={styles.navButtonText}>Fogot Password?</Text>
-        </TouchableOpacity>
-
-        <SocialButton
+        {/* <SocialButton
           buttonTitle="Sign In with Facebook"
           btnType="facebook"
           color="#4867aa"
           backgroundColor="#e6eaf4"
           onPress={() => {}}
-        />
+        /> */}
 
         <SocialButton
-          buttonTitle="Sign In with Google"
+          buttonTitle="Đăng nhập với Google"
           btnType="google"
           color="#de4d41"
           backgroundColor="#f5e7ea"
+          containerStyle={{
+            borderWidth: 1,
+            borderColor: '#de4d41',
+          }}
           onPress={() => googleLogin()}
         />
 
-        <TouchableOpacity
-          style={styles.forgotButton}
-          onPress={() => {
-            navigation.navigate('Signup');
-          }}>
-          <Text style={styles.navButtonText}>
-            Dont have an account? Create here!
-          </Text>
-        </TouchableOpacity>
+        <View style={{marginTop: 30, alignItems: 'center'}}>
+          <TouchableOpacity
+            style={{marginBottom: 10}}
+            onPress={() =>
+              navigation.navigate('ForgotPassword', {mailParams: email})
+            }>
+            <Text style={styles.navButtonText}>Quên mật khẩu?</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Signup');
+            }}>
+            <Text style={styles.navButtonText}>
+              Chưa có tài khoản? Tạo ngay!
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -130,11 +143,8 @@ const styles = StyleSheet.create({
   navButton: {
     marginTop: 15,
   },
-  forgotButton: {
-    marginVertical: 20,
-  },
   navButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
     color: '#2e64e5',
     fontFamily: 'Lato-Regular',

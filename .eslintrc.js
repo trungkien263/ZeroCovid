@@ -5,5 +5,6 @@ module.exports = {
     'prettier/prettier': 0,
     'react-native/no-inline-styles': 0,
     'react-hooks/exhaustive-deps': 0,
+    'no-alert': 0,
   },
 };

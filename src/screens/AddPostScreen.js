@@ -94,7 +94,7 @@ export default function AddPostScreen({navigation, route}) {
           );
           setPost(null);
           setIsRefresh(!isRefresh);
-          navigation.navigate('Zero Covid');
+          navigation.navigate('HomeScreen');
         })
         .catch(err => {
           console.log('Something went wrong!', err);

@@ -20,7 +20,8 @@ import {AuthContext} from '../navigation/AuthProvider';
 
 export default function ProfileScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
-  const {useDetails} = useSelector(state => state.user);
+  const {userDetails} = useSelector(state => state.user);
+  const partnerId = route.params ? route.params.userId : userDetails.uid;
 
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -66,7 +67,6 @@ export default function ProfileScreen({navigation, route}) {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists) {
-          console.log('user data--------------', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       });
@@ -151,6 +151,57 @@ export default function ProfileScreen({navigation, route}) {
       });
   };
 
+  const initChat = async () => {
+    const roomId = user?.uid + partnerId;
+    let isRoomExist = false;
+
+    let querySnapshot = await firestore()
+      .collection('rooms')
+      .get()
+      .catch(err => {
+        console.log(err);
+      });
+
+    querySnapshot.forEach(documentSnapshot => {
+      const room = documentSnapshot.data();
+      const members = room.members;
+      if (members[0] + members[1] === roomId) {
+        isRoomExist = true;
+      }
+    });
+
+    if (isRoomExist) {
+      navigation.navigate('Messages', {
+        screen: 'Chat',
+        params: {
+          partnerInfo: userData,
+          roomId: roomId,
+        },
+      });
+    } else {
+      await firestore()
+        .collection('rooms')
+        .doc(roomId)
+        .set({
+          members: [user.uid, partnerId],
+          roomId: roomId,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          navigation.navigate('Messages', {
+            screen: 'Chat',
+            params: {
+              partnerInfo: userData,
+              roomId: roomId,
+            },
+          });
+        })
+        .catch(err => {
+          console.log('Error while send comment', err);
+        });
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {isLoading ? (
@@ -172,7 +223,7 @@ export default function ProfileScreen({navigation, route}) {
           <Text style={styles.userName}>
             {userData ? userData?.fname + ' ' + userData?.lname : 'Test user'}
           </Text>
-          {route.params ? (
+          {partnerId !== userDetails.uid ? (
             <View
               style={{
                 flex: 1,
@@ -180,7 +231,11 @@ export default function ProfileScreen({navigation, route}) {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-              <TouchableOpacity style={styles.btn}>
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={() => {
+                  initChat();
+                }}>
                 <Text style={styles.textBtn}>Message</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.btn, {marginLeft: 10}]}>

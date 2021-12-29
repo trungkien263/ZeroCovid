@@ -1,12 +1,16 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
-import {Bubble, GiftedChat, Send} from 'react-native-gifted-chat';
+import {Bubble, GiftedChat, InputToolbar, Send} from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useSelector} from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+import moment from 'moment';
 
 export default function ChatScreen({route}) {
-  const {userName} = route.params;
+  const {roomInfo} = route.params;
+  const {userDetails} = useSelector(state => state.user);
 
   const [messages, setMessages] = useState([]);
 
@@ -22,23 +26,62 @@ export default function ChatScreen({route}) {
           avatar: 'https://placeimg.com/140/140/any',
         },
       },
-      {
-        _id: 2,
-        text: 'Hello Kien',
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
     ]);
   }, []);
 
-  const onSend = useCallback((messages = []) => {
+  const fetchMessages = async () => {
+    await firestore()
+      .collection('rooms')
+      .doc(roomInfo.roomId)
+      .collection('messages')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(snapshot => {
+        const msg = snapshot.docs.map(doc => {
+          const data = doc.data();
+          const id = doc.id;
+          const owner =
+            data.ownerId === userDetails.uid
+              ? userDetails
+              : roomInfo.partnerData;
+          return {
+            _id: id,
+            createdAt: data.createdAt.toDate(),
+            text: data.text,
+            user: {
+              _id: data.ownerId,
+              name: owner.lname,
+              avatar: owner.userImg,
+            },
+          };
+        });
+        setMessages(msg);
+      });
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const onSend = useCallback(async (messages = []) => {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
+    const data = {
+      text: messages[0].text,
+      createdAt: firestore.Timestamp.fromDate(new Date()),
+      ownerId: userDetails.uid,
+    };
+    await firestore()
+      .collection('rooms')
+      .doc(roomInfo.roomId)
+      .collection('messages')
+      .add(data)
+      .then(() => {
+        console.log('Send message successfully!');
+      })
+      .catch(err => {
+        console.log('Error while send msg', err);
+      });
   }, []);
 
   const renderSend = props => {
@@ -88,18 +131,35 @@ export default function ChatScreen({route}) {
     );
   };
 
+  const renderInputToolbar = props => {
+    return (
+      <InputToolbar
+        {...props}
+        style={{color: '#000', backgroundColor: 'red'}}
+      />
+    );
+  };
+
   return (
     <GiftedChat
       messages={messages}
       onSend={messages => onSend(messages)}
       user={{
-        _id: 1,
+        _id: userDetails?.uid,
+        name: userDetails?.lname,
+        avatar: userDetails?.userImg,
       }}
       renderBubble={renderBubble}
       alwaysShowSend={true}
       renderSend={renderSend}
       scrollToBottom
-      scrollToBottomComponent={scrollToBottomComponent}
+      infiniteScroll={true}
+      showAvatarForEveryMessage={false}
+      renderInputToolbar={renderInputToolbar}
+      textInputProps={{
+        color: '#000',
+      }}
+      placeholder="Enter your msg here..."
     />
   );
 }

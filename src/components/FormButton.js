@@ -2,10 +2,10 @@ import React from 'react';
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {windowHeight} from '../utils/Dimentions';
 
-const FormButton = ({buttonTitle, ...rest}) => {
+const FormButton = ({buttonTitle, style, titleStyle, ...rest}) => {
   return (
-    <TouchableOpacity style={styles.buttonContainer} {...rest}>
-      <Text style={styles.buttonText}>{buttonTitle}</Text>
+    <TouchableOpacity style={[styles.buttonContainer, style]} {...rest}>
+      <Text style={[styles.buttonText, titleStyle]}>{buttonTitle}</Text>
     </TouchableOpacity>
   );
 };

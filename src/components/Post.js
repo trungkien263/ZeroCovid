@@ -29,7 +29,6 @@ export default function Post({item, onDeletePost, userData}) {
         }
         snapshot.docs.map(doc => {
           const data = doc.data();
-          console.log('-------like count', snapshot.docs.length);
           if (data.creator === user.uid) {
             setIsLiked(true);
             return;

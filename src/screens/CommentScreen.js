@@ -48,7 +48,6 @@ export default function CommentScreen({route, navigation}) {
       .onSnapshot(snapshot => {
         const cmt = snapshot.docs.map(doc => {
           const data = doc.data();
-          console.log('dataaaaaaaaaaaa', data);
           const id = doc.id;
           const ownerCmt = allUsers.find(el => el.uid === data?.creator);
           const cmtTimestamp = data.createdAt;

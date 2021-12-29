@@ -6,6 +6,7 @@ import {
   ScrollView,
   Alert,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import FormButton from '../components/FormButton';
 import {AuthContext} from '../navigation/AuthProvider';
@@ -15,6 +16,8 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import HomeSkeleton from '../components/Skeleton/HomeSkeleton';
+
+import PushNotification from 'react-native-push-notification';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -167,6 +170,34 @@ export default function HomeScreen({navigation, route}) {
     }, 1000);
   }, []);
 
+  const createChannels = () => {
+    PushNotification.createChannel({
+      channelId: 'test-channel',
+      channelName: 'test-channel',
+    });
+  };
+
+  const handleNotification = () => {
+    PushNotification.localNotification({
+      channelId: 'test-channel',
+      title: 'Test title',
+      message: 'Test message',
+      bigText: 'Kien Dz Qua',
+    });
+
+    // PushNotification.localNotificationSchedule({
+    //   channelId: 'test-channel',
+    //   title: 'Alarm',
+    //   message: 'Test message',
+    //   date: new Date(Date.now() + 5 * 1000),
+    //   allowWhileIdle: true,
+    // });
+  };
+
+  useEffect(() => {
+    createChannels();
+  }, []);
+
   return isLoading ? (
     <ScrollView>
       <HomeSkeleton />
@@ -177,6 +208,13 @@ export default function HomeScreen({navigation, route}) {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
+      <TouchableOpacity
+        style={{padding: 10, backgroundColor: 'orange'}}
+        onPress={() => {
+          handleNotification();
+        }}>
+        <Text>TEST LOCAL NOTIFICATION</Text>
+      </TouchableOpacity>
       {posts.map((item, index) => {
         return (
           <Post

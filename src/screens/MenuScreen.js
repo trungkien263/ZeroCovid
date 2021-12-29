@@ -56,15 +56,15 @@ export default function MenuScreen() {
   const covidData = [
     {
       title: 'Total Confirmed',
-      data: isTotalWorld ? covidCases.TotalConfirmed : covidCases.Confirmed,
+      data: isTotalWorld ? covidCases?.TotalConfirmed : covidCases?.Confirmed,
     },
     {
       title: 'Total Recovered',
-      data: isTotalWorld ? covidCases.TotalRecovered : covidCases.Recovered,
+      data: isTotalWorld ? covidCases?.TotalRecovered : covidCases?.Recovered,
     },
     {
       title: 'Total Deaths',
-      data: isTotalWorld ? covidCases.TotalDeaths : covidCases.Deaths,
+      data: isTotalWorld ? covidCases?.TotalDeaths : covidCases?.Deaths,
     },
   ];
 
