@@ -27,6 +27,8 @@ import {
   actFetchAllUsersRequest,
 } from '../actions';
 
+import messaging from '@react-native-firebase/messaging';
+
 export default function HomeScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
   const dispatch = useDispatch();
@@ -199,6 +201,30 @@ export default function HomeScreen({navigation, route}) {
 
   useEffect(() => {
     createChannels();
+  }, []);
+
+  // Request permission for iOS only
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  useEffect(async () => {
+    // await requestUserPermission();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
   }, []);
 
   return isLoading ? (

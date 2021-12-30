@@ -14,6 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import MessageSkeleton from '../components/Skeleton/MessageSkeleton';
 import {useIsFocused} from '@react-navigation/native';
+import moment from 'moment';
 
 export default function MessagesScreen() {
   const navigation = useNavigation();
@@ -27,14 +28,16 @@ export default function MessagesScreen() {
 
   useEffect(async () => {
     setIsLoading(true);
-    await fetchRooms();
+    const data = await fetchRooms();
     setIsLoading(false);
+    return data;
   }, []);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    await fetchRooms();
+    const data = await fetchRooms();
     setRefreshing(false);
+    return data;
   }, []);
 
   const fetchRooms = async () => {
@@ -75,7 +78,6 @@ export default function MessagesScreen() {
           const test = {
             partnerData: tmp[0],
             ...el,
-            lastMsg: 'This is a test msg',
           };
           return test;
         }),
@@ -124,19 +126,22 @@ export default function MessagesScreen() {
               justifyContent: 'space-between',
               marginTop: 6,
               // backgroundColor: 'red',
-              maxWidth: '35%',
+              //   maxWidth: '35%',
             }}>
             <Text style={{marginBottom: 4, fontWeight: '700'}}>
               {item.partnerData.fname + ' ' + item.partnerData.lname}
             </Text>
-            <Text>{item.messageTime}</Text>
+            <Text>{moment(item.lastMsg.createdAt.toDate()).fromNow()}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{paddingBottom: 4}}
             onPress={() => {
               navigation.push('Chat', {roomInfo: item});
             }}>
-            <Text>{item.lastMsg}</Text>
+            <Text style={{fontSize: 12}}>
+              {item.lastMsg.creator === userDetails.uid ? 'Bạn: ' : ''}
+              {item.lastMsg.message}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -152,6 +157,7 @@ export default function MessagesScreen() {
           data={rooms}
           keyExtractor={item => item.roomId}
           renderItem={({item}) => {
+            console.log('itemmmmm', item);
             return <Message item={item} partnerId={partnerId} />;
           }}
           refreshControl={

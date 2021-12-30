@@ -83,6 +83,26 @@ export default function ChatScreen({route}) {
       .catch(err => {
         console.log('Error while send msg', err);
       });
+
+    await firestore()
+      .collection('rooms')
+      .doc(roomInfo.roomId)
+      .set({
+        createdAt: roomInfo.createdAt,
+        members: roomInfo.members,
+        roomId: roomInfo.roomId,
+        lastMsg: {
+          message: messages[0].text,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+          creator: userDetails.uid,
+        },
+      })
+      .then(() => {
+        console.log('Update last message successfully!');
+      })
+      .catch(err => {
+        console.log('Error while update last msg', err);
+      });
   }, []);
 
   const renderSend = props => {
