@@ -109,18 +109,16 @@ export default function MessagesScreen() {
             }}
           />
         </TouchableOpacity>
-        <View
+        <TouchableOpacity
+          onPress={() => {
+            navigation.push('Chat', {roomInfo: item});
+          }}
           style={{
             flex: 1,
             paddingLeft: 16,
             marginBottom: 14,
           }}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Profile', {
-                partnerId: partnerId,
-              });
-            }}
+          <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -128,22 +126,20 @@ export default function MessagesScreen() {
               // backgroundColor: 'red',
               //   maxWidth: '35%',
             }}>
-            <Text style={{marginBottom: 4, fontWeight: '700'}}>
-              {item.partnerData.fname + ' ' + item.partnerData.lname}
-            </Text>
-            <Text>{moment(item.lastMsg.createdAt.toDate()).fromNow()}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{paddingBottom: 4}}
-            onPress={() => {
-              navigation.push('Chat', {roomInfo: item});
-            }}>
+            <View>
+              <Text style={{marginBottom: 4, fontWeight: '700'}}>
+                {item.partnerData.fname + ' ' + item.partnerData.lname}
+              </Text>
+            </View>
+            <Text>{moment(item?.lastMsg.createdAt.toDate()).fromNow()}</Text>
+          </View>
+          <View style={{paddingBottom: 4}}>
             <Text style={{fontSize: 12}}>
-              {item.lastMsg.creator === userDetails.uid ? 'Bạn: ' : ''}
-              {item.lastMsg.message}
+              {item?.lastMsg.creator === userDetails.uid ? 'Bạn: ' : ''}
+              {item?.lastMsg.message}
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   };
