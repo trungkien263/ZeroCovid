@@ -94,7 +94,7 @@ export default function MessagesScreen() {
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('Profile', {
-              partnerId: partnerId,
+              userId: partnerId,
             });
           }}>
           <Image

@@ -100,8 +100,13 @@ export default function HomeScreen({navigation, route}) {
 
   useEffect(async () => {
     setIsLoading(true);
-    await fetchPosts();
+    const data = await fetchPosts();
     setIsLoading(false);
+
+    return () => {
+      setPosts([]);
+      data;
+    };
   }, [refresh]);
 
   useFocusEffect(
@@ -150,10 +155,7 @@ export default function HomeScreen({navigation, route}) {
       .doc(postId)
       .delete()
       .then(() => {
-        Alert.alert(
-          'Post deleted!',
-          'Your post has been deleted Successfully!',
-        );
+        Alert.alert('Đã xóa bài viết!', 'Bài viết đã được xóa thành công!');
       })
       .catch(err => {
         console.log('Error while delete the post', err);
@@ -164,10 +166,11 @@ export default function HomeScreen({navigation, route}) {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchPosts();
+    const data = fetchPosts();
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
+    return data;
   }, []);
 
   const createChannels = () => {
