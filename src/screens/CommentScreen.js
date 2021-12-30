@@ -34,9 +34,11 @@ export default function CommentScreen({route, navigation}) {
   const [toggleAnswer, setToggleAnswer] = useState(false);
 
   useEffect(() => {
+    let data;
     if (postIdParam !== postId) {
-      fetchComment();
+      data = fetchComment();
     }
+    return data;
   }, []);
 
   const fetchComment = () => {

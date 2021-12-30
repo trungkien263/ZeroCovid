@@ -59,7 +59,8 @@ export default function ChatScreen({route}) {
   };
 
   useEffect(() => {
-    fetchMessages();
+    const data = fetchMessages();
+    return data;
   }, []);
 
   const onSend = useCallback(async (messages = []) => {

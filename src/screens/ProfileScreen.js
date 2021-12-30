@@ -28,38 +28,6 @@ export default function ProfileScreen({navigation, route}) {
   const [refresh, setRefresh] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  //   const fetchPosts = async () => {
-  //     try {
-  //       const postList = [];
-  //       await firestore()
-  //         .collection('posts')
-  //         .where('userId', '==', route.params ? route.params.userId : user.uid)
-  //         .orderBy('createdAt', 'desc')
-  //         .get()
-  //         .then(querySnapshot => {
-  //           querySnapshot.forEach(documentSnapshot => {
-  //             const {post, postImg, createdAt, likes, comments, userId} =
-  //               documentSnapshot.data();
-  //             postList.push({
-  //               createdAt: createdAt,
-  //               post: post,
-  //               like: likes,
-  //               comment: comments,
-  //               avatar: postImg,
-  //               postImg: postImg,
-  //               userId,
-  //               postId: documentSnapshot.id,
-  //             });
-  //           });
-  //         });
-
-  //       setPosts(postList);
-  //     } catch (error) {
-  //       console.log('error', error);
-  //       return null;
-  //     }
-  //   };
-
   const fetchPosts = async () => {
     try {
       let querySnapshot = await firestore()
@@ -292,7 +260,7 @@ export default function ProfileScreen({navigation, route}) {
                 onPress={() => {
                   initChat();
                 }}>
-                <Text style={styles.textBtn}>Message</Text>
+                <Text style={styles.textBtn}>Nhắn tin</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.btn, {marginLeft: 10}]}>
                 <Text style={styles.textBtn}>Follow</Text>
@@ -311,13 +279,8 @@ export default function ProfileScreen({navigation, route}) {
                 onPress={() => {
                   navigation.navigate('EditProfile');
                 }}>
-                <Text style={styles.textBtn}>Edit Profile</Text>
+                <Text style={styles.textBtn}>Chỉnh sửa trang cá nhân</Text>
               </TouchableOpacity>
-              {/* <TouchableOpacity
-                style={[styles.btn, {marginLeft: 10}]}
-                onPress={logout}>
-                <Text style={styles.textBtn}>Logout</Text>
-              </TouchableOpacity> */}
             </View>
           )}
 
@@ -339,7 +302,12 @@ export default function ProfileScreen({navigation, route}) {
           <View style={styles.postArea}>
             {posts.map((item, index) => {
               return (
-                <Post key={index} item={item} onDeletePost={handleDelete} />
+                <Post
+                  key={index}
+                  userData={item.userData}
+                  item={item}
+                  onDeletePost={handleDelete}
+                />
               );
             })}
           </View>
