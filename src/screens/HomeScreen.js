@@ -237,13 +237,13 @@ export default function HomeScreen({navigation, route}) {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{padding: 10, backgroundColor: 'orange'}}
         onPress={() => {
           handleNotification();
         }}>
         <Text>TEST LOCAL NOTIFICATION</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {posts.map((item, index) => {
         return (
           <Post

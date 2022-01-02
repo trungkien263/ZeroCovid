@@ -173,7 +173,7 @@ const ProfileStack = ({navigation}) => (
       name="EditProfile"
       component={EditProfileScreen}
       options={{
-        headerTitle: 'Edit Profile',
+        headerTitle: 'Chỉnh sửa trang cá nhân',
         headerBackTitleVisible: false,
         headerTitleAlign: 'center',
         headerStyle: {

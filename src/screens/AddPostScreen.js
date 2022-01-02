@@ -21,13 +21,25 @@ import {AuthContext} from '../navigation/AuthProvider';
 
 export default function AddPostScreen({navigation, route}) {
   const {user} = useContext(AuthContext);
-  const [image, setImage] = useState(null);
+  const item = route?.params?.item;
+  const [image, setImage] = useState(item ? item?.postImg : null);
   //   const reference = storage().ref('black-t-shirt-sm.png');
   const [isUploading, setIsUploading] = useState(false);
   const [tranferred, setTranferred] = useState(0);
-  const [post, setPost] = useState('');
+  const [post, setPost] = useState(item ? item?.post : '');
   const [isRefresh, setIsRefresh] = useState(false);
   const [isEmptyPost, setIsEmptyPost] = useState(false);
+  const [isUpdateYet, setIsUpdateYet] = useState(false);
+
+  useEffect(() => {
+    if (item) {
+      if (item?.post === post && item?.postImg === image) {
+        setIsUpdateYet(false);
+      } else {
+        setIsUpdateYet(true);
+      }
+    }
+  }, [post, image]);
 
   useEffect(() => {
     if (post !== '') {
@@ -71,6 +83,55 @@ export default function AddPostScreen({navigation, route}) {
       });
   };
 
+  const addPost = imageUrl => {
+    firestore()
+      .collection('posts')
+      .add({
+        userId: user.uid,
+        post: post,
+        postImg: imageUrl,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        console.log('Post added!');
+        Alert.alert(
+          'Đã thêm bài viết!',
+          'Bài viết của bạn đã được thêm thành công!',
+        );
+        setPost(null);
+        setIsRefresh(!isRefresh);
+        navigation.navigate('HomeScreen');
+      })
+      .catch(err => {
+        console.log('Something went wrong!', err);
+      });
+  };
+
+  const updatePost = imageUrl => {
+    firestore()
+      .collection('posts')
+      .doc(item?.postId)
+      .update({
+        userId: user.uid,
+        post: post,
+        postImg: imageUrl,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        console.log('Post updated!');
+        Alert.alert(
+          'Cập nhật thành công!',
+          'Bài viết của bạn đã được cập nhật!',
+        );
+        setPost(null);
+        setIsRefresh(!isRefresh);
+        navigation.navigate('HomeScreen');
+      })
+      .catch(err => {
+        console.log('Something went wrong!', err);
+      });
+  };
+
   const submitPost = async () => {
     if (post === '') {
       setIsEmptyPost(true);
@@ -78,27 +139,7 @@ export default function AddPostScreen({navigation, route}) {
       const imageUrl = await uploadImage();
       console.log('-------------------image url', imageUrl);
 
-      firestore()
-        .collection('posts')
-        .add({
-          userId: user.uid,
-          post: post,
-          postImg: imageUrl,
-          createdAt: firestore.Timestamp.fromDate(new Date()),
-        })
-        .then(() => {
-          console.log('Post added!');
-          Alert.alert(
-            'Post published!',
-            'Your post has been published to the Firebase Cloud Storage Successfully!',
-          );
-          setPost(null);
-          setIsRefresh(!isRefresh);
-          navigation.navigate('HomeScreen');
-        })
-        .catch(err => {
-          console.log('Something went wrong!', err);
-        });
+      item ? updatePost(imageUrl) : addPost(imageUrl);
     }
   };
 
@@ -211,7 +252,7 @@ export default function AddPostScreen({navigation, route}) {
           </View>
         ) : (
           <TouchableOpacity
-            disabled={isEmptyPost || post === ''}
+            disabled={isEmptyPost || !isUpdateYet}
             onPress={submitPost}>
             <Text
               style={{
@@ -223,9 +264,9 @@ export default function AddPostScreen({navigation, route}) {
                 marginTop: 16,
                 borderRadius: 10,
                 backgroundColor: GlobalStyle.colors.COLOR_BLUE,
-                opacity: isEmptyPost || post === '' ? 0.8 : 1,
+                opacity: isEmptyPost || !isUpdateYet ? 0.8 : 1,
               }}>
-              Đăng
+              {item ? 'Cập nhật' : 'Đăng'}
             </Text>
           </TouchableOpacity>
         )}

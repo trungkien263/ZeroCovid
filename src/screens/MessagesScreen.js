@@ -131,13 +131,28 @@ export default function MessagesScreen() {
                 {item.partnerData.fname + ' ' + item.partnerData.lname}
               </Text>
             </View>
-            <Text>{moment(item?.lastMsg.createdAt.toDate()).fromNow()}</Text>
+            <Text>
+              {moment(
+                item?.lastMsg
+                  ? item?.lastMsg.createdAt.toDate()
+                  : item?.createdAt.toDate(),
+              ).fromNow()}
+            </Text>
           </View>
           <View style={{paddingBottom: 4}}>
-            <Text style={{fontSize: 12}}>
-              {item?.lastMsg.creator === userDetails.uid ? 'Bạn: ' : ''}
-              {item?.lastMsg.message}
-            </Text>
+            {item?.lastMsg ? (
+              <Text style={{fontSize: 12}}>
+                {item?.lastMsg.creator === userDetails.uid ? 'Bạn: ' : ''}
+                {item?.lastMsg.message}
+              </Text>
+            ) : (
+              <Text style={{fontSize: 12}}>
+                {'Gửi tin nhắn đầu tiên cho ' +
+                  item.partnerData.fname +
+                  ' ' +
+                  item.partnerData.lname}
+              </Text>
+            )}
           </View>
         </TouchableOpacity>
       </View>

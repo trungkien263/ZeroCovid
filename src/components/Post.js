@@ -16,6 +16,7 @@ export default function Post({item, onDeletePost, userData}) {
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
   let isRendered = useRef(false);
+  const [isDisplay, setIsDisplay] = useState(false);
 
   useEffect(async () => {
     isRendered = true;
@@ -87,35 +88,69 @@ export default function Post({item, onDeletePost, userData}) {
     });
   };
 
+  useEffect(() => {
+    if (isDisplay) {
+      setTimeout(() => {
+        setIsDisplay(false);
+      }, 2500);
+    }
+  }, [isDisplay]);
+
   return (
-    <View style={styles.container}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('HomeProfile', {
-              userId: item?.userId,
-            });
-          }}>
-          <Image
-            source={{
-              uri:
-                (userData && userData?.userImg) ||
-                'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
-            }}
-            style={{
-              width: 60,
-              height: 60,
-              borderRadius: 40,
-            }}
-            resizeMode="cover"
-          />
-        </TouchableOpacity>
-        <View style={{paddingLeft: 10}}>
-          <Text style={{fontWeight: '700'}}>
-            {userData?.fname + ' ' + userData?.lname}
-          </Text>
-          <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
+    <View style={[styles.container, {position: 'relative'}]}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('HomeProfile', {
+                userId: item?.userId,
+              });
+            }}>
+            <Image
+              source={{
+                uri:
+                  (userData && userData?.userImg) ||
+                  'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
+              }}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 40,
+              }}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+          <View style={{paddingLeft: 10}}>
+            <Text style={{fontWeight: '700'}}>
+              {userData?.fname + ' ' + userData?.lname}
+            </Text>
+            <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
+          </View>
         </View>
+        {user.uid === item.userId && (
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              paddingVertical: 2,
+              paddingHorizontal: 8,
+            }}
+            onPress={() => {
+              setIsDisplay(!isDisplay);
+            }}>
+            <FontAwesome
+              name="ellipsis-v"
+              size={20}
+              color={GlobalStyle.colors.COLOR_GRAY}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       {item.post && <Text style={{paddingVertical: 16}}>{item?.post}</Text>}
       {item.postImg && (
@@ -167,16 +202,51 @@ export default function Post({item, onDeletePost, userData}) {
             {commentCount ? commentCount : ''} Bình luận
           </Text>
         </TouchableOpacity>
-        {user.uid === item.userId && (
-          <TouchableOpacity onPress={() => onDeletePost(item.postId)}>
-            <FontAwesome
-              name="trash-o"
-              size={25}
-              color={GlobalStyle.colors.COLOR_GRAY}
-            />
-          </TouchableOpacity>
-        )}
       </View>
+      {isDisplay && user.uid === item.userId && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 16,
+            right: 38,
+            borderRadius: 10,
+            paddingVertical: 6,
+            paddingHorizontal: 16,
+            backgroundColor: '#fff',
+          }}>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('AddPost', {item: item});
+              }}>
+              <View style={{flexDirection: 'row'}}>
+                <FontAwesome
+                  name="edit"
+                  size={20}
+                  color={GlobalStyle.colors.COLOR_GRAY}
+                />
+                <Text style={{marginLeft: 10, fontWeight: '700', fontSize: 12}}>
+                  Chỉnh sửa
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => onDeletePost(item.postId)}
+              style={{marginTop: 10}}>
+              <View style={{flexDirection: 'row'}}>
+                <FontAwesome
+                  name="trash-o"
+                  size={20}
+                  color={GlobalStyle.colors.COLOR_GRAY}
+                />
+                <Text style={{marginLeft: 10, fontWeight: '700', fontSize: 12}}>
+                  Xóa
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }

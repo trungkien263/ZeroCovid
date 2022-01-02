@@ -248,7 +248,7 @@ export default function CommentScreen({route, navigation}) {
           }}>
           <View style={{flex: 1, marginRight: 10}}>
             <TextInput
-              placeholder="Enter your comment here..."
+              placeholder="Nhập bình luận của bạn..."
               placeholderTextColor={GlobalStyle.colors.COLOR_GRAY}
               style={{
                 backgroundColor: GlobalStyle.colors.COLOR_SILVER,
