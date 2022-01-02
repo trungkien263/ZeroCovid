@@ -87,9 +87,9 @@ export default function HomeScreen({navigation, route}) {
   };
 
   const handleDelete = postId => {
-    Alert.alert('Delete post', 'Are you sure?', [
+    Alert.alert('Xóa bài viết', 'Bạn có chắc chắn muốn xóa bài viết?', [
       {
-        text: 'Cancel',
+        text: 'Hủy bỏ',
         onPress: () => console.log('canceled!'),
         style: 'cancel',
       },

@@ -32,6 +32,8 @@ export default function CommentScreen({route, navigation}) {
   const [postId, setPostId] = useState('');
   const [content, setContent] = useState('');
   const [toggleAnswer, setToggleAnswer] = useState(false);
+  const [isEditting, setIsEditting] = useState(false);
+  const [currentCmtId, setCurrentCmtId] = useState('');
 
   useEffect(() => {
     let data;
@@ -80,9 +82,9 @@ export default function CommentScreen({route, navigation}) {
   };
 
   const handleDelete = cmtId => {
-    Alert.alert('Delete comment', 'Are you sure?', [
+    Alert.alert('Xóa bình luận', 'Bạn chắc chắn muốn xóa bình luận này?', [
       {
-        text: 'Cancel',
+        text: 'Hủy bỏ',
         onPress: () => console.log('canceled!'),
         style: 'cancel',
       },
@@ -102,8 +104,8 @@ export default function CommentScreen({route, navigation}) {
       .delete()
       .then(() => {
         Alert.alert(
-          'Comment deleted!',
-          'Your comment has been deleted Successfully!',
+          'Đã xóa bình luận!',
+          'Bình luận của bạn đã được xóa thành công!',
         );
       })
       .catch(err => {
@@ -111,123 +113,30 @@ export default function CommentScreen({route, navigation}) {
       });
   };
 
-  const CmtItem = ({item}) => {
-    return (
-      <View style={{marginBottom: 10}}>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
-            style={{marginRight: 10}}
-            onPress={() => {
-              navigation.navigate('HomeProfile', {
-                userId: item.creator,
-              });
-            }}>
-            <Image
-              source={{
-                uri:
-                  (item && item?.userImg) ||
-                  'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
-              }}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 40,
-              }}
-            />
-          </TouchableOpacity>
-          <View style={{flex: 1}}>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: GlobalStyle.colors.COLOR_SILVER,
-                paddingHorizontal: 16,
-                paddingVertical: 6,
-                borderRadius: 10,
-              }}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '700',
-                  marginBottom: 4,
-                }}>
-                {item?.fname + ' ' + item?.lname}
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text style={{maxWidth: '90%'}}>{item.content}</Text>
-                {item?.creator === user.uid && (
-                  <TouchableOpacity onPress={() => handleDelete(item.id)}>
-                    <FontAwesome
-                      name="trash-o"
-                      size={25}
-                      color={GlobalStyle.colors.COLOR_GRAY}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginVertical: 4,
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <TouchableOpacity>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: GlobalStyle.colors.COLOR_BLUE,
-                    }}>
-                    Like
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{marginLeft: 20}}
-                  onPress={() => {
-                    setToggleAnswer(!toggleAnswer);
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: GlobalStyle.colors.COLOR_BLUE,
-                    }}>
-                    Answer
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <Text style={{fontSize: 12}}>
-                {moment(item?.cmtTimestamp.toDate()).fromNow()}
-              </Text>
-            </View>
-            {toggleAnswer && (
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: GlobalStyle.colors.COLOR_SILVER,
-                  borderRadius: 10,
-                  padding: 16,
-                }}>
-                <Text>KKKKKKKKKK</Text>
-                <Text>KKKKKKKKKK</Text>
-                <Text>KKKKKKKKKK</Text>
-                <Text>KKKKKKKKKK</Text>
-                <Text>KKKKKKKKKK</Text>
-                <Text>KKKKKKKKKK</Text>
-                <Text>KKKKKKKKKK</Text>
-              </View>
-            )}
-          </View>
-        </View>
-      </View>
-    );
+  const sendEditedCmt = async () => {
+    await firestore()
+      .collection('posts')
+      .doc(postIdParam)
+      .collection('comments')
+      .doc(currentCmtId)
+      .update({
+        content: content,
+        creator: user.uid,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        setContent('');
+        Keyboard.dismiss();
+      })
+      .catch(err => {
+        console.log('Error while send comment', err);
+      });
+  };
+
+  const handleEditCmt = async (cmtId, cmtContent) => {
+    setContent(cmtContent);
+    setCurrentCmtId(cmtId);
+    setIsEditting(true);
   };
 
   return (
@@ -236,7 +145,14 @@ export default function CommentScreen({route, navigation}) {
         <FlatList
           data={comments}
           renderItem={({item}) => {
-            return <CmtItem item={item} />;
+            return (
+              <CommentItem
+                item={item}
+                onEditCmt={handleEditCmt}
+                onDeleteCmt={handleDelete}
+                user={user}
+              />
+            );
           }}
         />
         <View
@@ -264,7 +180,7 @@ export default function CommentScreen({route, navigation}) {
           </View>
           <TouchableOpacity
             onPress={() => {
-              handleSendComment();
+              isEditting ? sendEditedCmt() : handleSendComment();
             }}
             disabled={content === ''}
             style={{

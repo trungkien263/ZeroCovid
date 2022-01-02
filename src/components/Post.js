@@ -16,7 +16,7 @@ export default function Post({item, onDeletePost, userData}) {
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
   let isRendered = useRef(false);
-  const [isDisplay, setIsDisplay] = useState(false);
+  const [isDisplayOption, setIsDisplayOption] = useState(false);
 
   useEffect(async () => {
     isRendered = true;
@@ -89,12 +89,12 @@ export default function Post({item, onDeletePost, userData}) {
   };
 
   useEffect(() => {
-    if (isDisplay) {
+    if (isDisplayOption) {
       setTimeout(() => {
-        setIsDisplay(false);
+        setIsDisplayOption(false);
       }, 2500);
     }
-  }, [isDisplay]);
+  }, [isDisplayOption]);
 
   return (
     <View style={[styles.container, {position: 'relative'}]}>
@@ -142,7 +142,7 @@ export default function Post({item, onDeletePost, userData}) {
               paddingHorizontal: 8,
             }}
             onPress={() => {
-              setIsDisplay(!isDisplay);
+              setIsDisplayOption(!isDisplayOption);
             }}>
             <FontAwesome
               name="ellipsis-v"
@@ -203,7 +203,7 @@ export default function Post({item, onDeletePost, userData}) {
           </Text>
         </TouchableOpacity>
       </View>
-      {isDisplay && user.uid === item.userId && (
+      {isDisplayOption && user.uid === item.userId && (
         <View
           style={{
             position: 'absolute',
