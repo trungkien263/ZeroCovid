@@ -53,7 +53,7 @@ export default function LoginScreen({navigation}) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Image source={require('../assets/login.png')} style={styles.logo} />
+        <Image source={require('../assets/logo.jpg')} style={styles.logo} />
         <Text style={styles.text}>Zero Covid</Text>
         <FormInput
           labelValue={email}
@@ -130,9 +130,10 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   logo: {
-    height: 150,
-    width: 150,
+    height: 220,
+    width: 220,
     resizeMode: 'cover',
+    borderRadius: 200,
   },
   text: {
     fontFamily: 'Kufam-SemiBoldItalic',

@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -43,6 +44,11 @@ export default function SignupScreen({navigation}) {
   return (
     <View style={styles.container}>
       <ScrollView>
+        <Image
+          source={require('../assets/register.png')}
+          style={{width: 240, height: 240, alignSelf: 'center'}}
+        />
+
         <Text style={styles.text}>Tạo tài khoản</Text>
 
         <FormInput
@@ -138,6 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     marginBottom: 10,
     color: '#051d5f',
+    textAlign: 'center',
   },
   navButton: {
     marginTop: 15,
