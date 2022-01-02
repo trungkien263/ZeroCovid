@@ -36,6 +36,12 @@ export default function MenuScreen() {
       },
     },
     {
+      title: 'Đổi mật khẩu',
+      action: () => {
+        alert('SOS Clicked !');
+      },
+    },
+    {
       title: 'Đăng xuất',
       action: () => {
         Alert.alert('Sign out!', 'Are you sure?', [

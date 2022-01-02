@@ -68,9 +68,9 @@ export default function EditProfile() {
     if (selectedProvince.length > 0) {
       try {
         const province = provinces.find(el => el.Id === selectedProvince);
-        await setDistrictList(province.Districts);
-        console.log('++++++districtList[0]:', districtList[0].Wards);
-        const district = districtList[0].Wards;
+        await setDistrictList(province?.Districts);
+        console.log('++++++districtList[0]:', districtList[0]?.Wards);
+        const district = districtList[0]?.Wards;
         setWardList(district);
       } catch (err) {
         console.log(err);
@@ -451,7 +451,7 @@ export default function EditProfile() {
         </View>
       </ScrollView>
       <View>
-        <FormButton buttonTitle="Submit" onPress={handleUpdate} />
+        <FormButton buttonTitle="Cập nhật" onPress={handleUpdate} />
       </View>
     </View>
   );

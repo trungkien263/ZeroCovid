@@ -27,6 +27,8 @@ import {
   actFetchAllUsersRequest,
 } from '../actions';
 
+import messaging from '@react-native-firebase/messaging';
+
 export default function HomeScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
   const dispatch = useDispatch();
@@ -85,9 +87,9 @@ export default function HomeScreen({navigation, route}) {
   };
 
   const handleDelete = postId => {
-    Alert.alert('Delete post', 'Are you sure?', [
+    Alert.alert('Xóa bài viết', 'Bạn có chắc chắn muốn xóa bài viết?', [
       {
-        text: 'Cancel',
+        text: 'Hủy bỏ',
         onPress: () => console.log('canceled!'),
         style: 'cancel',
       },
@@ -201,6 +203,30 @@ export default function HomeScreen({navigation, route}) {
     createChannels();
   }, []);
 
+  // Request permission for iOS only
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  useEffect(async () => {
+    // await requestUserPermission();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }, []);
+
   return isLoading ? (
     <ScrollView>
       <HomeSkeleton />
@@ -211,13 +237,13 @@ export default function HomeScreen({navigation, route}) {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{padding: 10, backgroundColor: 'orange'}}
         onPress={() => {
           handleNotification();
         }}>
         <Text>TEST LOCAL NOTIFICATION</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {posts.map((item, index) => {
         return (
           <Post

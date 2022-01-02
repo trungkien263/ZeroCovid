@@ -1,15 +1,33 @@
 import moment from 'moment';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useSelector} from 'react-redux';
 
-export default function CommentItem({item, user, navigation}) {
-  const handleDelete = () => {
-    alert('KKKKKKK');
-  };
+export default function CommentItem({
+  item,
+  user,
+  navigation,
+  onDeleteCmt,
+  onEditCmt,
+}) {
+  const {userDetails} = useSelector(state => state.user);
+  const [toggleAnswer, setToggleAnswer] = useState(false);
+  const [isDisplayOption, setIsDisplayOption] = useState(false);
+
+  console.log('cmtitemmmmmmmmmmmmmm', item);
+
+  useEffect(() => {
+    if (isDisplayOption) {
+      setTimeout(() => {
+        setIsDisplayOption(false);
+      }, 2500);
+    }
+  }, [isDisplayOption]);
+
   return (
-    <View style={{marginBottom: 10}}>
+    <View style={{marginBottom: 10, position: 'relative'}}>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity
           style={{marginRight: 10}}
@@ -40,38 +58,51 @@ export default function CommentItem({item, user, navigation}) {
               paddingVertical: 6,
               borderRadius: 10,
             }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '700',
-                marginBottom: 4,
-              }}>
-              {item?.fname + ' ' + item?.lname}
-            </Text>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '700',
+                  marginBottom: 4,
+                }}>
+                {item?.fname + ' ' + item?.lname}
+              </Text>
+              {userDetails.uid === item.creator && (
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    paddingVertical: 2,
+                    paddingLeft: 16,
+                  }}
+                  onPress={() => {
+                    setIsDisplayOption(!isDisplayOption);
+                  }}>
+                  <FontAwesome
+                    name="ellipsis-v"
+                    size={20}
+                    color={GlobalStyle.colors.COLOR_GRAY}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
               <Text style={{maxWidth: '90%'}}>{item.content}</Text>
-              {item?.creator === user.uid && (
-                <TouchableOpacity onPress={() => handleDelete(item.id)}>
-                  <FontAwesome
-                    name="trash-o"
-                    size={25}
-                    color={GlobalStyle.colors.COLOR_GRAY}
-                  />
-                </TouchableOpacity>
-              )}
             </View>
           </View>
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-between',
+              justifyContent: 'flex-end',
               marginTop: 4,
             }}>
-            <View
+            {/* <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -94,20 +125,60 @@ export default function CommentItem({item, user, navigation}) {
                   Answer
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
             <Text style={{fontSize: 12}}>
               {moment(item?.cmtTimestamp.toDate()).fromNow()}
             </Text>
           </View>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: GlobalStyle.colors.COLOR_SILVER,
-              borderRadius: 10,
-              padding: 16,
-            }}>
-            <Text>KKKKKKKKKK</Text>
-          </View>
+          {isDisplayOption && (
+            <View
+              style={{
+                position: 'absolute',
+                top: 16,
+                right: 38,
+                borderRadius: 10,
+                paddingVertical: 6,
+                paddingHorizontal: 16,
+                backgroundColor: '#fff',
+                borderWidth: 1,
+                // borderColor: GlobalStyle.colors.COLOR_GRAY,
+                borderColor: '#ddd',
+              }}>
+              <View>
+                <TouchableOpacity
+                  onPress={() => {
+                    onEditCmt(item.id, item.content);
+                  }}>
+                  <View style={{flexDirection: 'row'}}>
+                    <FontAwesome
+                      name="edit"
+                      size={20}
+                      color={GlobalStyle.colors.COLOR_GRAY}
+                    />
+                    <Text
+                      style={{marginLeft: 10, fontWeight: '700', fontSize: 12}}>
+                      Chỉnh sửa
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => onDeleteCmt(item.id)}
+                  style={{marginTop: 10}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <FontAwesome
+                      name="trash-o"
+                      size={20}
+                      color={GlobalStyle.colors.COLOR_GRAY}
+                    />
+                    <Text
+                      style={{marginLeft: 10, fontWeight: '700', fontSize: 12}}>
+                      Xóa
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </View>

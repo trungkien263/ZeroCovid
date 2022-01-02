@@ -27,11 +27,12 @@ const FeedStack = ({navigation}) => (
       component={HomeScreen}
       options={{
         headerTitleAlign: 'center',
-        headerTitle: 'Zero Covid',
+        headerTitle: 'Trang chủ',
         headerTitleStyle: {
-          color: '#2e64e5',
+          color: '#000',
           fontFamily: 'Kufam-SemiBoldItalic',
           fontSize: 18,
+          fontWeight: 'bold',
         },
         headerStyle: {
           shadowColor: '#fff',
@@ -124,6 +125,7 @@ const MessageStack = ({navigation}) => (
       name="Chat"
       component={ChatScreen}
       options={({route}) => ({
+        headerShown: false,
         headerBackTitleVisible: false,
         headerLeft: () => (
           <View style={{marginLeft: 10}}>
@@ -173,7 +175,7 @@ const ProfileStack = ({navigation}) => (
       name="EditProfile"
       component={EditProfileScreen}
       options={{
-        headerTitle: 'Edit Profile',
+        headerTitle: 'Chỉnh sửa trang cá nhân',
         headerBackTitleVisible: false,
         headerTitleAlign: 'center',
         headerStyle: {

@@ -14,6 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import MessageSkeleton from '../components/Skeleton/MessageSkeleton';
 import {useIsFocused} from '@react-navigation/native';
+import moment from 'moment';
 
 export default function MessagesScreen() {
   const navigation = useNavigation();
@@ -27,14 +28,16 @@ export default function MessagesScreen() {
 
   useEffect(async () => {
     setIsLoading(true);
-    await fetchRooms();
+    const data = await fetchRooms();
     setIsLoading(false);
+    return data;
   }, []);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    await fetchRooms();
+    const data = await fetchRooms();
     setRefreshing(false);
+    return data;
   }, []);
 
   const fetchRooms = async () => {
@@ -75,7 +78,6 @@ export default function MessagesScreen() {
           const test = {
             partnerData: tmp[0],
             ...el,
-            lastMsg: 'This is a test msg',
           };
           return test;
         }),
@@ -107,38 +109,52 @@ export default function MessagesScreen() {
             }}
           />
         </TouchableOpacity>
-        <View
+        <TouchableOpacity
+          onPress={() => {
+            navigation.push('Chat', {roomInfo: item});
+          }}
           style={{
             flex: 1,
             paddingLeft: 16,
             marginBottom: 14,
           }}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Profile', {
-                partnerId: partnerId,
-              });
-            }}
+          <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               marginTop: 6,
               // backgroundColor: 'red',
-              maxWidth: '35%',
+              //   maxWidth: '35%',
             }}>
-            <Text style={{marginBottom: 4, fontWeight: '700'}}>
-              {item.partnerData.fname + ' ' + item.partnerData.lname}
+            <View>
+              <Text style={{marginBottom: 4, fontWeight: '700'}}>
+                {item.partnerData.fname + ' ' + item.partnerData.lname}
+              </Text>
+            </View>
+            <Text>
+              {moment(
+                item?.lastMsg
+                  ? item?.lastMsg.createdAt.toDate()
+                  : item?.createdAt.toDate(),
+              ).fromNow()}
             </Text>
-            <Text>{item.messageTime}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{paddingBottom: 4}}
-            onPress={() => {
-              navigation.push('Chat', {roomInfo: item});
-            }}>
-            <Text>{item.lastMsg}</Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+          <View style={{paddingBottom: 4}}>
+            {item?.lastMsg ? (
+              <Text style={{fontSize: 12}}>
+                {item?.lastMsg.creator === userDetails.uid ? 'Bạn: ' : ''}
+                {item?.lastMsg.message}
+              </Text>
+            ) : (
+              <Text style={{fontSize: 12}}>
+                {'Gửi tin nhắn đầu tiên cho ' +
+                  item.partnerData.fname +
+                  ' ' +
+                  item.partnerData.lname}
+              </Text>
+            )}
+          </View>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -152,6 +168,7 @@ export default function MessagesScreen() {
           data={rooms}
           keyExtractor={item => item.roomId}
           renderItem={({item}) => {
+            console.log('itemmmmm', item);
             return <Message item={item} partnerId={partnerId} />;
           }}
           refreshControl={
