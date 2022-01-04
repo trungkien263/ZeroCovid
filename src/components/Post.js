@@ -15,19 +15,19 @@ export default function Post({item, onDeletePost, userData}) {
   const {postId} = item;
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
-  let isRendered = useRef(false);
+  //   let isRendered = useRef(false);
   const [isDisplayOption, setIsDisplayOption] = useState(false);
 
   useEffect(async () => {
-    isRendered = true;
+    // isRendered = true;
     firestore()
       .collection('posts')
       .doc(postId)
       .collection('likes')
       .onSnapshot(snapshot => {
-        if (isRendered) {
-          setLikeCount(snapshot.docs.length);
-        }
+        // if (isRendered) {
+        setLikeCount(snapshot.docs.length);
+        // }
         snapshot.docs.map(doc => {
           const data = doc.data();
           if (data.creator === user.uid) {
@@ -42,14 +42,14 @@ export default function Post({item, onDeletePost, userData}) {
       .doc(postId)
       .collection('comments')
       .onSnapshot(snapshot => {
-        if (isRendered) {
-          setCommentCount(snapshot.docs.length);
-        }
+        // if (isRendered) {
+        setCommentCount(snapshot.docs.length);
+        // }
       });
 
-    return () => {
-      isRendered = false;
-    };
+    // return () => {
+    //   isRendered = false;
+    // };
   }, [item]);
 
   const handleLike = async () => {
@@ -126,9 +126,7 @@ export default function Post({item, onDeletePost, userData}) {
             />
           </TouchableOpacity>
           <View style={{paddingLeft: 10}}>
-            <Text style={{fontWeight: '700'}}>
-              {userData?.fname + ' ' + userData?.lname}
-            </Text>
+            <Text style={{fontWeight: '700'}}>{userData?.name}</Text>
             <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
           </View>
         </View>

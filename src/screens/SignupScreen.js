@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,9 +14,10 @@ import SocialButton from '../components/SocialButton';
 import {AuthContext} from '../navigation/AuthProvider';
 
 export default function SignupScreen({navigation}) {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const {register} = useContext(AuthContext);
 
@@ -29,20 +31,29 @@ export default function SignupScreen({navigation}) {
   };
 
   const handleSignUp = () => {
-    if (!email || !password || !confirmPassword) {
-      alert('Email và mật khẩu không được trống!');
+    if (!email || !password || !confirmPassword || !name) {
+      alert('Email, mật khẩu, họ tên không được trống!');
     } else if (!validateMail(email)) {
       alert('Email không hợp lệ');
     } else if (password !== confirmPassword) {
       alert('Mật khẩu không trùng khớp');
+    } else if (name.length > 20) {
+      alert('Tên không được vượt quá 20 ký tự');
+    } else if (password.length < 8) {
+      alert('Mật khẩu phải lớn hơn 8 ký tự');
     } else {
-      register(email, password);
+      register(email, password, name);
     }
   };
 
   return (
     <View style={styles.container}>
       <ScrollView>
+        <Image
+          source={require('../assets/register.png')}
+          style={{width: 160, height: 160, alignSelf: 'center'}}
+        />
+
         <Text style={styles.text}>Tạo tài khoản</Text>
 
         <FormInput
@@ -53,6 +64,14 @@ export default function SignupScreen({navigation}) {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          isEmailInput={true}
+        />
+
+        <FormInput
+          labelValue={name}
+          onChangeText={txt => setName(txt)}
+          placeholderText="Họ tên"
+          iconType="user"
           isEmailInput={true}
         />
 
@@ -138,6 +157,8 @@ const styles = StyleSheet.create({
     fontSize: 28,
     marginBottom: 10,
     color: '#051d5f',
+    textAlign: 'center',
+    marginTop: 10,
   },
   navButton: {
     marginTop: 15,

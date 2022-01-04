@@ -21,7 +21,7 @@ import {AuthContext} from '../navigation/AuthProvider';
 export default function ProfileScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
   const {userDetails} = useSelector(state => state.user);
-  const partnerId = route.params ? route.params.userId : userDetails.uid;
+  const partnerId = route.params ? route.params.userId : userDetails?.uid;
 
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -171,7 +171,7 @@ export default function ProfileScreen({navigation, route}) {
 
     let querySnapshot = await firestore()
       .collection('rooms')
-      .where('members', 'array-contains', userDetails.uid)
+      .where('members', 'array-contains', userDetails?.uid)
       .get()
       .catch(err => {
         console.log(err);
@@ -244,10 +244,8 @@ export default function ProfileScreen({navigation, route}) {
                 : require('../assets/defaultAvatar.png')
             }
           />
-          <Text style={styles.userName}>
-            {userData ? userData?.fname + ' ' + userData?.lname : 'Test user'}
-          </Text>
-          {partnerId !== userDetails.uid ? (
+          <Text style={styles.userName}>{userData?.name}</Text>
+          {partnerId !== userDetails?.uid ? (
             <View
               style={{
                 flex: 1,
@@ -283,7 +281,6 @@ export default function ProfileScreen({navigation, route}) {
               </TouchableOpacity>
             </View>
           )}
-
           <View style={styles.userInfoWrapper}>
             <View style={styles.userInfoItem}>
               <Text style={styles.userName}>{posts.length}</Text>
@@ -298,7 +295,6 @@ export default function ProfileScreen({navigation, route}) {
               <Text>Following</Text>
             </View>
           </View>
-
           <View style={styles.postArea}>
             {posts.map((item, index) => {
               return (

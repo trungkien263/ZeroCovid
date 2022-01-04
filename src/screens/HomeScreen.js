@@ -44,6 +44,8 @@ export default function HomeScreen({navigation, route}) {
     dispatch(actFetchAllUsersRequest());
   }, []);
 
+  //   console.log('useruseruseruser', user);
+
   const fetchPosts = async () => {
     try {
       let querySnapshot = await firestore()
@@ -57,7 +59,9 @@ export default function HomeScreen({navigation, route}) {
       let postsData = [];
       querySnapshot.forEach(documentSnapshot => {
         const postInfo = documentSnapshot.data();
-        postsData.push({...postInfo, postId: documentSnapshot.id});
+        if (postInfo.deleteFlag === false) {
+          postsData.push({...postInfo, postId: documentSnapshot.id});
+        }
       });
 
       const postsDetail = await Promise.all(
@@ -117,34 +121,50 @@ export default function HomeScreen({navigation, route}) {
     }, []),
   );
 
+  //   const deletePost = postId => {
+  //     firestore()
+  //       .collection('posts')
+  //       .doc(postId)
+  //       .get()
+  //       .then(documentSnapshot => {
+  //         if (documentSnapshot.exists) {
+  //           const {postImg} = documentSnapshot.data();
+  //           if (postImg !== null) {
+  //             const storageRef = storage().refFromURL(postImg);
+  //             const imageRef = storage().ref(storageRef.fullPath);
+
+  //             imageRef
+  //               .delete()
+  //               .then(() => {
+  //                 console.log(`${postImg} has been deleted successfully!`);
+  //                 deleteFirestoreData(postId);
+  //                 setRefresh(!refresh);
+  //               })
+  //               .catch(err => {
+  //                 console.log('Error while delete the image', err);
+  //               });
+  //             // if the post image is not available
+  //           } else {
+  //             deleteFirestoreData(postId);
+  //             setRefresh(!refresh);
+  //           }
+  //         }
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //       });
+  //   };
+
   const deletePost = postId => {
     firestore()
       .collection('posts')
       .doc(postId)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-          const {postImg} = documentSnapshot.data();
-          if (postImg !== null) {
-            const storageRef = storage().refFromURL(postImg);
-            const imageRef = storage().ref(storageRef.fullPath);
-
-            imageRef
-              .delete()
-              .then(() => {
-                console.log(`${postImg} has been deleted successfully!`);
-                deleteFirestoreData(postId);
-                setRefresh(!refresh);
-              })
-              .catch(err => {
-                console.log('Error while delete the image', err);
-              });
-            // if the post image is not available
-          } else {
-            deleteFirestoreData(postId);
-            setRefresh(!refresh);
-          }
-        }
+      .update({
+        deleteFlag: true,
+      })
+      .then(() => {
+        setRefresh(!refresh);
+        console.log('Post deleted');
       })
       .catch(err => {
         console.log(err);

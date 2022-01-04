@@ -71,6 +71,7 @@ export default function CommentScreen({route, navigation}) {
         content: content,
         creator: user.uid,
         createdAt: firestore.Timestamp.fromDate(new Date()),
+        updatedAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setContent('');
@@ -122,7 +123,7 @@ export default function CommentScreen({route, navigation}) {
       .update({
         content: content,
         creator: user.uid,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
+        updatedAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setContent('');
