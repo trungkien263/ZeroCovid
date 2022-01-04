@@ -35,7 +35,7 @@ export const AuthProvider = ({children}) => {
             console.log('error', error);
           }
         },
-        register: async (email, password) => {
+        register: async (email, password, name = 'User') => {
           try {
             await auth()
               .createUserWithEmailAndPassword(email, password)
@@ -45,12 +45,12 @@ export const AuthProvider = ({children}) => {
                   .collection('users')
                   .doc(auth().currentUser.uid)
                   .set({
-                    fname: 'User',
-                    lname: '',
                     email: email,
+                    name: name,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: null,
                     uid: auth().currentUser.uid,
+                    role: 0,
                   })
                   .catch(err => {
                     console.log('error when sign up: ', err);

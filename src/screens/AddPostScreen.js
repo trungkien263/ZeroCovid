@@ -90,7 +90,9 @@ export default function AddPostScreen({navigation, route}) {
         userId: user.uid,
         post: post,
         postImg: imageUrl,
+        deleteFlag: false,
         createdAt: firestore.Timestamp.fromDate(new Date()),
+        updatedAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         console.log('Post added!');
@@ -115,7 +117,7 @@ export default function AddPostScreen({navigation, route}) {
         userId: user.uid,
         post: post,
         postImg: imageUrl,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
+        updatedAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         console.log('Post updated!');
@@ -251,9 +253,7 @@ export default function AddPostScreen({navigation, route}) {
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         ) : (
-          <TouchableOpacity
-            disabled={isEmptyPost || !isUpdateYet}
-            onPress={submitPost}>
+          <TouchableOpacity disabled={isEmptyPost} onPress={submitPost}>
             <Text
               style={{
                 color: GlobalStyle.colors.COLOR_WHITE,
@@ -264,7 +264,7 @@ export default function AddPostScreen({navigation, route}) {
                 marginTop: 16,
                 borderRadius: 10,
                 backgroundColor: GlobalStyle.colors.COLOR_BLUE,
-                opacity: isEmptyPost || !isUpdateYet ? 0.8 : 1,
+                opacity: isEmptyPost ? 0.8 : 1,
               }}>
               {item ? 'Cập nhật' : 'Đăng'}
             </Text>

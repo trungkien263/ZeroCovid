@@ -17,7 +17,7 @@ import Animated from 'react-native-reanimated';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import BottomSheet from 'reanimated-bottom-sheet';
 import FormButton from '../components/FormButton';
 import {GlobalStyle} from '../config/globalStyle';
@@ -28,8 +28,9 @@ import {Picker} from '@react-native-picker/picker';
 const {width, height} = Dimensions.get('window');
 
 export default function EditProfile() {
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const {userDetails} = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
   //   const [imageSource, setImageSource] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -46,44 +47,66 @@ export default function EditProfile() {
   const [selectedDistrict, setSelectedDistrict] = useState([]);
   const [selectedWard, setSelectedWard] = useState([]);
 
+  const [name, setName] = useState(userDetails.name ? userDetails.name : '');
+  const [phoneNumber, setPhoneNumber] = useState(
+    userDetails?.phone ? userDetails?.phone : '',
+  );
+  const [age, setAge] = useState(userDetails.age ? userDetails.age : null);
+  const [address, setAddress] = useState(userDetails?.address);
+  const [nameError, setNameError] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [addressError, setAddressError] = useState('');
+  const [ageError, setAgeError] = useState('');
+  const [isDisableBtn, setIsDisableBtn] = useState(false);
+
   useEffect(() => {
-    setUserData(userDetails);
-  }, []);
-
-  console.log('user data--------------', userData);
-
-  useEffect(() => {
-    const arr = [];
-    provinces.map(el => {
-      arr.push({
-        id: el.Id,
-        name: el.Name,
-        district: el.Districts,
-      });
-    });
-    setProvinceData(arr);
-  }, []);
-
-  useEffect(async () => {
-    if (selectedProvince.length > 0) {
-      try {
-        const province = provinces.find(el => el.Id === selectedProvince);
-        await setDistrictList(province?.Districts);
-        console.log('++++++districtList[0]:', districtList[0]?.Wards);
-        const district = districtList[0]?.Wards;
-        setWardList(district);
-      } catch (err) {
-        console.log(err);
-      }
+    if (
+      name === userDetails.name &&
+      address === userDetails.address &&
+      phoneNumber === userDetails.phone
+    ) {
+      setIsDisableBtn(true);
+    } else {
+      setIsDisableBtn(false);
     }
-  }, [selectedProvince]);
 
-  useEffect(() => {
-    if (districtList.length > 0) {
-      const district = districtList.find(el => el.Id === selectedDistrict);
-      setWardList(district.Wards);
+    if (phoneNumber.length === 10 || phoneNumber.length > 0) {
+      setPhoneNumberError('');
     }
-  }, [selectedDistrict]);
+  }, [name, phoneNumber, address]);
+
+  //   useEffect(() => {
+  //     const arr = [];
+  //     provinces.map(el => {
+  //       arr.push({
+  //         id: el.Id,
+  //         name: el.Name,
+  //         district: el.Districts,
+  //       });
+  //     });
+  //     setProvinceData(arr);
+  //   }, []);
+
+  //   useEffect(async () => {
+  //     if (selectedProvince.length > 0) {
+  //       try {
+  //         const province = provinces.find(el => el.Id === selectedProvince);
+  //         await setDistrictList(province?.Districts);
+  //         console.log('++++++districtList[0]:', districtList[0]?.Wards);
+  //         const district = districtList[0]?.Wards;
+  //         setWardList(district);
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   }, [selectedProvince]);
+
+  //   useEffect(() => {
+  //     if (districtList.length > 0) {
+  //       const district = districtList.find(el => el.Id === selectedDistrict);
+  //       setWardList(district.Wards);
+  //     }
+  //   }, [selectedDistrict]);
 
   const ProvinceItem = (label, value) => {
     return (
@@ -161,19 +184,20 @@ export default function EditProfile() {
     </View>
   );
 
-  const handleUpdate = async () => {
+  const updateProfile = async () => {
     let imgUrl = await uploadImage();
 
-    if (imgUrl === null && userData.userImg) {
-      imgUrl = userData.userImg;
+    if (imgUrl === null && userDetails.userImg) {
+      imgUrl = userDetails.userImg;
     }
 
     const data = {
-      fname: userData.fname,
-      lname: userData.lname,
-      phone: userData.phone,
-      address: userData.address,
+      name: name,
+      phone: phoneNumber,
+      address: address,
       userImg: imgUrl,
+      age: age,
+      updatedAt: firestore.Timestamp.fromDate(new Date()),
     };
 
     await firestore()
@@ -182,13 +206,49 @@ export default function EditProfile() {
       .update(data)
       .then(() => {
         Alert.alert(
-          'Profile Updated!',
-          'Your profile has been updated successfully.',
+          'Cập nhật thông tin thành công!',
+          'Thông tin của bạn đã được cập nhật.',
         );
+        dispatch({
+          type: Types.FETCH_USER_DETAILS,
+          payload: {
+            ...userDetails,
+            name: data.name,
+            age: data.age,
+            phone: data.phone,
+            address: data.address,
+          },
+        });
+        setNameError('');
+        setPhoneNumberError('');
+        setAddressError('');
+        setAgeError('');
       })
       .catch(err => {
         console.log('Error while updating data: ', err);
       });
+  };
+
+  const handleUpdate = () => {
+    if (name === '') {
+      setNameError('Không được bỏ trống');
+    } else if (name.length > 20) {
+      setNameError('Không được vượt quá 20 ký tự');
+    } else if (phoneNumber === '') {
+      setPhoneNumberError('Không được bỏ trống');
+    } else if (phoneNumber.length !== 10) {
+      setPhoneNumberError('Số điện thoại bao gồm 10 ký tự');
+    } else if (address === '') {
+      setAddressError('Không được bỏ trống');
+    } else if (address.length > 200) {
+      setAddressError('Địa chỉ không được vượt quá 200 ký tự');
+    } else if (age === null) {
+      setAgeError('Không được bỏ trống');
+    } else if (age < 6 || age > 100) {
+      setAgeError('Tuổi chỉ được nằm trong khoảng 6 đến 100');
+    } else {
+      updateProfile();
+    }
   };
 
   const uploadImage = async () => {
@@ -268,7 +328,7 @@ export default function EditProfile() {
                 source={{
                   uri: image
                     ? image
-                    : userData?.userImg ||
+                    : userDetails?.userImg ||
                       'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
                 }}
                 style={{
@@ -308,7 +368,7 @@ export default function EditProfile() {
               fontWeight: 'bold',
               color: 'black',
             }}>
-            {userData?.fname + ' ' + userData?.lname}
+            {userDetails?.name}
           </Text>
         </View>
 
@@ -320,30 +380,19 @@ export default function EditProfile() {
             size={20}
           />
           <TextInput
-            placeholder="First Name"
+            placeholder="Họ tên"
             placeholderTextColor="#666"
-            value={userData ? userData.fname : ''}
+            value={name}
             style={[styles.textInput]}
-            onChangeText={txt => setUserData({...userData, fname: txt})}
+            onChangeText={txt => {
+              setName(txt);
+            }}
             autoCorrect={false}
           />
         </View>
-        <View style={styles.action}>
-          <FontAwesome
-            name="user-o"
-            color={GlobalStyle.colors.COLOR_GRAY}
-            style={{marginTop: 3}}
-            size={20}
-          />
-          <TextInput
-            placeholder="Last Name"
-            placeholderTextColor="#666"
-            value={userData ? userData.lname : ''}
-            style={[styles.textInput]}
-            onChangeText={txt => setUserData({...userData, lname: txt})}
-            autoCorrect={false}
-          />
-        </View>
+        {nameError !== '' && (
+          <Text style={{fontSize: 10, color: 'red'}}>{nameError}</Text>
+        )}
         <View style={styles.action}>
           <Feather
             name="phone"
@@ -352,15 +401,20 @@ export default function EditProfile() {
             size={20}
           />
           <TextInput
-            placeholder="Phone"
+            placeholder="Số điện thoại"
             keyboardType="number-pad"
             placeholderTextColor="#666"
             style={[styles.textInput]}
-            value={userData ? userData.phone : ''}
-            onChangeText={txt => setUserData({...userData, phone: txt})}
+            value={phoneNumber}
+            onChangeText={txt => {
+              setPhoneNumber(txt);
+            }}
             autoCorrect={false}
           />
         </View>
+        {phoneNumberError !== '' && (
+          <Text style={{fontSize: 10, color: 'red'}}>{phoneNumberError}</Text>
+        )}
         <View style={styles.action}>
           <Feather
             name="mail"
@@ -373,9 +427,8 @@ export default function EditProfile() {
             keyboardType="email-address"
             placeholderTextColor="#666"
             style={[styles.textInput]}
-            value={userData ? userData.email : ''}
+            value={userDetails ? userDetails.email : ''}
             editable={false}
-            // onChangeText={txt => setUserData({...userData, phone: txt})}
             autoCorrect={false}
           />
         </View>
@@ -432,26 +485,60 @@ export default function EditProfile() {
 
         <View style={styles.action}>
           <FontAwesome
+            name="user-o"
+            color={GlobalStyle.colors.COLOR_GRAY}
+            style={{marginTop: 3}}
+            size={20}
+          />
+          <TextInput
+            placeholder="Tuổi"
+            keyboardType="number-pad"
+            placeholderTextColor="#666"
+            style={[styles.textInput]}
+            value={age}
+            onChangeText={txt => {
+              setAge(txt);
+            }}
+            autoCorrect={false}
+            editable={!userDetails.age ? true : false}
+          />
+        </View>
+        {ageError !== '' && (
+          <Text style={{fontSize: 10, color: 'red'}}>{ageError}</Text>
+        )}
+
+        <View style={styles.action}>
+          <FontAwesome
             name="map-marker"
             color={GlobalStyle.colors.COLOR_GRAY}
             style={{marginTop: 3, marginLeft: 4}}
             size={20}
           />
           <TextInput
-            placeholder="Address"
+            placeholder="Địa chỉ"
             keyboardType="default"
             placeholderTextColor="#666"
             style={[styles.textInput]}
-            value={userData ? userData.address : ''}
-            onChangeText={txt => setUserData({...userData, address: txt})}
+            value={address}
+            onChangeText={txt => {
+              setAddress(txt);
+            }}
             autoCorrect={false}
             multiline={true}
             // minHeight={80}
           />
         </View>
+        {addressError !== '' && (
+          <Text style={{fontSize: 10, color: 'red'}}>{addressError}</Text>
+        )}
       </ScrollView>
       <View>
-        <FormButton buttonTitle="Cập nhật" onPress={handleUpdate} />
+        <FormButton
+          buttonTitle="Cập nhật"
+          onPress={handleUpdate}
+          disabled={isDisableBtn}
+          style={{opacity: isDisableBtn ? 0.8 : 1}}
+        />
       </View>
     </View>
   );
