@@ -35,7 +35,6 @@ export default function EditProfile() {
   //   const [imageSource, setImageSource] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [userData, setUserData] = useState(null);
   const [image, setImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [tranferred, setTranferred] = useState(0);
@@ -60,15 +59,13 @@ export default function EditProfile() {
   const [isDisableBtn, setIsDisableBtn] = useState(false);
 
   useEffect(() => {
-    if (
-      name === userDetails.name &&
-      address === userDetails.address &&
-      phoneNumber === userDetails.phone
-    ) {
-      setIsDisableBtn(true);
-    } else {
-      setIsDisableBtn(false);
-    }
+    // if (
+    //   name === userDetails.name &&
+    //   address === userDetails.address &&
+    //   phoneNumber === userDetails.phone
+    // ) {
+    //   setIsDisableBtn(true);
+    // }
 
     if (phoneNumber.length === 10 || phoneNumber.length > 0) {
       setPhoneNumberError('');
@@ -153,31 +150,31 @@ export default function EditProfile() {
   };
 
   const renderInner = () => (
-    <View style={styles.panel}>
+    <View style={[styles.panel, {backgroundColor: '#f9f9f9'}]}>
       <View style={{alignItems: 'center'}}>
-        <Text style={styles.panelTitle}>Upload Photo</Text>
-        <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
+        <Text style={styles.panelTitle}>Tải ảnh lên</Text>
+        <Text style={styles.panelSubtitle}>Chọn ảnh đại diện của bạn</Text>
       </View>
       <TouchableOpacity
         style={styles.panelButton}
         onPress={takePhotoFromCamera}>
-        <Text style={styles.panelButtonTitle}>Take Photo</Text>
+        <Text style={styles.panelButtonTitle}>Chụp ảnh</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.panelButton}
         onPress={choosePhotoFromLibrary}>
-        <Text style={styles.panelButtonTitle}>Choose From Library</Text>
+        <Text style={styles.panelButtonTitle}>Chọn ảnh</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.panelButton}
         onPress={() => bs.current.snapTo(1)}>
-        <Text style={styles.panelButtonTitle}>Cancel</Text>
+        <Text style={styles.panelButtonTitle}>Hủy bỏ</Text>
       </TouchableOpacity>
     </View>
   );
 
   const renderHeader = () => (
-    <View style={styles.header}>
+    <View style={[styles.header, {backgroundColor: '#f8f8f8'}]}>
       <View style={styles.panelHeader}>
         <View style={styles.panelHandle} />
       </View>
@@ -217,6 +214,7 @@ export default function EditProfile() {
             age: data.age,
             phone: data.phone,
             address: data.address,
+            userImg: data.userImg,
           },
         });
         setNameError('');
@@ -305,16 +303,6 @@ export default function EditProfile() {
   return (
     <View style={styles.container}>
       <ScrollView keyboardShouldPersistTaps="handled">
-        <BottomSheet
-          ref={bs}
-          renderContent={renderInner}
-          renderHeader={renderHeader}
-          snapPoints={[330, -5]}
-          initialSnap={1}
-          callbackNode={fall}
-          enableGestureInteraction={true}
-          enabledContentTapInteraction={false}
-        />
         <View style={{alignItems: 'center'}}>
           <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
             <View
@@ -539,6 +527,16 @@ export default function EditProfile() {
           disabled={isDisableBtn}
           style={{opacity: isDisableBtn ? 0.8 : 1}}
         />
+        <BottomSheet
+          ref={bs}
+          renderContent={renderInner}
+          renderHeader={renderHeader}
+          snapPoints={[310, -20]}
+          initialSnap={1}
+          callbackNode={fall}
+          enableGestureInteraction={true}
+          enabledContentTapInteraction={false}
+        />
       </View>
     </View>
   );
@@ -559,13 +557,13 @@ const styles = StyleSheet.create({
   },
   panel: {
     padding: 20,
-    backgroundColor: GlobalStyle.colors.COLOR_GRAY,
+    backgroundColor: GlobalStyle.colors.COLOR_BACKGROUND,
     paddingTop: 10,
   },
   // header
   header: {
-    borderTopWidth: 3,
-    borderTopColor: '#ddd',
+    // borderTopWidth: 3,
+    // borderTopColor: '#ddd',
 
     paddingTop: 20,
     borderTopLeftRadius: 20,
@@ -597,7 +595,7 @@ const styles = StyleSheet.create({
   panelButton: {
     padding: 10,
     borderRadius: 10,
-    backgroundColor: '#FF6347',
+    backgroundColor: GlobalStyle.colors.COLOR_BLUE,
     alignItems: 'center',
     marginVertical: 7,
   },

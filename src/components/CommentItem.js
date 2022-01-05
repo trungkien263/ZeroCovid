@@ -66,7 +66,7 @@ export default function CommentItem({
                   fontWeight: '700',
                   marginBottom: 4,
                 }}>
-                {item?.fname + ' ' + item?.lname}
+                {item?.name}
               </Text>
               {userDetails.uid === item.creator && (
                 <TouchableOpacity
