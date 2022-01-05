@@ -1,15 +1,35 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 import {GlobalStyle} from '../../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import moment from 'moment';
+import {TabView, SceneMap} from 'react-native-tab-view';
+
+const {width} = Dimensions.get('window');
 
 export default function SosManageMent({navigation}) {
   const {userDetails} = useSelector(state => state.user);
   const [sosList, setSosList] = useState([]);
   const allUsers = useSelector(state => state.users.allUsers);
+  const [pendingList, setPendingList] = useState([]);
+  const [processingList, setProcessingList] = useState([]);
+  const [doneList, setDoneList] = useState([]);
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    {key: 'first', title: 'Đang chờ'},
+    {key: 'second', title: 'Đang xử lý'},
+    {key: 'third', title: 'Đã xử lý'},
+  ]);
 
   useEffect(() => {
     fetchSos();
@@ -27,8 +47,18 @@ export default function SosManageMent({navigation}) {
             const sosOwner = allUsers.find(el => el.uid === data?.creator);
             return {id, ...data, userInfo: sosOwner};
           });
-          console.log(sosData);
-          setSosList(sosData);
+          const pendingData = sosData.filter(el => el.status === 'PENDING');
+          const processingData = sosData.filter(
+            el => el.status === 'PROCESSING',
+          );
+          const doneData = sosData.filter(el => el.status === 'DONE');
+          setPendingList(pendingData);
+          setProcessingList(processingData);
+          setDoneList(doneData);
+          console.log('pendingData', pendingData);
+          console.log('processingData', processingData);
+          console.log('doneData', doneData);
+          //   setSosList(sosData);
         });
     } catch (error) {
       console.log('error', error);
@@ -45,35 +75,99 @@ export default function SosManageMent({navigation}) {
     }
   };
 
-  const SosItem = ({item}) => {
+  const SosItem = ({item, screen}) => {
+    let itemColor = '';
+    let textColor = '';
+    if (screen === 0) {
+      itemColor = '#E8554E';
+      textColor = '#fff';
+    } else if (screen === 1) {
+      itemColor = '#F9C449';
+    } else if (screen === 2) {
+      itemColor = '#2AA876';
+      textColor = '#fff';
+    }
     return (
       <TouchableOpacity
         onPress={() => {
           navigation.navigate('SosDetail', {item: item});
         }}
         style={{
-          backgroundColor: GlobalStyle.colors.COLOR_SILVER,
+          backgroundColor: itemColor,
           borderRadius: 10,
           padding: 10,
           marginBottom: 10,
         }}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text>{item.userInfo.name}</Text>
-          <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
-        </View>
-        <View style={{alignItems: 'flex-end'}}>
-          <Text>{displayStatus(item.status)}</Text>
+        <View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text style={{color: textColor}}>{item.userInfo.name}</Text>
+            <Text style={{color: textColor}}>
+              {moment(item?.createdAt.toDate()).fromNow()}
+            </Text>
+          </View>
+          <View style={{alignItems: 'flex-end'}}>
+            <Text style={{color: textColor}}>{displayStatus(item.status)}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
   };
 
-  return (
-    <View style={styles.container}>
-      {sosList.map((el, i) => {
-        return <SosItem item={el} index={i} />;
+  const FirstRoute = () => (
+    <ScrollView
+      style={[
+        styles.container,
+        // {backgroundColor: '#E8554E'}
+      ]}>
+      {pendingList.map((el, i) => {
+        return <SosItem item={el} key={i} screen={0} />;
       })}
-    </View>
+    </ScrollView>
+  );
+
+  const SecondRoute = () => (
+    <ScrollView
+      style={[
+        styles.container,
+        // {backgroundColor: '#F9C449'}
+      ]}>
+      {processingList.map((el, i) => {
+        return <SosItem item={el} key={i} screen={1} />;
+      })}
+    </ScrollView>
+  );
+
+  const ThirdRoute = () => (
+    <ScrollView
+      style={[
+        styles.container,
+        // {backgroundColor: '#2AA876'}
+      ]}>
+      {doneList.map((el, i) => {
+        return <SosItem item={el} key={i} screen={2} />;
+      })}
+    </ScrollView>
+  );
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+    third: ThirdRoute,
+  });
+
+  return (
+    // <View style={styles.container}>
+    //   {sosList.map((el, i) => {
+    //     return <SosItem item={el} key={i} />;
+    //   })}
+    // </View>
+    <TabView
+      navigationState={{index, routes}}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{width: width}}
+      style={{backgroundColor: GlobalStyle.colors.COLOR_BLUE}}
+    />
   );
 }
 

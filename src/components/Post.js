@@ -61,6 +61,7 @@ export default function Post({item, onDeletePost, userData}) {
       .add({
         creator: user.uid,
         createdAt: firestore.Timestamp.fromDate(new Date()),
+        postId: postId,
       })
       .then(() => {
         console.log('Send like successfully!');
