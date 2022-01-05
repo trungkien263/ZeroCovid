@@ -316,6 +316,7 @@ export default function ProfileScreen({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: GlobalStyle.colors.COLOR_BACKGROUND,
   },
   userImg: {
     height: 150,

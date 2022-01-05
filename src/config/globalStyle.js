@@ -7,5 +7,7 @@ export const GlobalStyle = {
     COLOR_BLUE: '#2e64e5',
     COLOR_GRAY: '#888',
     COLOR_WHITE: '#fff',
+    COLOR_ALABASTER: '#F8F8F8',
+    COLOR_RED_ORANGE: '#FF6347',
   },
 };

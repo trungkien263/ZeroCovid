@@ -16,6 +16,8 @@ import MessagesScreen from '../screens/MessagesScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import MenuScreen from '../screens/MenuScreen';
 import CommentScreen from '../screens/CommentScreen';
+import SosManagement from '../screens/SosManagement';
+import SosDetail from '../screens/SosManagement/SosDetail';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -188,6 +190,46 @@ const ProfileStack = ({navigation}) => (
   </Stack.Navigator>
 );
 
+const MenuStack = ({navigation}) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Menu"
+      component={MenuScreen}
+      options={({route}) => ({
+        headerShown: false,
+      })}
+    />
+    <Stack.Screen
+      name="SosManagement"
+      component={SosManagement}
+      options={({route}) => ({
+        headerShown: true,
+        title: 'Quản lý SOS',
+        headerTitleAlign: 'center',
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      })}
+    />
+    <Stack.Screen
+      name="SosDetail"
+      component={SosDetail}
+      options={({route}) => ({
+        headerShown: true,
+        title: 'Chi tiết SOS',
+        headerTitleAlign: 'center',
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      })}
+    />
+  </Stack.Navigator>
+);
+
 const AppStack = ({navigation}) => {
   return (
     <Tab.Navigator
@@ -236,7 +278,7 @@ const AppStack = ({navigation}) => {
       />
       <Tab.Screen
         name="Menu"
-        component={MenuScreen}
+        component={MenuStack}
         options={({route}) => ({
           tabBarLabel: 'Khác',
           tabBarIcon: ({color, size}) => (

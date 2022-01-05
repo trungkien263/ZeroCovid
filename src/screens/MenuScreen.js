@@ -11,16 +11,18 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
 import {AuthContext} from '../navigation/AuthProvider';
+import firestore from '@react-native-firebase/firestore';
 
 const windowWidth = Dimensions.get('window').width;
 
-export default function MenuScreen() {
+export default function MenuScreen({navigation}) {
   const {user, logout} = useContext(AuthContext);
   const {vnCases, worldCases} = useSelector(state => state?.covidCases);
   const {users} = useSelector(state => state.users);
   const vnNumber = vnCases.pop();
   const [covidCases, setCovidCases] = useState(vnNumber);
   const [isTotalWorld, setIsTotalWorld] = useState(false);
+  const {userDetails} = useSelector(state => state.user);
 
   const renderData = [
     {
@@ -32,7 +34,13 @@ export default function MenuScreen() {
     {
       title: 'SOS',
       action: () => {
-        alert('SOS Clicked !');
+        handleSendSOS();
+      },
+    },
+    {
+      title: 'Quản lý SOS',
+      action: () => {
+        navigation.navigate('SosManagement');
       },
     },
     {
@@ -73,6 +81,26 @@ export default function MenuScreen() {
       data: isTotalWorld ? covidCases?.TotalDeaths : covidCases?.Deaths,
     },
   ];
+
+  const handleSendSOS = () => {
+    firestore()
+      .collection('sos')
+      .add({
+        creator: userDetails.uid,
+        status: 'PENDING',
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        console.log('SOS sent!');
+        Alert.alert(
+          'Đã gửi trạng thái khẩn cấp!',
+          'Hãy đợi trong giây lát, chúng tôi sẽ liên hệ với bạn!',
+        );
+      })
+      .catch(err => {
+        console.log('Something went wrong!', err);
+      });
+  };
 
   const MenuItem = ({title, action}) => {
     return (
@@ -119,7 +147,7 @@ export default function MenuScreen() {
         }}>
         <TouchableOpacity
           onPress={() => {
-            const data = vnCases.pop();
+            const data = vnNumber;
             setCovidCases(data);
             setIsTotalWorld(false);
           }}

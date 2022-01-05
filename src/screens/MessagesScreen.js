@@ -100,7 +100,11 @@ export default function MessagesScreen() {
             });
           }}>
           <Image
-            source={{uri: item?.partnerData?.userImg}}
+            source={{
+              uri: item?.partnerData?.userImg
+                ? item?.partnerData?.userImg
+                : 'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
+            }}
             style={{
               width: 60,
               height: 60,
@@ -128,7 +132,7 @@ export default function MessagesScreen() {
             }}>
             <View>
               <Text style={{marginBottom: 4, fontWeight: '700'}}>
-                {item.partnerData.fname + ' ' + item.partnerData.lname}
+                {item.partnerData.name}
               </Text>
             </View>
             <Text>
@@ -147,10 +151,7 @@ export default function MessagesScreen() {
               </Text>
             ) : (
               <Text style={{fontSize: 12}}>
-                {'Gửi tin nhắn đầu tiên cho ' +
-                  item.partnerData.fname +
-                  ' ' +
-                  item.partnerData.lname}
+                {'Gửi tin nhắn đầu tiên cho ' + item.partnerData.name}
               </Text>
             )}
           </View>
@@ -184,5 +185,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: GlobalStyle.colors.COLOR_BACKGROUND,
   },
 });
