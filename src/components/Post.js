@@ -180,7 +180,7 @@ export default function Post({item, onDeletePost, userData}) {
           {lengthMore ? (
             <Text
               onPress={toggleNumberOfLines}
-              style={{lineHeight: 21, marginTop: 10}}>
+              style={{lineHeight: 21, marginVertical: 10, fontWeight: '600'}}>
               {textShown ? 'Ẩn' : 'Xem thêm'}
             </Text>
           ) : null}
