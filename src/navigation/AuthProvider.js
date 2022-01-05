@@ -20,7 +20,7 @@ export const AuthProvider = ({children}) => {
             const errorCode = e?.code;
             const errorMessage = e?.message;
             alert(errorMessage);
-            console.log(e);
+            console.log(errorCode);
             return e;
           }
         },

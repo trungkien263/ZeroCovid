@@ -88,8 +88,6 @@ export default function Diet({navigation, route}) {
     }
   };
 
-  console.log('diettttttttttttttttttt', posts);
-
   const handleDelete = postId => {
     Alert.alert('Xóa bài viết', 'Bạn có chắc chắn muốn xóa bài viết?', [
       {
@@ -157,14 +155,14 @@ export default function Diet({navigation, route}) {
 
   const deletePost = postId => {
     firestore()
-      .collection('posts')
+      .collection('foods')
       .doc(postId)
       .update({
         deleteFlag: true,
       })
       .then(() => {
         setRefresh(!refresh);
-        console.log('Post deleted');
+        console.log('Food deleted');
       })
       .catch(err => {
         console.log(err);

@@ -22,30 +22,30 @@ import {AuthContext} from '../../../navigation/AuthProvider';
 export default function AddFood({navigation, route}) {
   const {user} = useContext(AuthContext);
   const item = route?.params?.item;
-  const [image, setImage] = useState(item ? item?.postImg : null);
+  const [image, setImage] = useState(item ? item?.foodImage : null);
   //   const reference = storage().ref('black-t-shirt-sm.png');
   const [isUploading, setIsUploading] = useState(false);
   const [tranferred, setTranferred] = useState(0);
-  const [post, setPost] = useState(item ? item?.post : '');
+  const [content, setContent] = useState(item ? item?.content : '');
   const [isRefresh, setIsRefresh] = useState(false);
   const [isEmptyPost, setIsEmptyPost] = useState(false);
   const [isUpdateYet, setIsUpdateYet] = useState(false);
 
   useEffect(() => {
     if (item) {
-      if (item?.post === post && item?.postImg === image) {
+      if (item?.content === content && item?.foodImage === image) {
         setIsUpdateYet(false);
       } else {
         setIsUpdateYet(true);
       }
     }
-  }, [post, image]);
+  }, [content, image]);
 
   useEffect(() => {
-    if (post !== '') {
+    if (content !== '') {
       setIsEmptyPost(false);
     }
-  }, [post]);
+  }, [content]);
 
   const choosePhoto = () => {
     ImagePicker.openPicker({
@@ -67,8 +67,8 @@ export default function AddFood({navigation, route}) {
 
   const takePhoto = () => {
     ImagePicker.openCamera({
-      width: 300,
-      height: 400,
+      width: 720,
+      height: 1280,
       cropping: true,
       freeStyleCropEnabled: true,
       compressImageQuality: 0.7,
@@ -88,7 +88,7 @@ export default function AddFood({navigation, route}) {
       .collection('foods')
       .add({
         creator: user.uid,
-        content: post,
+        content: content,
         foodImage: imageUrl,
         deleteFlag: false,
         status: 'PUBLIC',
@@ -98,7 +98,7 @@ export default function AddFood({navigation, route}) {
       .then(() => {
         console.log('Post added!');
         Alert.alert('Đã thêm đồ ăn!', 'Đồ ăn đã được thêm thành công!');
-        setPost(null);
+        setContent(null);
         setIsRefresh(!isRefresh);
         navigation.goBack();
       })
@@ -109,18 +109,18 @@ export default function AddFood({navigation, route}) {
 
   const updatePost = imageUrl => {
     firestore()
-      .collection('posts')
+      .collection('foods')
       .doc(item?.postId)
       .update({
         userId: user.uid,
-        post: post,
-        postImg: imageUrl,
+        content: content,
+        foodImage: imageUrl,
         updatedAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         console.log('Food updated!');
         Alert.alert('Cập nhật thành công!', 'Đồ ăn đã được cập nhật!');
-        setPost(null);
+        setContent(null);
         setIsRefresh(!isRefresh);
         navigation.goBack();
       })
@@ -130,7 +130,7 @@ export default function AddFood({navigation, route}) {
   };
 
   const submitPost = async () => {
-    if (post === '') {
+    if (content === '') {
       setIsEmptyPost(true);
     } else {
       const imageUrl = await uploadImage();
@@ -232,9 +232,9 @@ export default function AddFood({navigation, route}) {
           keyboardType="default"
           multiline={true}
           numberOfLines={4}
-          value={post}
+          value={content}
           onChangeText={text => {
-            setPost(text);
+            setContent(text);
           }}
         />
         {isEmptyPost && (

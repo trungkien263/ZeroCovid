@@ -256,17 +256,23 @@ const MenuStack = ({navigation}) => (
             <Ionicons name="arrow-back" size={25} color="#2e64e5" />
           </View>
         ),
-        headerRight: () => (
-          <View style={{marginRight: 10}}>
-            <FontAwesome5.Button
-              name="plus"
-              size={22}
-              backgroundColor="#fff"
-              color="#2e64e5"
-              onPress={() => navigation.navigate('AddFood')}
-            />
-          </View>
-        ),
+        headerRight: () => {
+          const data = route.params.userDetails;
+          console.log('dataaaaaaaa', data);
+          return (
+            <View style={{marginRight: 10}}>
+              {data.role === 1 && (
+                <FontAwesome5.Button
+                  name="plus"
+                  size={22}
+                  backgroundColor="#fff"
+                  color="#2e64e5"
+                  onPress={() => navigation.navigate('AddFood')}
+                />
+              )}
+            </View>
+          );
+        },
       })}
     />
     <Stack.Screen

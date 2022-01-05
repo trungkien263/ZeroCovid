@@ -260,9 +260,9 @@ export default function ProfileScreen({navigation, route}) {
                 }}>
                 <Text style={styles.textBtn}>Nhắn tin</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.btn, {marginLeft: 10}]}>
+              {/* <TouchableOpacity style={[styles.btn, {marginLeft: 10}]}>
                 <Text style={styles.textBtn}>Follow</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           ) : (
             <View
@@ -282,18 +282,18 @@ export default function ProfileScreen({navigation, route}) {
             </View>
           )}
           <View style={styles.userInfoWrapper}>
-            <View style={styles.userInfoItem}>
+            {/* <View style={styles.userInfoItem}>
               <Text style={styles.userName}>{posts.length}</Text>
               <Text>Posts</Text>
-            </View>
-            <View style={styles.userInfoItem}>
+            </View> */}
+            {/* <View style={styles.userInfoItem}>
               <Text style={styles.userName}>10,000</Text>
               <Text>Followers</Text>
             </View>
             <View style={styles.userInfoItem}>
               <Text style={styles.userName}>100</Text>
               <Text>Following</Text>
-            </View>
+            </View> */}
           </View>
           <View style={styles.postArea}>
             {posts.map((item, index) => {

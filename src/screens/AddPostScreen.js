@@ -67,8 +67,8 @@ export default function AddPostScreen({navigation, route}) {
 
   const takePhoto = () => {
     ImagePicker.openCamera({
-      width: 300,
-      height: 400,
+      width: 720,
+      height: 1280,
       cropping: true,
       freeStyleCropEnabled: true,
       compressImageQuality: 0.7,

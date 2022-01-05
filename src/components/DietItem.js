@@ -7,11 +7,13 @@ import {AuthContext} from '../navigation/AuthProvider';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/core';
 import firestore from '@react-native-firebase/firestore';
+import {useSelector} from 'react-redux';
 
 export default function DietItem({item, onDeletePost, userData}) {
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
   const [isDisplayOption, setIsDisplayOption] = useState(false);
+  const {userDetails} = useSelector(state => state.user);
 
   useEffect(() => {
     if (isDisplayOption) {
@@ -55,7 +57,7 @@ export default function DietItem({item, onDeletePost, userData}) {
             <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
           </View>
         </View>
-        {user.uid === item.userId && (
+        {userDetails.role === 1 && (
           <TouchableOpacity
             style={{
               position: 'absolute',
@@ -89,7 +91,7 @@ export default function DietItem({item, onDeletePost, userData}) {
           }}
         />
       )}
-      {isDisplayOption && user.uid === item.userId && (
+      {isDisplayOption && (
         <View
           style={{
             position: 'absolute',
@@ -103,7 +105,7 @@ export default function DietItem({item, onDeletePost, userData}) {
           <View>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('AddPost', {item: item});
+                navigation.navigate('AddFood', {item: item});
               }}>
               <View style={{flexDirection: 'row'}}>
                 <FontAwesome

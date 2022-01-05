@@ -12,6 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
+import {GlobalStyle} from '../../config/globalStyle';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -28,17 +29,19 @@ export default function MenuScreen({navigation}) {
     {
       title: 'Chế độ ăn',
       action: () => {
-        navigation.navigate('Diet');
+        navigation.navigate('Diet', {userDetails: userDetails});
       },
     },
     {
       title: 'SOS',
+      isUser: true,
       action: () => {
         handleSendSOS();
       },
     },
     {
       title: 'Quản lý SOS',
+      isDisplay: true,
       action: () => {
         navigation.navigate('SosManagement');
       },
@@ -52,14 +55,14 @@ export default function MenuScreen({navigation}) {
     {
       title: 'Đăng xuất',
       action: () => {
-        Alert.alert('Sign out!', 'Are you sure?', [
+        Alert.alert('Đăng xuất!', 'Bạn có chắc chắn muốn đăng xuất?', [
           {
-            text: 'Cancel',
+            text: 'Hủy bỏ',
             onPress: () => console.log('canceled!'),
             style: 'cancel',
           },
           {
-            text: 'Sign Out',
+            text: 'Đăng xuất',
             onPress: () => logout(),
           },
         ]);
@@ -136,16 +139,18 @@ export default function MenuScreen({navigation}) {
   const MenuItem = ({title, action}) => {
     return (
       <TouchableOpacity onPress={action} style={{marginTop: 16}}>
-        <LinearGradient
+        <View
           style={{
-            height: 100,
+            height: 60,
             borderRadius: 10,
             justifyContent: 'center',
             alignItems: 'center',
+            backgroundColor: GlobalStyle.colors.COLOR_BLUE,
           }}
-          colors={['#4c669f', '#3b5998', '#192f6a']}>
-          <Text style={styles.title}>{title}</Text>
-        </LinearGradient>
+          //   colors={['#4c669f', '#3b5998', '#192f6a']}
+        >
+          <Text style={[styles.title, {fontWeight: '600'}]}>{title}</Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -189,7 +194,7 @@ export default function MenuScreen({navigation}) {
             borderRadius: 8,
             width: (windowWidth - 64) / 2,
           }}>
-          <Text>Vietnam</Text>
+          <Text>Việt Nam</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -203,7 +208,7 @@ export default function MenuScreen({navigation}) {
             borderRadius: 8,
             width: (windowWidth - 64) / 2,
           }}>
-          <Text>World</Text>
+          <Text>Thế giới</Text>
         </TouchableOpacity>
       </View>
       <View
@@ -224,7 +229,19 @@ export default function MenuScreen({navigation}) {
         })}
       </View>
       {renderData.map((el, i) => {
-        return <MenuItem key={i} title={el.title} action={el.action} />;
+        if (userDetails.role === 1) {
+          return el.isUser ? (
+            <View key={i} />
+          ) : (
+            <MenuItem key={i} title={el.title} action={el.action} />
+          );
+        } else {
+          return el.isDisplay ? (
+            <View key={i} />
+          ) : (
+            <MenuItem key={i} title={el.title} action={el.action} />
+          );
+        }
       })}
     </ScrollView>
   );
@@ -234,6 +251,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: GlobalStyle.colors.COLOR_BACKGROUND,
   },
   box: {
     backgroundColor: 'orange',
