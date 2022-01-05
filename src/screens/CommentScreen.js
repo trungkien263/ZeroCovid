@@ -72,6 +72,7 @@ export default function CommentScreen({route, navigation}) {
         creator: user.uid,
         createdAt: firestore.Timestamp.fromDate(new Date()),
         updatedAt: firestore.Timestamp.fromDate(new Date()),
+        postId: postIdParam,
       })
       .then(() => {
         setContent('');

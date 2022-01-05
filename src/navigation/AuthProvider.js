@@ -2,6 +2,7 @@ import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React, {createContext, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
+import {Alert} from 'react-native';
 
 export const AuthContext = createContext();
 
@@ -16,6 +17,9 @@ export const AuthProvider = ({children}) => {
           try {
             await auth().signInWithEmailAndPassword(email, password);
           } catch (e) {
+            const errorCode = e?.code;
+            const errorMessage = e?.message;
+            alert(errorMessage);
             console.log(e);
             return e;
           }
@@ -57,7 +61,13 @@ export const AuthProvider = ({children}) => {
                   });
               });
           } catch (e) {
-            console.log(e);
+            const errorCode = e.code;
+            const errorMessage = e.message;
+            if (errorCode === 'auth/email-already-in-use') {
+              Alert.alert('Lỗi!', 'Email đã được sử dụng.');
+            } else {
+              Alert.alert('Unexpected Error!', errorMessage);
+            }
           }
         },
         logout: async () => {

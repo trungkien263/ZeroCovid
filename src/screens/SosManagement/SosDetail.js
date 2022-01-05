@@ -1,6 +1,6 @@
 import {Picker} from '@react-native-picker/picker';
 import moment from 'moment';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useState} from 'react';
 import {
   View,
@@ -133,19 +133,33 @@ export default function SosDetail({route, navigation}) {
           </Text>
         </View>
 
+        <Text
+          style={{
+            fontSize: 16,
+            marginBottom: 6,
+            backgroundColor: GlobalStyle.colors.COLOR_BLUE,
+            paddingHorizontal: 16,
+            paddingVertical: 4,
+            borderRadius: 10,
+            color: '#fff',
+            textAlign: 'center',
+            width: (width - 32) / 3,
+          }}>
+          Trạng thái
+        </Text>
         <View style={{flex: 1, borderRadius: 10, overflow: 'hidden'}}>
           <Picker
             selectedValue={selectedValue}
             style={{
-              backgroundColor: GlobalStyle.colors.COLOR_RED_ORANGE,
-              color: '#fff',
+              backgroundColor: GlobalStyle.colors.COLOR_SILVER,
+              //   color: '#fff',
             }}
             onValueChange={(itemValue, itemIndex) => {
               setSelectedValue(itemValue);
             }}
             mode="dropdown">
             {data.map((el, i) => (
-              <Picker.Item label={el.label} value={el.value} index={i} />
+              <Picker.Item label={el.label} value={el.value} key={i} />
             ))}
           </Picker>
         </View>

@@ -82,8 +82,26 @@ export default function MenuScreen({navigation}) {
     },
   ];
 
-  const handleSendSOS = () => {
-    firestore()
+  const fetchSos = async () => {
+    try {
+      firestore()
+        .collection('sos')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot(snapshot => {
+          const sosData = snapshot.docs.map(doc => {
+            const data = doc.data();
+            const id = doc.id;
+            return {id, ...data};
+          });
+          const pendingData = sosData.filter(el => el.status === 'PENDING');
+        });
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const handleSendSOS = async () => {
+    await firestore()
       .collection('sos')
       .add({
         creator: userDetails.uid,
