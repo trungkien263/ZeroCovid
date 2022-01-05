@@ -191,7 +191,9 @@ export default function MenuScreen({navigation}) {
           }}
           style={{
             backgroundColor:
-              selectedItem === 'VN' ? GlobalStyle.colors.COLOR_BLUE : 'orange',
+              selectedItem === 'VN'
+                ? GlobalStyle.colors.COLOR_BLUE
+                : GlobalStyle.colors.COLOR_SILVER,
             alignItems: 'center',
             paddingVertical: 4,
             borderRadius: 8,
@@ -212,7 +214,9 @@ export default function MenuScreen({navigation}) {
           }}
           style={{
             backgroundColor:
-              selectedItem === 'W' ? GlobalStyle.colors.COLOR_BLUE : 'orange',
+              selectedItem === 'W'
+                ? GlobalStyle.colors.COLOR_BLUE
+                : GlobalStyle.colors.COLOR_SILVER,
             alignItems: 'center',
             paddingVertical: 4,
             borderRadius: 8,
