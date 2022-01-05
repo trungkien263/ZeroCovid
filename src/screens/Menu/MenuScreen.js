@@ -24,6 +24,7 @@ export default function MenuScreen({navigation}) {
   const [covidCases, setCovidCases] = useState(vnNumber);
   const [isTotalWorld, setIsTotalWorld] = useState(false);
   const {userDetails} = useSelector(state => state.user);
+  const [selectedItem, setSelectedItem] = useState('VN');
 
   const renderData = [
     {
@@ -186,29 +187,43 @@ export default function MenuScreen({navigation}) {
             const data = vnNumber;
             setCovidCases(data);
             setIsTotalWorld(false);
+            setSelectedItem('VN');
           }}
           style={{
-            backgroundColor: 'orange',
+            backgroundColor:
+              selectedItem === 'VN' ? GlobalStyle.colors.COLOR_BLUE : 'orange',
             alignItems: 'center',
             paddingVertical: 4,
             borderRadius: 8,
             width: (windowWidth - 64) / 2,
           }}>
-          <Text>Việt Nam</Text>
+          <Text
+            style={{
+              color: selectedItem === 'VN' ? '#fff' : '#000',
+            }}>
+            Việt Nam
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             setCovidCases(worldCases);
             setIsTotalWorld(true);
+            setSelectedItem('W');
           }}
           style={{
-            backgroundColor: 'orange',
+            backgroundColor:
+              selectedItem === 'W' ? GlobalStyle.colors.COLOR_BLUE : 'orange',
             alignItems: 'center',
             paddingVertical: 4,
             borderRadius: 8,
             width: (windowWidth - 64) / 2,
           }}>
-          <Text>Thế giới</Text>
+          <Text
+            style={{
+              color: selectedItem === 'W' ? '#fff' : '#000',
+            }}>
+            Thế giới
+          </Text>
         </TouchableOpacity>
       </View>
       <View
