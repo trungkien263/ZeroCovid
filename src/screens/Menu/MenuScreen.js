@@ -53,14 +53,14 @@ export default function MenuScreen({navigation}) {
     {
       title: 'Đăng xuất',
       action: () => {
-        Alert.alert('Sign out!', 'Are you sure?', [
+        Alert.alert('Đăng xuất!', 'Bạn có chắc muốn đăng xuất?', [
           {
-            text: 'Cancel',
+            text: 'Hủy bỏ',
             onPress: () => console.log('canceled!'),
             style: 'cancel',
           },
           {
-            text: 'Sign Out',
+            text: 'Đăng xuất',
             onPress: () => logout(),
           },
         ]);
