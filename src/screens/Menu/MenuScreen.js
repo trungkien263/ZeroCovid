@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 
 const windowWidth = Dimensions.get('window').width;
@@ -26,9 +26,9 @@ export default function MenuScreen({navigation}) {
 
   const renderData = [
     {
-      title: 'Chế độ ăn uống',
+      title: 'Chế độ ăn',
       action: () => {
-        alert('Diet Clicked !');
+        navigation.navigate('Diet');
       },
     },
     {
@@ -46,7 +46,7 @@ export default function MenuScreen({navigation}) {
     {
       title: 'Đổi mật khẩu',
       action: () => {
-        alert('SOS Clicked !');
+        navigation.navigate('ChangePwd');
       },
     },
     {
@@ -67,18 +67,31 @@ export default function MenuScreen({navigation}) {
     },
   ];
 
+  const numberFormater = number => {
+    const numberFormarted = parseInt(number)
+      .toFixed(2)
+      .replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    const tmp = numberFormarted.split('.');
+    const outputNumber = tmp[0];
+    return outputNumber;
+  };
+
   const covidData = [
     {
-      title: 'Total Confirmed',
-      data: isTotalWorld ? covidCases?.TotalConfirmed : covidCases?.Confirmed,
+      title: 'Tổng số nhiễm',
+      data: isTotalWorld
+        ? numberFormater(covidCases?.TotalConfirmed)
+        : numberFormater(covidCases?.Confirmed),
     },
     {
-      title: 'Total Recovered',
+      title: 'Tổng số khỏi',
       data: isTotalWorld ? covidCases?.TotalRecovered : covidCases?.Recovered,
     },
     {
-      title: 'Total Deaths',
-      data: isTotalWorld ? covidCases?.TotalDeaths : covidCases?.Deaths,
+      title: 'Tổng số tử vong',
+      data: isTotalWorld
+        ? numberFormater(covidCases?.TotalDeaths)
+        : numberFormater(covidCases?.Deaths),
     },
   ];
 
