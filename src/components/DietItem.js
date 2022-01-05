@@ -115,7 +115,7 @@ export default function DietItem({item, onDeletePost, userData}) {
       {item.foodImage && (
         <Image
           source={{uri: item?.foodImage}}
-          resizeMode="contain"
+          resizeMode="cover"
           style={{
             maxWidth: '100%',
             height: 200,

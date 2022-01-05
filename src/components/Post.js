@@ -5,7 +5,14 @@ import React, {
   useRef,
   useCallback,
 } from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -13,6 +20,8 @@ import {AuthContext} from '../navigation/AuthProvider';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/core';
 import firestore from '@react-native-firebase/firestore';
+
+const {width} = Dimensions.get('window');
 
 export default function Post({item, onDeletePost, userData}) {
   const {user} = useContext(AuthContext);
@@ -189,7 +198,7 @@ export default function Post({item, onDeletePost, userData}) {
       {item.postImg && (
         <Image
           source={{uri: item?.postImg}}
-          resizeMode="contain"
+          resizeMode="cover"
           style={{
             maxWidth: '100%',
             height: 200,
