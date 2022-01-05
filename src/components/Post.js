@@ -1,4 +1,10 @@
-import React, {useContext, useEffect, useState, useRef} from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -17,6 +23,18 @@ export default function Post({item, onDeletePost, userData}) {
   const [commentCount, setCommentCount] = useState(0);
   //   let isRendered = useRef(false);
   const [isDisplayOption, setIsDisplayOption] = useState(false);
+
+  const [textShown, setTextShown] = useState(false); //To show ur remaining Text
+  const [lengthMore, setLengthMore] = useState(false); //to show the "Read more & Less Line"
+  const toggleNumberOfLines = () => {
+    //To toggle the show text or hide it
+    setTextShown(!textShown);
+  };
+
+  const onTextLayout = useCallback(e => {
+    setLengthMore(e.nativeEvent.lines.length >= 4); //to check the text is more than 4 lines or not
+    // console.log(e.nativeEvent);
+  }, []);
 
   useEffect(async () => {
     // isRendered = true;
@@ -151,7 +169,23 @@ export default function Post({item, onDeletePost, userData}) {
           </TouchableOpacity>
         )}
       </View>
-      {item.post && <Text style={{paddingVertical: 16}}>{item?.post}</Text>}
+      {item.post && (
+        <View>
+          <Text
+            onTextLayout={onTextLayout}
+            numberOfLines={textShown ? undefined : 4}
+            style={{paddingVertical: 16}}>
+            {item?.post}
+          </Text>
+          {lengthMore ? (
+            <Text
+              onPress={toggleNumberOfLines}
+              style={{lineHeight: 21, marginTop: 10}}>
+              {textShown ? 'Ẩn' : 'Xem thêm'}
+            </Text>
+          ) : null}
+        </View>
+      )}
       {item.postImg && (
         <Image
           source={{uri: item?.postImg}}
