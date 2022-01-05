@@ -14,7 +14,10 @@ import ProfileScreen from '../screens/ProfileScreen';
 import AddPostScreen from '../screens/AddPostScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
-import MenuScreen from '../screens/MenuScreen';
+import MenuScreen from '../screens/Menu/MenuScreen';
+import ChangePwd from '../screens/Menu/ChangePwd';
+import AddFood from '../screens/Menu/Diet/AddFood';
+import Diet from '../screens/Menu/Diet';
 import CommentScreen from '../screens/CommentScreen';
 import SosManagement from '../screens/SosManagement';
 import SosDetail from '../screens/SosManagement/SosDetail';
@@ -219,6 +222,59 @@ const MenuStack = ({navigation}) => (
       options={({route}) => ({
         headerShown: true,
         title: 'Chi tiết SOS',
+        headerTitleAlign: 'center',
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      })}
+    />
+    <Stack.Screen
+      name="ChangePwd"
+      component={ChangePwd}
+      options={({route}) => ({
+        headerShown: true,
+        title: 'Đổi mật khẩu',
+        headerTitleAlign: 'center',
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+      })}
+    />
+    <Stack.Screen
+      name="Diet"
+      component={Diet}
+      options={({route}) => ({
+        headerShown: true,
+        title: 'Gợi ý đồ ăn',
+        headerTitleAlign: 'center',
+        headerBackImage: () => (
+          <View style={{marginLeft: 15}}>
+            <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          </View>
+        ),
+        headerRight: () => (
+          <View style={{marginRight: 10}}>
+            <FontAwesome5.Button
+              name="plus"
+              size={22}
+              backgroundColor="#fff"
+              color="#2e64e5"
+              onPress={() => navigation.navigate('AddFood')}
+            />
+          </View>
+        ),
+      })}
+    />
+    <Stack.Screen
+      name="AddFood"
+      component={AddFood}
+      options={({route}) => ({
+        headerShown: true,
+        title: 'Thêm đồ ăn',
         headerTitleAlign: 'center',
         headerBackImage: () => (
           <View style={{marginLeft: 15}}>

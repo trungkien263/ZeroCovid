@@ -36,6 +36,9 @@ export const AuthProvider = ({children}) => {
             // Sign-in the user with the credential
             await auth().signInWithCredential(googleCredential);
           } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            Alert.alert('Error', errorMessage);
             console.log('error', error);
           }
         },
