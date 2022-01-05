@@ -39,6 +39,7 @@ export default function MenuScreen({navigation}) {
     },
     {
       title: 'Quản lý SOS',
+      isDisplay: userDetails.role === 1 ? true : false,
       action: () => {
         navigation.navigate('SosManagement');
       },

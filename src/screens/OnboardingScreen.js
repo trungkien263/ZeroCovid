@@ -36,31 +36,28 @@ export default function OnboardingScreen({navigation}) {
           backgroundColor: '#a6e4d0',
           image: (
             <Image
-              source={require('../assets/people.png')}
+              source={require('../assets/doctor.png')}
               style={styles.img}
             />
           ),
-          title: 'Making Friends',
-          subtitle: 'Let be friend',
+          title: 'Kết nối người bệnh',
+          subtitle: 'Kết nối trực tiếp đến đội ngũ y tế',
         },
         {
           backgroundColor: '#fdeb93',
           image: (
-            <Image
-              source={require('../assets/connect.png')}
-              style={styles.img}
-            />
+            <Image source={require('../assets/sos.png')} style={styles.img} />
           ),
-          title: 'Connect to the world',
-          subtitle: 'Make people more closer',
+          title: 'Tình trạng khẩn cấp?',
+          subtitle: 'Thông báo ngay tới đội ngũ y tế',
         },
         {
           backgroundColor: '#e9bcbe',
           image: (
-            <Image source={require('../assets/share.png')} style={styles.img} />
+            <Image source={require('../assets/news.png')} style={styles.img} />
           ),
-          title: 'Share Your Favorites',
-          subtitle: 'Share Your Thoughts With Similar Kind of People',
+          title: 'Cập nhật tin tức',
+          subtitle: 'Cập nhật tin tức mới nhất về Covid',
         },
       ]}
     />

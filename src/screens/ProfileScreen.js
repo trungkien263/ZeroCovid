@@ -284,15 +284,7 @@ export default function ProfileScreen({navigation, route}) {
           <View style={styles.userInfoWrapper}>
             <View style={styles.userInfoItem}>
               <Text style={styles.userName}>{posts.length}</Text>
-              <Text>Posts</Text>
-            </View>
-            <View style={styles.userInfoItem}>
-              <Text style={styles.userName}>10,000</Text>
-              <Text>Followers</Text>
-            </View>
-            <View style={styles.userInfoItem}>
-              <Text style={styles.userName}>100</Text>
-              <Text>Following</Text>
+              <Text>Bài viết</Text>
             </View>
           </View>
           <View style={styles.postArea}>
