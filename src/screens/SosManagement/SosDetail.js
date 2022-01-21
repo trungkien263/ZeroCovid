@@ -123,6 +123,15 @@ export default function SosDetail({route, navigation}) {
         </View>
         <View style={styles.action}>
           <Feather
+            name="message-square"
+            color={GlobalStyle.colors.COLOR_GRAY}
+            style={{marginTop: 3}}
+            size={16}
+          />
+          <Text style={{fontSize: 16, marginLeft: 10}}>{item?.message}</Text>
+        </View>
+        <View style={styles.action}>
+          <Feather
             name="clock"
             color={GlobalStyle.colors.COLOR_GRAY}
             style={{marginTop: 3}}

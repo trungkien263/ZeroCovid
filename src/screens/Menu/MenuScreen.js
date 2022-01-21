@@ -13,6 +13,7 @@ import {useSelector} from 'react-redux';
 import {AuthContext} from '../../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import {GlobalStyle} from '../../config/globalStyle';
+import Dialog from 'react-native-dialog';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -25,6 +26,8 @@ export default function MenuScreen({navigation}) {
   const [isTotalWorld, setIsTotalWorld] = useState(false);
   const {userDetails} = useSelector(state => state.user);
   const [selectedItem, setSelectedItem] = useState('VN');
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [message, setMessage] = useState('');
 
   const renderData = [
     {
@@ -37,21 +40,22 @@ export default function MenuScreen({navigation}) {
       title: 'SOS',
       isUser: true,
       action: () => {
-        Alert.alert(
-          'SOS',
-          'Trạng thái khẩn cấp (SOS) sẽ gửi thông tin chi tiết của bạn tới đội ngũ y tế. Bạn xác nhận gửi?',
-          [
-            {
-              text: 'Hủy bỏ',
-              onPress: () => console.log('canceled!'),
-              style: 'cancel',
-            },
-            {
-              text: 'OK',
-              onPress: () => handleSendSOS(),
-            },
-          ],
-        );
+        // Alert.alert(
+        //   'SOS',
+        //   'Trạng thái khẩn cấp (SOS) sẽ gửi thông tin chi tiết của bạn tới đội ngũ y tế. Bạn xác nhận gửi?',
+        //   [
+        //     {
+        //       text: 'Hủy bỏ',
+        //       onPress: () => console.log('canceled!'),
+        //       style: 'cancel',
+        //     },
+        //     {
+        //       text: 'OK',
+        //       onPress: () => handleSendSOS(),
+        //     },
+        //   ],
+        // );
+        setIsDialogVisible(true);
       },
     },
     {
@@ -132,23 +136,30 @@ export default function MenuScreen({navigation}) {
   };
 
   const handleSendSOS = async () => {
-    await firestore()
-      .collection('sos')
-      .add({
-        creator: userDetails.uid,
-        status: 'PENDING',
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => {
-        console.log('SOS sent!');
-        Alert.alert(
-          'Đã gửi trạng thái khẩn cấp!',
-          'Hãy đợi trong giây lát, chúng tôi sẽ liên hệ với bạn!',
-        );
-      })
-      .catch(err => {
-        console.log('Something went wrong!', err);
-      });
+    if (message === '') {
+      Alert.alert('Cảnh báo!', 'Không được bỏ trống tình trạng bệnh.');
+    } else {
+      await firestore()
+        .collection('sos')
+        .add({
+          creator: userDetails.uid,
+          status: 'PENDING',
+          message: message,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          console.log('SOS sent!');
+          setIsDialogVisible(false);
+          setMessage('');
+          Alert.alert(
+            'Đã gửi trạng thái khẩn cấp!',
+            'Hãy đợi trong giây lát, chúng tôi sẽ liên hệ với bạn!',
+          );
+        })
+        .catch(err => {
+          console.log('Something went wrong!', err);
+        });
+    }
   };
 
   const MenuItem = ({title, action}) => {
@@ -190,6 +201,28 @@ export default function MenuScreen({navigation}) {
 
   return (
     <ScrollView style={styles.container}>
+      <Dialog.Container visible={isDialogVisible}>
+        <Dialog.Title>{'SOS'}</Dialog.Title>
+        {/* <Dialog.Description>
+          {
+            'Trạng thái khẩn cấp (SOS) sẽ gửi thông tin chi tiết của bạn tới đội ngũ y tế. Bạn xác nhận gửi?'
+          }
+        </Dialog.Description> */}
+        <Dialog.Input
+          label="Tình trạng của bạn thế nào?"
+          onChangeText={txt => setMessage(txt)}
+          multiline={true}
+          numberOfLines={2}
+        />
+        <Dialog.Button
+          label="Hủy bỏ"
+          onPress={() => {
+            setIsDialogVisible(false);
+            setMessage('');
+          }}
+        />
+        <Dialog.Button label="Gửi" onPress={() => handleSendSOS()} />
+      </Dialog.Container>
       <View
         style={{
           flexDirection: 'row',
