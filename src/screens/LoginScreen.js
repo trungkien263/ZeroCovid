@@ -94,7 +94,7 @@ export default function LoginScreen({navigation}) {
           onPress={() => {}}
         /> */}
 
-        <SocialButton
+        {/* <SocialButton
           buttonTitle="Đăng nhập với Google"
           btnType="google"
           color="#de4d41"
@@ -104,7 +104,7 @@ export default function LoginScreen({navigation}) {
             borderColor: '#de4d41',
           }}
           onPress={() => googleLogin()}
-        />
+        /> */}
 
         <View style={{marginTop: 30, alignItems: 'center'}}>
           <TouchableOpacity
