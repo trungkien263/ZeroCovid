@@ -1,25 +1,19 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-} from 'react';
+import firestore from '@react-native-firebase/firestore';
+import {useNavigation} from '@react-navigation/core';
+import moment from 'moment';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
+  Dimensions,
   Image,
   StyleSheet,
-  Dimensions,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {GlobalStyle} from '../config/globalStyle';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {GlobalStyle} from '../config/globalStyle';
 import {AuthContext} from '../navigation/AuthProvider';
-import moment from 'moment';
-import {useNavigation} from '@react-navigation/core';
-import firestore from '@react-native-firebase/firestore';
 
 const {width} = Dimensions.get('window');
 
@@ -138,7 +132,8 @@ export default function Post({item, onDeletePost, userData}) {
               navigation.navigate('HomeProfile', {
                 userId: item?.userId,
               });
-            }}>
+            }}
+            style={{position: 'relative'}}>
             <Image
               source={{
                 uri:
@@ -152,6 +147,20 @@ export default function Post({item, onDeletePost, userData}) {
               }}
               resizeMode="cover"
             />
+            {userData.role === 1 && (
+              <Image
+                source={require('../assets/check.png')}
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 40,
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                }}
+                resizeMode="cover"
+              />
+            )}
           </TouchableOpacity>
           <View style={{paddingLeft: 10}}>
             <Text style={{fontWeight: '700'}}>{userData?.name}</Text>
