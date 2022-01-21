@@ -116,63 +116,36 @@ export default function SosManageMent({navigation}) {
   };
 
   const FirstRoute = () => (
-    // <ScrollView
-    //   style={[
-    //     styles.container,
-    //     // {backgroundColor: '#E8554E'}
-    //   ]}>
-    //   {pendingList.map((el, i) => {
-    //     return <SosItem item={el} key={i} screen={0} />;
-    //   })}
-    // </ScrollView>
     <FlatList
       style={styles.container}
       data={pendingList}
       keyExtractor={item => item.roomId}
       renderItem={({item}) => {
-        return <SosItem item={item} screen={0} />;
+        return <SosItem key={item.roomId} item={item} screen={0} />;
       }}
       ListEmptyComponent={<EmptyScreen title="Danh sách trống!" />}
     />
   );
 
   const SecondRoute = () => (
-    // <ScrollView
-    //   style={[
-    //     styles.container,
-    //     // {backgroundColor: '#F9C449'}
-    //   ]}>
-    //   {processingList.map((el, i) => {
-    //     return <SosItem item={el} key={i} screen={1} />;
-    //   })}
-    // </ScrollView>
     <FlatList
       style={styles.container}
       data={processingList}
       keyExtractor={item => item.roomId}
       renderItem={({item}) => {
-        return <SosItem item={item} screen={0} />;
+        return <SosItem key={item.roomId} item={item} screen={0} />;
       }}
       ListEmptyComponent={<EmptyScreen title="Danh sách trống!" />}
     />
   );
 
   const ThirdRoute = () => (
-    // <ScrollView
-    //   style={[
-    //     styles.container,
-    //     // {backgroundColor: '#2AA876'}
-    //   ]}>
-    //   {doneList.map((el, i) => {
-    //     return <SosItem item={el} key={i} screen={2} />;
-    //   })}
-    // </ScrollView>
     <FlatList
       style={styles.container}
       data={doneList}
       keyExtractor={item => item.roomId}
       renderItem={({item}) => {
-        return <SosItem item={item} screen={0} />;
+        return <SosItem key={item.roomId} item={item} screen={0} />;
       }}
       ListEmptyComponent={<EmptyScreen title="Danh sách trống!" />}
     />
@@ -185,11 +158,6 @@ export default function SosManageMent({navigation}) {
   });
 
   return (
-    // <View style={styles.container}>
-    //   {sosList.map((el, i) => {
-    //     return <SosItem item={el} key={i} />;
-    //   })}
-    // </View>
     <TabView
       navigationState={{index, routes}}
       renderScene={renderScene}

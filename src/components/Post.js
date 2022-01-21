@@ -15,6 +15,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {GlobalStyle} from '../config/globalStyle';
 import {AuthContext} from '../navigation/AuthProvider';
 import Avatar from './Avatar';
+import 'moment/locale/vi'; // without this line it didn't work
+moment.locale('vi');
 
 const {width} = Dimensions.get('window');
 
