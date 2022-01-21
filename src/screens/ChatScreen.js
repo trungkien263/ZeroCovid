@@ -180,7 +180,11 @@ export default function ChatScreen({route, navigation}) {
           onPress={() => {
             navigation.goBack();
           }}>
-          <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+          <Ionicons
+            name="arrow-back"
+            size={25}
+            color={GlobalStyle.colors.COLOR_BLUE}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {

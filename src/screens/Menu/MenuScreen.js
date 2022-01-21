@@ -37,7 +37,21 @@ export default function MenuScreen({navigation}) {
       title: 'SOS',
       isUser: true,
       action: () => {
-        handleSendSOS();
+        Alert.alert(
+          'SOS',
+          'Trạng thái khẩn cấp (SOS) sẽ gửi thông tin chi tiết của bạn tới đội ngũ y tế. Bạn xác nhận gửi?',
+          [
+            {
+              text: 'Hủy bỏ',
+              onPress: () => console.log('canceled!'),
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => handleSendSOS(),
+            },
+          ],
+        );
       },
     },
     {

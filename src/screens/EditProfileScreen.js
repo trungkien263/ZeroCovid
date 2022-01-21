@@ -253,6 +253,12 @@ export default function EditProfile() {
       setAgeError('Không được bỏ trống');
     } else if (age < 6 || age > 100) {
       setAgeError('Tuổi chỉ được nằm trong khoảng 6 đến 100');
+    } else if (
+      age == userDetails.age &&
+      name == userDetails.name &&
+      address == userDetails.address
+    ) {
+      return;
     } else {
       updateProfile();
     }
