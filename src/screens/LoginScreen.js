@@ -41,6 +41,8 @@ export default function LoginScreen({navigation}) {
       console.log(errorCode);
       if (errorCode === 'auth/user-not-found') {
         Alert.alert('Lỗi', 'Người dùng không tồn tại.');
+      } else if (errorCode === 'auth/wrong-password') {
+        Alert.alert('Lỗi', 'Mật khẩu không đúng.');
       } else {
         Alert.alert('Unknow Error', errorMessage);
       }
@@ -49,9 +51,9 @@ export default function LoginScreen({navigation}) {
 
   const handleLogin = () => {
     if (!email || !password) {
-      alert('Email và mật khẩu không được bỏ trống!');
+      Alert.alert('Lỗi', 'Email và mật khẩu không được bỏ trống!');
     } else if (!validateMail(email)) {
-      alert('Email không hợp lệ');
+      Alert.alert('Lỗi', 'Email không hợp lệ');
     } else {
       login(email, password);
     }

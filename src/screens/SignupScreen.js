@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -32,15 +33,15 @@ export default function SignupScreen({navigation}) {
 
   const handleSignUp = () => {
     if (!email || !password || !confirmPassword || !name) {
-      alert('Email, mật khẩu, họ tên không được trống!');
+      Alert.alert('Lỗi', 'Email, mật khẩu, họ tên không được trống!');
     } else if (!validateMail(email)) {
-      alert('Email không hợp lệ');
+      Alert.alert('Lỗi', 'Email không hợp lệ');
     } else if (password !== confirmPassword) {
-      alert('Mật khẩu không trùng khớp');
+      Alert.alert('Lỗi', 'Mật khẩu không trùng khớp');
     } else if (name.length > 20) {
-      alert('Tên không được vượt quá 20 ký tự');
+      Alert.alert('Lỗi', 'Tên không được vượt quá 20 ký tự');
     } else if (password.length < 8) {
-      alert('Mật khẩu phải lớn hơn 8 ký tự');
+      Alert.alert('Lỗi', 'Mật khẩu phải lớn hơn 8 ký tự');
     } else {
       register(email, password, name);
     }
@@ -107,9 +108,11 @@ export default function SignupScreen({navigation}) {
             </Text>
           </TouchableOpacity>
           <Text style={styles.color_textPrivate}> và </Text>
-          <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-            Chính sách bảo mật
-          </Text>
+          <TouchableOpacity>
+            <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
+              Chính sách bảo mật
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* <SocialButton
