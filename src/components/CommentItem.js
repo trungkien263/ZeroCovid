@@ -16,8 +16,6 @@ export default function CommentItem({
   const [toggleAnswer, setToggleAnswer] = useState(false);
   const [isDisplayOption, setIsDisplayOption] = useState(false);
 
-  console.log('cmtitemmmmmmmmmmmmmm', item);
-
   useEffect(() => {
     if (isDisplayOption) {
       setTimeout(() => {

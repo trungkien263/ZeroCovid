@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import {Bubble, GiftedChat, InputToolbar, Send} from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -7,10 +7,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function ChatScreen({route}) {
+export default function ChatScreen({route, navigation}) {
   const {roomInfo} = route.params;
   const {userDetails} = useSelector(state => state.user);
+
+  console.log('roomInfo in chat', roomInfo);
 
   const [messages, setMessages] = useState([]);
 
@@ -164,26 +167,59 @@ export default function ChatScreen({route}) {
   };
 
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: userDetails?.uid,
-        name: userDetails?.lname,
-        avatar: userDetails?.userImg,
-      }}
-      renderBubble={renderBubble}
-      alwaysShowSend={true}
-      renderSend={renderSend}
-      scrollToBottom
-      infiniteScroll={true}
-      showAvatarForEveryMessage={false}
-      renderInputToolbar={renderInputToolbar}
-      textInputProps={{
-        color: '#000',
-      }}
-      placeholder="Nhập tin nhắn..."
-    />
+    <View style={{flex: 1}}>
+      <View
+        style={{
+          backgroundColor: '#fff',
+          height: 48,
+          padding: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <Ionicons name="arrow-back" size={25} color="#2e64e5" />
+        </TouchableOpacity>
+        <View
+          style={{flexDirection: 'row', alignItems: 'center', marginLeft: 16}}>
+          <Image
+            source={
+              roomInfo?.partnerData?.userImg
+                ? {
+                    uri: roomInfo?.partnerData?.userImg,
+                  }
+                : require('../assets/defaultAvatar.png')
+            }
+            style={{width: 40, height: 40, borderRadius: 100}}
+          />
+          <Text style={{fontWeight: '600', marginLeft: 10}}>
+            {roomInfo?.partnerData?.name}
+          </Text>
+        </View>
+      </View>
+      <GiftedChat
+        messages={messages}
+        onSend={messages => onSend(messages)}
+        user={{
+          _id: userDetails?.uid,
+          name: userDetails?.lname,
+          avatar: userDetails?.userImg,
+        }}
+        renderBubble={renderBubble}
+        alwaysShowSend={true}
+        renderSend={renderSend}
+        scrollToBottom
+        infiniteScroll={true}
+        showAvatarForEveryMessage={false}
+        renderInputToolbar={renderInputToolbar}
+        textInputProps={{
+          color: '#000',
+        }}
+        placeholder="Nhập tin nhắn..."
+      />
+    </View>
   );
 }
 

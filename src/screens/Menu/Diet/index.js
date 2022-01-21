@@ -15,6 +15,7 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import HomeSkeleton from '../../../components/Skeleton/HomeSkeleton';
+import EmptyScreen from '../../../components/EmptyScreen';
 
 import PushNotification from 'react-native-push-notification';
 
@@ -262,16 +263,20 @@ export default function Diet({navigation, route}) {
         }}>
         <Text>TEST LOCAL NOTIFICATION</Text>
       </TouchableOpacity> */}
-      {posts.map((item, index) => {
-        return (
-          <DietItem
-            key={index}
-            userData={item.userData}
-            item={item}
-            onDeletePost={handleDelete}
-          />
-        );
-      })}
+      {posts.length ? (
+        posts.map((item, index) => {
+          return (
+            <DietItem
+              key={index}
+              userData={item.userData}
+              item={item}
+              onDeletePost={handleDelete}
+            />
+          );
+        })
+      ) : (
+        <EmptyScreen title="Chưa có bài viết nào!" />
+      )}
     </ScrollView>
   );
 }
