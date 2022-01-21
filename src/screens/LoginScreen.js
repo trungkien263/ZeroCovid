@@ -8,6 +8,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -34,9 +35,15 @@ export default function LoginScreen({navigation}) {
   const login = async (email, password) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
-    } catch (e) {
-      console.log(e);
-      alert(e);
+    } catch (error) {
+      const errorCode = error?.code;
+      const errorMessage = error?.message;
+      console.log(errorCode);
+      if (errorCode === 'auth/user-not-found') {
+        Alert.alert('Lỗi', 'Người dùng không tồn tại.');
+      } else {
+        Alert.alert('Unknow Error', errorMessage);
+      }
     }
   };
 

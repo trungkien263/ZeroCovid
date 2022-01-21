@@ -17,7 +17,7 @@ const Done = ({...props}) => (
       marginRight: 10,
     }}
     {...props}>
-    <Text>Done</Text>
+    <Text>Hoàn tất</Text>
   </TouchableOpacity>
 );
 
@@ -31,6 +31,8 @@ export default function OnboardingScreen({navigation}) {
       onDone={() => {
         navigation.navigate('Login');
       }}
+      nextLabel={'Tiếp theo'}
+      skipLabel={'Bỏ qua'}
       pages={[
         {
           backgroundColor: '#a6e4d0',

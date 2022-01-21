@@ -16,12 +16,18 @@ export const AuthProvider = ({children}) => {
         login: async (email, password) => {
           try {
             await auth().signInWithEmailAndPassword(email, password);
-          } catch (e) {
-            const errorCode = e?.code;
-            const errorMessage = e?.message;
-            alert(errorMessage);
-            console.log(errorCode);
-            return e;
+          } catch (error) {
+            const errorCode = error?.code;
+            const errorMessage = error?.message;
+            console.log('error type', typeof error);
+            // if (
+            //   errorMessage ==
+            //   '[Error: [auth/user-not-found] There is no user record corresponding to this identifier. The user may have been deleted.]'
+            // ) {
+            //   alert('User không tồn tại!');
+            // }
+            // console.log('errorCode', error.code);
+            // console.log('errorMessage', error.message);
           }
         },
         googleLogin: async () => {
@@ -47,7 +53,7 @@ export const AuthProvider = ({children}) => {
             await auth()
               .createUserWithEmailAndPassword(email, password)
               .then(() => {
-                // once the user creation has happened sucessfully, we can add with th
+                // once the user creation has happened successfully, we can add with th
                 firestore()
                   .collection('users')
                   .doc(auth().currentUser.uid)
