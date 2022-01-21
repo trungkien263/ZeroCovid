@@ -14,6 +14,7 @@ import moment from 'moment';
 import {useNavigation} from '@react-navigation/core';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
+import Avatar from './Avatar';
 
 export default function DietItem({item, onDeletePost, userData}) {
   const {user} = useContext(AuthContext);
@@ -50,7 +51,7 @@ export default function DietItem({item, onDeletePost, userData}) {
           justifyContent: 'space-between',
         }}>
         <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               navigation.navigate('HomeProfile', {
                 userId: item?.userId,
@@ -69,7 +70,15 @@ export default function DietItem({item, onDeletePost, userData}) {
               }}
               resizeMode="cover"
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <Avatar
+            user={userData}
+            onPress={() => {
+              navigation.navigate('HomeProfile', {
+                userId: item?.creator,
+              });
+            }}
+          />
           <View style={{paddingLeft: 10}}>
             <Text style={{fontWeight: '700'}}>{userData?.name}</Text>
             <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>

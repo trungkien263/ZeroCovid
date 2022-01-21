@@ -16,6 +16,7 @@ import MessageSkeleton from '../components/Skeleton/MessageSkeleton';
 import {useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
 import EmptyScreen from '../components/EmptyScreen';
+import Avatar from '../components/Avatar';
 
 export default function MessagesScreen() {
   const navigation = useNavigation();
@@ -96,26 +97,14 @@ export default function MessagesScreen() {
   const Message = ({item, partnerId}) => {
     return (
       <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity
+        <Avatar
+          user={item?.partnerData}
           onPress={() => {
             navigation.navigate('Profile', {
               userId: partnerId,
             });
-          }}>
-          <Image
-            source={{
-              uri: item?.partnerData?.userImg
-                ? item?.partnerData?.userImg
-                : 'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
-            }}
-            style={{
-              width: 60,
-              height: 60,
-              borderRadius: 40,
-              marginBottom: 16,
-            }}
-          />
-        </TouchableOpacity>
+          }}
+        />
         <TouchableOpacity
           onPress={() => {
             navigation.push('Chat', {roomInfo: item});

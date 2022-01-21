@@ -8,6 +8,7 @@ import {useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Avatar from '../components/Avatar';
 
 export default function ChatScreen({route, navigation}) {
   const {roomInfo} = route.params;
@@ -193,7 +194,7 @@ export default function ChatScreen({route, navigation}) {
             });
           }}
           style={{flexDirection: 'row', alignItems: 'center', marginLeft: 16}}>
-          <Image
+          {/* <Image
             source={
               roomInfo?.partnerData?.userImg
                 ? {
@@ -202,6 +203,16 @@ export default function ChatScreen({route, navigation}) {
                 : require('../assets/defaultAvatar.png')
             }
             style={{width: 40, height: 40, borderRadius: 100}}
+          /> */}
+          <Avatar
+            user={roomInfo?.partnerData}
+            imgStyle={{width: 40, height: 40, borderRadius: 100}}
+            tickStyle={{width: 16, height: 16}}
+            onPress={() => {
+              navigation.navigate('Profile', {
+                userId: roomInfo?.partnerData?.uid,
+              });
+            }}
           />
           <Text style={{fontWeight: '600', marginLeft: 10}}>
             {roomInfo?.partnerData?.name}

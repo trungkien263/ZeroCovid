@@ -4,17 +4,14 @@ import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {GlobalStyle} from '../config/globalStyle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useSelector} from 'react-redux';
+import Avatar from './Avatar';
+import {useNavigation} from '@react-navigation/native';
 
-export default function CommentItem({
-  item,
-  user,
-  navigation,
-  onDeleteCmt,
-  onEditCmt,
-}) {
+export default function CommentItem({item, user, onDeleteCmt, onEditCmt}) {
   const {userDetails} = useSelector(state => state.user);
   const [toggleAnswer, setToggleAnswer] = useState(false);
   const [isDisplayOption, setIsDisplayOption] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (isDisplayOption) {
@@ -27,7 +24,7 @@ export default function CommentItem({
   return (
     <View style={{marginBottom: 10, position: 'relative'}}>
       <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{marginRight: 10}}
           onPress={() => {
             navigation.navigate('HomeProfile', {
@@ -46,7 +43,22 @@ export default function CommentItem({
               borderRadius: 40,
             }}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <Avatar
+          user={item}
+          onPress={() => {
+            navigation.navigate('HomeProfile', {
+              userId: item?.uid,
+            });
+          }}
+          imgStyle={{
+            width: 40,
+            height: 40,
+            borderRadius: 40,
+          }}
+          style={{marginRight: 10, width: 40, height: 40, borderRadius: 40}}
+          tickStyle={{width: 14, height: 14}}
+        />
         <View style={{flex: 1}}>
           <View
             style={{

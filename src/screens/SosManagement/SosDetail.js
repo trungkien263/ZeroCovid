@@ -18,12 +18,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FormButton from '../../components/FormButton';
 import {GlobalStyle} from '../../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
+import {useSelector} from 'react-redux';
 
 const {width} = Dimensions.get('window');
 
 export default function SosDetail({route, navigation}) {
   const {item} = route.params;
   const [selectedValue, setSelectedValue] = useState(item?.status);
+  const {userDetails} = useSelector(state => state.user);
 
   const data = [
     {
@@ -46,6 +48,7 @@ export default function SosDetail({route, navigation}) {
       .doc(item?.id)
       .update({
         status: selectedValue,
+        handledBy: userDetails.uid,
         updatedAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {

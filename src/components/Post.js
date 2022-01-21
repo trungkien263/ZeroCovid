@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {GlobalStyle} from '../config/globalStyle';
 import {AuthContext} from '../navigation/AuthProvider';
+import Avatar from './Avatar';
 
 const {width} = Dimensions.get('window');
 
@@ -127,14 +128,14 @@ export default function Post({item, onDeletePost, userData}) {
           justifyContent: 'space-between',
         }}>
         <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               navigation.navigate('HomeProfile', {
                 userId: item?.userId,
               });
             }}
-            style={{position: 'relative'}}>
-            <Image
+            style={{position: 'relative'}}> */}
+          {/* <Image
               source={{
                 uri:
                   (userData && userData?.userImg) ||
@@ -146,8 +147,16 @@ export default function Post({item, onDeletePost, userData}) {
                 borderRadius: 40,
               }}
               resizeMode="cover"
-            />
-            {userData.role === 1 && (
+            /> */}
+          <Avatar
+            user={userData}
+            onPress={() => {
+              navigation.navigate('HomeProfile', {
+                userId: item?.userId,
+              });
+            }}
+          />
+          {/* {userData.role === 1 && (
               <Image
                 source={require('../assets/check.png')}
                 style={{
@@ -160,8 +169,8 @@ export default function Post({item, onDeletePost, userData}) {
                 }}
                 resizeMode="cover"
               />
-            )}
-          </TouchableOpacity>
+            )} */}
+          {/* </TouchableOpacity> */}
           <View style={{paddingLeft: 10}}>
             <Text style={{fontWeight: '700'}}>{userData?.name}</Text>
             <Text>{moment(item?.createdAt.toDate()).fromNow()}</Text>
