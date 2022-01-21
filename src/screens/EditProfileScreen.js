@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import * as Types from '../constants/ActionTypes';
 import FastImage from 'react-native-fast-image';
@@ -57,6 +58,7 @@ export default function EditProfile() {
   const [addressError, setAddressError] = useState('');
   const [ageError, setAgeError] = useState('');
   const [isDisableBtn, setIsDisableBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // if (
@@ -182,6 +184,7 @@ export default function EditProfile() {
   );
 
   const updateProfile = async () => {
+    setIsLoading(true);
     let imgUrl = await uploadImage();
 
     if (imgUrl === null && userDetails.userImg) {
@@ -202,6 +205,7 @@ export default function EditProfile() {
       .doc(user.uid)
       .update(data)
       .then(() => {
+        setIsLoading(false);
         Alert.alert(
           'Cập nhật thông tin thành công!',
           'Thông tin của bạn đã được cập nhật.',
@@ -225,6 +229,11 @@ export default function EditProfile() {
       .catch(err => {
         console.log('Error while updating data: ', err);
       });
+
+    // close loading after 30s
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 30000);
   };
 
   const handleUpdate = () => {
@@ -301,7 +310,37 @@ export default function EditProfile() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {position: 'relative'}]}>
+      {isLoading && (
+        <View
+          style={{
+            position: 'absolute',
+            zIndex: 2,
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: '#f8f8f8',
+              height: 150,
+              width: 150,
+              alignSelf: 'center',
+              borderRadius: 10,
+              zIndex: 2,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator
+              size="large"
+              color={GlobalStyle.colors.COLOR_BLUE}
+            />
+          </View>
+        </View>
+      )}
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={{alignItems: 'center'}}>
           <TouchableOpacity onPress={() => bs.current.snapTo(0)}>

@@ -23,7 +23,7 @@ const {width} = Dimensions.get('window');
 
 export default function SosDetail({route, navigation}) {
   const {item} = route.params;
-  const [selectedValue, setSelectedValue] = useState(item.status);
+  const [selectedValue, setSelectedValue] = useState(item?.status);
 
   const data = [
     {
@@ -43,7 +43,7 @@ export default function SosDetail({route, navigation}) {
   const handleUpdateStatsus = () => {
     firestore()
       .collection('sos')
-      .doc(item.id)
+      .doc(item?.id)
       .update({
         status: selectedValue,
         updatedAt: firestore.Timestamp.fromDate(new Date()),
@@ -68,8 +68,8 @@ export default function SosDetail({route, navigation}) {
           <Image
             style={{width: 150, height: 150, borderRadius: 200}}
             source={{
-              uri: item.userInfo.userImg
-                ? item.userInfo.userImg
+              uri: item?.userInfo?.userImg
+                ? item?.userInfo?.userImg
                 : 'https://img.favpng.com/25/13/19/samsung-galaxy-a8-a8-user-login-telephone-avatar-png-favpng-dqKEPfX7hPbc6SMVUCteANKwj.jpg',
             }}
           />
@@ -85,7 +85,7 @@ export default function SosDetail({route, navigation}) {
             size={20}
           />
           <Text style={{fontSize: 16, marginLeft: 10}}>
-            {item.userInfo.name}
+            {item?.userInfo?.name}
           </Text>
         </View>
         <View style={styles.action}>
@@ -96,7 +96,7 @@ export default function SosDetail({route, navigation}) {
             size={20}
           />
           <Text style={{fontSize: 16, marginLeft: 10}}>
-            {item.userInfo.age}
+            {item?.userInfo.age}
           </Text>
         </View>
         <View style={styles.action}>
@@ -107,7 +107,7 @@ export default function SosDetail({route, navigation}) {
             size={20}
           />
           <Text style={{fontSize: 16, marginLeft: 10}}>
-            {item.userInfo.phone}
+            {item?.userInfo.phone}
           </Text>
         </View>
         <View style={styles.action}>
@@ -118,7 +118,7 @@ export default function SosDetail({route, navigation}) {
             size={20}
           />
           <Text style={{fontSize: 16, marginLeft: 10}}>
-            {item.userInfo.address}
+            {item?.userInfo.address}
           </Text>
         </View>
         <View style={styles.action}>

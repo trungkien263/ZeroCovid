@@ -182,7 +182,12 @@ export default function ChatScreen({route, navigation}) {
           }}>
           <Ionicons name="arrow-back" size={25} color="#2e64e5" />
         </TouchableOpacity>
-        <View
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Profile', {
+              userId: roomInfo?.partnerData?.uid,
+            });
+          }}
           style={{flexDirection: 'row', alignItems: 'center', marginLeft: 16}}>
           <Image
             source={
@@ -197,7 +202,7 @@ export default function ChatScreen({route, navigation}) {
           <Text style={{fontWeight: '600', marginLeft: 10}}>
             {roomInfo?.partnerData?.name}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <GiftedChat
         messages={messages}
