@@ -28,6 +28,7 @@ import {
 } from '../actions';
 
 import messaging from '@react-native-firebase/messaging';
+import EmptyScreen from '../components/EmptyScreen';
 
 export default function HomeScreen({navigation, route}) {
   const {user, logout} = useContext(AuthContext);
@@ -264,16 +265,20 @@ export default function HomeScreen({navigation, route}) {
         }}>
         <Text>TEST LOCAL NOTIFICATION</Text>
       </TouchableOpacity> */}
-      {posts.map((item, index) => {
-        return (
-          <Post
-            key={index}
-            userData={item.userData}
-            item={item}
-            onDeletePost={handleDelete}
-          />
-        );
-      })}
+      {posts.length ? (
+        posts.map((item, index) => {
+          return (
+            <Post
+              key={index}
+              userData={item.userData}
+              item={item}
+              onDeletePost={handleDelete}
+            />
+          );
+        })
+      ) : (
+        <EmptyScreen title="Chưa có bài viết nào!" />
+      )}
     </ScrollView>
   );
 }

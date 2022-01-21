@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux';
 import MessageSkeleton from '../components/Skeleton/MessageSkeleton';
 import {useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
+import EmptyScreen from '../components/EmptyScreen';
 
 export default function MessagesScreen() {
   const navigation = useNavigation();
@@ -22,6 +23,8 @@ export default function MessagesScreen() {
   const [rooms, setRooms] = useState([]);
   const [partnerId, setPartnerId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+
+  console.log('rooms', rooms.length);
 
   const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
@@ -169,11 +172,13 @@ export default function MessagesScreen() {
           data={rooms}
           keyExtractor={item => item.roomId}
           renderItem={({item}) => {
-            console.log('itemmmmm', item);
             return <Message item={item} partnerId={partnerId} />;
           }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={
+            <EmptyScreen title="Bạn chưa có cuộc trò chuyện nào!" />
           }
         />
       )}

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import {GlobalStyle} from '../../config/globalStyle';
 import firestore from '@react-native-firebase/firestore';
@@ -13,6 +14,7 @@ import {useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import moment from 'moment';
 import {TabView, SceneMap} from 'react-native-tab-view';
+import EmptyScreen from '../../components/EmptyScreen';
 
 const {width} = Dimensions.get('window');
 
@@ -114,39 +116,66 @@ export default function SosManageMent({navigation}) {
   };
 
   const FirstRoute = () => (
-    <ScrollView
-      style={[
-        styles.container,
-        // {backgroundColor: '#E8554E'}
-      ]}>
-      {pendingList.map((el, i) => {
-        return <SosItem item={el} key={i} screen={0} />;
-      })}
-    </ScrollView>
+    // <ScrollView
+    //   style={[
+    //     styles.container,
+    //     // {backgroundColor: '#E8554E'}
+    //   ]}>
+    //   {pendingList.map((el, i) => {
+    //     return <SosItem item={el} key={i} screen={0} />;
+    //   })}
+    // </ScrollView>
+    <FlatList
+      style={styles.container}
+      data={pendingList}
+      keyExtractor={item => item.roomId}
+      renderItem={({item}) => {
+        return <SosItem item={item} screen={0} />;
+      }}
+      ListEmptyComponent={<EmptyScreen title="Danh sách trống!" />}
+    />
   );
 
   const SecondRoute = () => (
-    <ScrollView
-      style={[
-        styles.container,
-        // {backgroundColor: '#F9C449'}
-      ]}>
-      {processingList.map((el, i) => {
-        return <SosItem item={el} key={i} screen={1} />;
-      })}
-    </ScrollView>
+    // <ScrollView
+    //   style={[
+    //     styles.container,
+    //     // {backgroundColor: '#F9C449'}
+    //   ]}>
+    //   {processingList.map((el, i) => {
+    //     return <SosItem item={el} key={i} screen={1} />;
+    //   })}
+    // </ScrollView>
+    <FlatList
+      style={styles.container}
+      data={processingList}
+      keyExtractor={item => item.roomId}
+      renderItem={({item}) => {
+        return <SosItem item={item} screen={0} />;
+      }}
+      ListEmptyComponent={<EmptyScreen title="Danh sách trống!" />}
+    />
   );
 
   const ThirdRoute = () => (
-    <ScrollView
-      style={[
-        styles.container,
-        // {backgroundColor: '#2AA876'}
-      ]}>
-      {doneList.map((el, i) => {
-        return <SosItem item={el} key={i} screen={2} />;
-      })}
-    </ScrollView>
+    // <ScrollView
+    //   style={[
+    //     styles.container,
+    //     // {backgroundColor: '#2AA876'}
+    //   ]}>
+    //   {doneList.map((el, i) => {
+    //     return <SosItem item={el} key={i} screen={2} />;
+    //   })}
+    // </ScrollView>
+    <FlatList
+      style={styles.container}
+      data={doneList}
+      keyExtractor={item => item.roomId}
+      renderItem={({item}) => {
+        return <SosItem item={item} screen={0} />;
+      }}
+      ListEmptyComponent={<EmptyScreen title="Danh sách trống!" />}
+    />
   );
 
   const renderScene = SceneMap({

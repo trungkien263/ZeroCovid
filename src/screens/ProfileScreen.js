@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import {useSelector} from 'react-redux';
+import EmptyScreen from '../components/EmptyScreen';
 import Post from '../components/Post';
 import ProfileSkeleton from '../components/Skeleton/ProfileSkeleton';
 import {GlobalStyle} from '../config/globalStyle';
@@ -42,7 +43,9 @@ export default function ProfileScreen({navigation, route}) {
       let postsData = [];
       querySnapshot.forEach(documentSnapshot => {
         const postInfo = documentSnapshot.data();
-        postsData.push({...postInfo, postId: documentSnapshot.id});
+        if (postInfo.deleteFlag === false) {
+          postsData.push({...postInfo, postId: documentSnapshot.id});
+        }
       });
 
       const postsDetail = await Promise.all(
@@ -295,18 +298,25 @@ export default function ProfileScreen({navigation, route}) {
               <Text>Following</Text>
             </View> */}
           </View>
-          <View style={styles.postArea}>
-            {posts.map((item, index) => {
-              return (
-                <Post
-                  key={index}
-                  userData={item.userData}
-                  item={item}
-                  onDeletePost={handleDelete}
-                />
-              );
-            })}
-          </View>
+          {posts.length ? (
+            <View style={styles.postArea}>
+              {posts.map((item, index) => {
+                return (
+                  <Post
+                    key={index}
+                    userData={item.userData}
+                    item={item}
+                    onDeletePost={handleDelete}
+                  />
+                );
+              })}
+            </View>
+          ) : (
+            <EmptyScreen
+              style={{marginTop: 100}}
+              title="Bạn chưa có bài viết nào!"
+            />
+          )}
         </ScrollView>
       )}
     </SafeAreaView>
